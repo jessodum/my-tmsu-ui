@@ -66,7 +66,7 @@
          </size>
         </property>
         <property name="text">
-         <string>TextLabel</string>
+         <string>Select a base directory</string>
         </property>
        </widget>
       </item>
@@ -283,7 +283,7 @@ QRadioButton::indicator:checked{image: url(:radio/img/radio_checked_blue.png);}<
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>450</width>
+             <width>448</width>
              <height>771</height>
             </rect>
            </property>
