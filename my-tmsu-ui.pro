@@ -5,6 +5,12 @@
 TEMPLATE = app
 TARGET = my-tmsu-ui
 DESTDIR = bin
+OBJECTS_DIR = obj
+UI_DIR = inc
+MOC_DIR = src
+RCC_DIR = src
+
+QT = core gui widgets
 
 # You can make your code fail to compile if you use deprecated APIs.
 # In order to do so, uncomment the following line.
@@ -15,6 +21,7 @@ DESTDIR = bin
 
 # Input
 INCLUDEPATH += .
+INCLUDEPATH += inc
 
 HEADERS += inc/mytmsuui_mainwindow.h
 
