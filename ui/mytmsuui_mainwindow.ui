@@ -6,26 +6,349 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>600</height>
+    <width>1440</width>
+    <height>1024</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MyTMSUUI_MainWindow</string>
+   <string>My TMSU UI</string>
   </property>
-  <widget class="QWidget" name="centralwidget"/>
-  <widget class="QMenuBar" name="menubar">
+  <widget class="QWidget" name="myCentralWidget">
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <item>
+     <layout class="QGridLayout" name="myTopAreaGridLayout">
+      <item row="0" column="0">
+       <widget class="QPushButton" name="mySelectBaseDirBtn">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>32</width>
+          <height>32</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>32</width>
+          <height>32</height>
+         </size>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset theme="folder"/>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>16</width>
+          <height>16</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QLabel" name="mySelectedBaseDirLabel">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>32</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>TextLabel</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QCheckBox" name="myRecurseCheckbox">
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>32</height>
+         </size>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">QCheckBox::indicator:unchecked {image: url(:cb/img/cb_unchecked_grey.png);}
+QCheckBox::indicator:checked {image: url(:cb/img/cb_checked_blue.png);}</string>
+        </property>
+        <property name="text">
+         <string>Recurse into sub-directories</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <widget class="QSplitter" name="mySplitter">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="frameShape">
+       <enum>QFrame::Box</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Raised</enum>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <widget class="QWidget" name="layoutWidget">
+       <layout class="QVBoxLayout" name="myLeftAreaVLayout">
+        <property name="topMargin">
+         <number>5</number>
+        </property>
+        <item>
+         <layout class="QHBoxLayout" name="myNavButtonsHLayout">
+          <item>
+           <spacer name="myNavButtonsLeftHSpacer">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QPushButton" name="myFirstImgButton">
+            <property name="text">
+             <string>First</string>
+            </property>
+            <property name="icon">
+             <iconset theme="go-first"/>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="myPrevImgButton">
+            <property name="text">
+             <string>Prev</string>
+            </property>
+            <property name="icon">
+             <iconset theme="go-previous"/>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="myNavButtonsMiddleHSpacer">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QPushButton" name="myNextImgButton">
+            <property name="text">
+             <string>Next</string>
+            </property>
+            <property name="icon">
+             <iconset theme="go-next"/>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="myLastImgButton">
+            <property name="text">
+             <string>Last</string>
+            </property>
+            <property name="icon">
+             <iconset theme="go-last"/>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="myNavButtonsRightHSpacer">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="QLabel" name="myImageWidget">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="frameShape">
+           <enum>QFrame::Box</enum>
+          </property>
+          <property name="frameShadow">
+           <enum>QFrame::Sunken</enum>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="layoutWidget">
+       <layout class="QVBoxLayout" name="myRightAreaVLayout">
+        <property name="leftMargin">
+         <number>8</number>
+        </property>
+        <item>
+         <widget class="QRadioButton" name="myQueryRadioButton">
+          <property name="styleSheet">
+           <string notr="true">QRadioButton::indicator:unchecked{image: url(:radio/img/radio_unchecked_grey.png);}
+QRadioButton::indicator:checked{image: url(:radio/img/radio_checked_blue.png);}</string>
+          </property>
+          <property name="text">
+           <string>Query</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QRadioButton" name="mySetTagsRadioButton">
+          <property name="styleSheet">
+           <string notr="true">QRadioButton::indicator:unchecked{image: url(:radio/img/radio_unchecked_grey.png);}
+QRadioButton::indicator:checked{image: url(:radio/img/radio_checked_blue.png);}</string>
+          </property>
+          <property name="text">
+           <string>Set tags (for current image)</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="myApplyButton">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>80</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Apply</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QScrollArea" name="myTagsScrollArea">
+          <property name="styleSheet">
+           <string notr="true">margin-top: 5px; margin-right: 5px; margin-bottom: 1px;</string>
+          </property>
+          <property name="horizontalScrollBarPolicy">
+           <enum>Qt::ScrollBarAsNeeded</enum>
+          </property>
+          <property name="widgetResizable">
+           <bool>true</bool>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+          </property>
+          <widget class="QWidget" name="scrollAreaWidgetContents">
+           <property name="geometry">
+            <rect>
+             <x>0</x>
+             <y>0</y>
+             <width>450</width>
+             <height>771</height>
+            </rect>
+           </property>
+          </widget>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="myMenuBar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>800</width>
+     <width>1440</width>
      <height>27</height>
     </rect>
    </property>
+   <widget class="QMenu" name="myFileMenu">
+    <property name="title">
+     <string>File</string>
+    </property>
+    <addaction name="mySelectBaseDirAction"/>
+    <addaction name="myQuitAction"/>
+   </widget>
+   <addaction name="myFileMenu"/>
   </widget>
-  <widget class="QStatusBar" name="statusbar"/>
+  <widget class="QStatusBar" name="myStatusBar"/>
+  <action name="mySelectBaseDirAction">
+   <property name="icon">
+    <iconset theme="folder"/>
+   </property>
+   <property name="text">
+    <string>Select Base Dir</string>
+   </property>
+   <property name="toolTip">
+    <string>Select base directory</string>
+   </property>
+   <property name="statusTip">
+    <string>Select base directory</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+D</string>
+   </property>
+  </action>
+  <action name="myQuitAction">
+   <property name="text">
+    <string>Quit</string>
+   </property>
+   <property name="toolTip">
+    <string>Quit the application</string>
+   </property>
+   <property name="statusTip">
+    <string>Quit the application</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Q</string>
+   </property>
+  </action>
  </widget>
- <resources/>
+ <resources>
+  <include location="resources.qrc"/>
+ </resources>
  <connections/>
 </ui>

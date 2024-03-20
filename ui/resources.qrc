@@ -1,0 +1,16 @@
+<RCC>
+  <qresource prefix="cb">
+    <file>img/cb_checked_blue.png</file>
+    <file>img/cb_checked_green.png</file>
+    <file>img/cb_checked_orange.png</file>
+    <file>img/cb_checked_pink.png</file>
+    <file>img/cb_checked_purple.png</file>
+    <file>img/cb_checked_yellow.png</file>
+    <file>img/cb_unchecked_grey.png</file>
+    <file>img/cb_unchecked_red.png</file>
+  </qresource>
+  <qresource prefix="radio">
+    <file>img/radio_checked_blue.png</file>
+    <file>img/radio_unchecked_grey.png</file>
+  </qresource>
+</RCC>
