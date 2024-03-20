@@ -4,7 +4,7 @@
 
 TEMPLATE = app
 TARGET = my-tmsu-ui
-INCLUDEPATH += .
+DESTDIR = bin
 
 # You can make your code fail to compile if you use deprecated APIs.
 # In order to do so, uncomment the following line.
@@ -14,7 +14,14 @@ INCLUDEPATH += .
 #DEFINES += QT_DISABLE_DEPRECATED_UP_TO=0x060000 # disables all APIs deprecated in Qt 6.0.0 and earlier
 
 # Input
+INCLUDEPATH += .
+
 HEADERS += inc/mytmsuui_mainwindow.h
-FORMS += ui/mytmsuui_mainwindow.ui ui/mytmsuui_tagwidget.ui
-SOURCES += src/main.cpp src/mytmsuui_mainwindow.cpp
+
+SOURCES += src/main.cpp
+SOURCES += src/mytmsuui_mainwindow.cpp
+
+FORMS += ui/mytmsuui_mainwindow.ui
+FORMS += ui/mytmsuui_tagwidget.ui
+
 RESOURCES += ui/resources.qrc

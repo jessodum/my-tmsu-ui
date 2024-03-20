@@ -4,20 +4,22 @@
 #include <QMainWindow>
 
 QT_BEGIN_NAMESPACE
-namespace Ui {
-class MyTMSUUI_MainWindow;
+namespace Ui
+{
+   class MyTMSUUI_MainWindow;
 }
 QT_END_NAMESPACE
 
 class MyTMSUUI_MainWindow : public QMainWindow
 {
-    Q_OBJECT
+ Q_OBJECT
 
-public:
-    MyTMSUUI_MainWindow(QWidget *parent = nullptr);
-    ~MyTMSUUI_MainWindow();
+ public:
+   MyTMSUUI_MainWindow(QWidget* parent = nullptr);
+   ~MyTMSUUI_MainWindow();
 
-private:
-    Ui::MyTMSUUI_MainWindow *ui;
+ private:
+   Ui::MyTMSUUI_MainWindow* ui;
 };
+
 #endif // MYTMSUUI_MAINWINDOW_H
