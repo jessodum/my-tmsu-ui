@@ -1,11 +1,13 @@
 #include "mytmsuui_mainwindow.h"
 #include "ui_mytmsuui_mainwindow.h"
+#include "mytmsuui_data.h"
 #include <stdio.h> // TODO: remove
 
 // ----------------------------------------------------------------------------
 MyTMSUUI_MainWindow::MyTMSUUI_MainWindow(QWidget* parent)
  : QMainWindow(parent)
  , myGuiPtr(new Ui::MyTMSUUI_MainWindow)
+ , myDataPtr(nullptr)
 {
    // Setup the UI widgets (based on the Designer "ui" file)
    myGuiPtr->setupUi(this);
@@ -84,6 +86,11 @@ MyTMSUUI_MainWindow::~MyTMSUUI_MainWindow()
 void MyTMSUUI_MainWindow::doSelectBaseDir()
 {
    printf("TODO doSelectBaseDir\n");
+   // if (myDataPtr != nullptr)
+   // {
+   //    printf("  Current Base Dir = %s\n", myDataPtr->getCurrentBaseDir().absolutePath().toStdString().c_str());
+   // }
+
    return;
 }
 

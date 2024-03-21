@@ -10,6 +10,9 @@ namespace Ui
 }
 QT_END_NAMESPACE
 
+// Forward declarations
+class MyTMSUUI_Data;
+
 // ============================================================================
 
 class MyTMSUUI_MainWindow : public QMainWindow
@@ -19,6 +22,8 @@ class MyTMSUUI_MainWindow : public QMainWindow
  public:
    MyTMSUUI_MainWindow(QWidget* parent = nullptr);
    ~MyTMSUUI_MainWindow();
+
+   void setDataObj(MyTMSUUI_Data* dataPtr);
 
  protected slots:
    void doSelectBaseDir();
@@ -32,6 +37,12 @@ class MyTMSUUI_MainWindow : public QMainWindow
 
  private:
    Ui::MyTMSUUI_MainWindow* myGuiPtr;
+   MyTMSUUI_Data* myDataPtr;
 };
+
+inline void MyTMSUUI_MainWindow::setDataObj(MyTMSUUI_Data* dataPtr)
+{
+   myDataPtr = dataPtr;
+}
 
 #endif // MYTMSUUI_MAINWINDOW_H
