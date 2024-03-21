@@ -25,6 +25,9 @@ class MyTMSUUI_MainWindow : public QMainWindow
 
    void setDataObj(MyTMSUUI_Data* dataPtr);
 
+ signals:
+   void dataBaseDirChanged(const QString& p);
+
  protected slots:
    void doSelectBaseDir();
    void firstButtonClicked();
@@ -39,10 +42,5 @@ class MyTMSUUI_MainWindow : public QMainWindow
    Ui::MyTMSUUI_MainWindow* myGuiPtr;
    MyTMSUUI_Data* myDataPtr;
 };
-
-inline void MyTMSUUI_MainWindow::setDataObj(MyTMSUUI_Data* dataPtr)
-{
-   myDataPtr = dataPtr;
-}
 
 #endif // MYTMSUUI_MAINWINDOW_H

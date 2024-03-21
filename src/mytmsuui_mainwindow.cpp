@@ -1,6 +1,7 @@
 #include "mytmsuui_mainwindow.h"
 #include "ui_mytmsuui_mainwindow.h"
 #include "mytmsuui_data.h"
+#include <QFileDialog>
 #include <stdio.h> // TODO: remove
 
 // ----------------------------------------------------------------------------
@@ -72,6 +73,11 @@ MyTMSUUI_MainWindow::MyTMSUUI_MainWindow(QWidget* parent)
                                      this,   SLOT(radioClicked())
           );
 
+   // this: Base dir changed
+   connect(                            this, SIGNAL(dataBaseDirChanged(const QString&)),
+           myGuiPtr->mySelectedBaseDirLabel,   SLOT(setText(const QString&))
+          );
+
    } // Block for folding
 
 }
@@ -82,62 +88,101 @@ MyTMSUUI_MainWindow::~MyTMSUUI_MainWindow()
    delete myGuiPtr;
 }
 
+void MyTMSUUI_MainWindow::setDataObj(MyTMSUUI_Data* dataPtr)
+{
+   myDataPtr = dataPtr;
+   if (myDataPtr != nullptr)
+   {
+      emit dataBaseDirChanged(myDataPtr->myCurrentBaseDir.absolutePath());
+   }
+}
+
 // ----------------------------------------------------------------------------
 void MyTMSUUI_MainWindow::doSelectBaseDir()
 {
-   printf("TODO doSelectBaseDir\n");
-   // if (myDataPtr != nullptr)
-   // {
-   //    printf("  Current Base Dir = %s\n", myDataPtr->getCurrentBaseDir().absolutePath().toStdString().c_str());
-   // }
+   if (myDataPtr == nullptr)
+   {
+      statusBar()->showMessage("INTERNAL ERROR: Missing data object - cannot set a base directory");
+      return;
+   }
+
+   // Keep track of change to the selected base directory
+   QString oldDir(myDataPtr->myCurrentBaseDir.absolutePath());
+
+   // Construct directory selection dialog
+   QFileDialog dirSelector(this);
+   dirSelector.setFileMode(QFileDialog::Directory);
+   dirSelector.setOption(QFileDialog::ShowDirsOnly);
+   dirSelector.setDirectory(myDataPtr->myCurrentBaseDir);
+
+   // Call (display) the dir selection dialog and get result
+   QStringList selectedFiles;
+   if (dirSelector.exec() == QDialog::Accepted)
+   {
+      selectedFiles = dirSelector.selectedFiles();
+   }
+
+   // See if a (new) directory was selected
+   if (selectedFiles.size() > 0)
+   {
+      QString newDir(selectedFiles[0]);
+      if (newDir != oldDir)
+      {
+         // Update the data object
+         myDataPtr->myCurrentBaseDir.setPath(newDir);
+
+         // Notify other elements of the app that the selected dir changed
+         emit dataBaseDirChanged(newDir);
+      }
+   }
 
    return;
 }
 
 // ----------------------------------------------------------------------------
-void MyTMSUUI_MainWindow::firstButtonClicked()
+void MyTMSUUI_MainWindow::firstButtonClicked() // TODO
 {
    printf("TODO firstButtonClicked\n");
    return;
 }
 
 // ----------------------------------------------------------------------------
-void MyTMSUUI_MainWindow::prevButtonClicked()
+void MyTMSUUI_MainWindow::prevButtonClicked() // TODO
 {
    printf("TODO prevButtonClicked\n");
    return;
 }
 
 // ----------------------------------------------------------------------------
-void MyTMSUUI_MainWindow::nextButtonClicked()
+void MyTMSUUI_MainWindow::nextButtonClicked() // TODO
 {
    printf("TODO nextButtonClicked\n");
    return;
 }
 
 // ----------------------------------------------------------------------------
-void MyTMSUUI_MainWindow::lastButtonClicked()
+void MyTMSUUI_MainWindow::lastButtonClicked() // TODO
 {
    printf("TODO lastButtonClicked\n");
    return;
 }
 
 // ----------------------------------------------------------------------------
-void MyTMSUUI_MainWindow::applyButtonClicked()
+void MyTMSUUI_MainWindow::applyButtonClicked() // TODO
 {
    printf("TODO applyButtonClicked\n");
    return;
 }
 
 // ----------------------------------------------------------------------------
-void MyTMSUUI_MainWindow::doUpdateRecurse(int newRecurseState)
+void MyTMSUUI_MainWindow::doUpdateRecurse(int newRecurseState) // TODO
 {
    printf("TODO doUpdateRecurse %d\n", newRecurseState);
    return;
 }
 
 // ----------------------------------------------------------------------------
-void MyTMSUUI_MainWindow::radioClicked()
+void MyTMSUUI_MainWindow::radioClicked() // TODO
 {
    printf("TODO radioClicked\n");
    return;

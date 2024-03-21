@@ -9,17 +9,12 @@ class MyTMSUUI_Data
    MyTMSUUI_Data();
    ~MyTMSUUI_Data();
 
-   QDir getCurrentBaseDir() const;
+   // Properities
+   QDir myCurrentBaseDir;
 
  protected:
 
  private:
-   QDir myCurrentBaseDir;
 };
-
-inline QDir MyTMSUUI_Data::getCurrentBaseDir() const
-{
-   return myCurrentBaseDir;
-}
 
 #endif
