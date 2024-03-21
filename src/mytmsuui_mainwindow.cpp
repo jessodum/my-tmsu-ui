@@ -13,6 +13,7 @@ MyTMSUUI_MainWindow::MyTMSUUI_MainWindow(QWidget* parent)
    // -----------------
    // Setup Connections
    // -----------------
+   { // Block for folding
 
    // Action: Quit
    connect(myGuiPtr->myQuitAction, SIGNAL(triggered()),
@@ -68,6 +69,8 @@ MyTMSUUI_MainWindow::MyTMSUUI_MainWindow(QWidget* parent)
    connect(myGuiPtr->mySetTagsRadioButton, SIGNAL(clicked()),
                                      this,   SLOT(radioClicked())
           );
+
+   } // Block for folding
 
 }
 
