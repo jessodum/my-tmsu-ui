@@ -10,6 +10,8 @@ namespace Ui
 }
 QT_END_NAMESPACE
 
+// ============================================================================
+
 class MyTMSUUI_MainWindow : public QMainWindow
 {
  Q_OBJECT
@@ -18,8 +20,18 @@ class MyTMSUUI_MainWindow : public QMainWindow
    MyTMSUUI_MainWindow(QWidget* parent = nullptr);
    ~MyTMSUUI_MainWindow();
 
+ protected slots:
+   void doSelectBaseDir();
+   void firstButtonClicked();
+   void prevButtonClicked();
+   void nextButtonClicked();
+   void lastButtonClicked();
+   void applyButtonClicked();
+   void doUpdateRecurse(int newRecurseState);
+   void radioClicked();
+
  private:
-   Ui::MyTMSUUI_MainWindow* ui;
+   Ui::MyTMSUUI_MainWindow* myGuiPtr;
 };
 
 #endif // MYTMSUUI_MAINWINDOW_H
