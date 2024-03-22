@@ -13,11 +13,18 @@ class MyTMSUUI_Interface : public QObject
 
    QProcess* getIFProcess();
 
+ public slots:
+   void doNewBaseDir(const QString& newPath);
+
  protected:
 
  private:
    QProcess myIFProc;
 };
+
+// =======
+// INLINES
+// =======
 
 inline QProcess* MyTMSUUI_Interface::getIFProcess()
 {

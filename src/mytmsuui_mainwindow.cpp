@@ -95,9 +95,9 @@ void MyTMSUUI_MainWindow::setDataObj(MyTMSUUI_Data* dataPtr)
    if (myDataPtr != nullptr)
    {
       // this: Base dir changed
-//      connect(                     this, SIGNAL(dataBaseDirChanged(const QString&)),
-//              &(myDataPtr->myInterface),   SLOT(TODO(const QString&))
-//             );
+      connect(                     this, SIGNAL(dataBaseDirChanged(const QString&)),
+              &(myDataPtr->myInterface),   SLOT(doNewBaseDir(const QString&))
+             );
 
       emit dataBaseDirChanged(myDataPtr->myCurrentBaseDir.absolutePath());
    }

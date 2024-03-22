@@ -17,6 +17,7 @@ class MyTMSUUI_Data
  protected:
 
  private:
+
 };
 
 #endif
