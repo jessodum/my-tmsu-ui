@@ -26,10 +26,12 @@ INCLUDEPATH += .
 INCLUDEPATH += inc
 
 HEADERS += inc/mytmsuui_data.h
+HEADERS += inc/mytmsuui_interface.h
 HEADERS += inc/mytmsuui_mainwindow.h
 
 SOURCES += src/main.cpp
 SOURCES += src/mytmsuui_data.cpp
+SOURCES += src/mytmsuui_interface.cpp
 SOURCES += src/mytmsuui_mainwindow.cpp
 
 FORMS += ui/mytmsuui_mainwindow.ui

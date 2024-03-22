@@ -88,11 +88,17 @@ MyTMSUUI_MainWindow::~MyTMSUUI_MainWindow()
    delete myGuiPtr;
 }
 
+// ----------------------------------------------------------------------------
 void MyTMSUUI_MainWindow::setDataObj(MyTMSUUI_Data* dataPtr)
 {
    myDataPtr = dataPtr;
    if (myDataPtr != nullptr)
    {
+      // this: Base dir changed
+//      connect(                     this, SIGNAL(dataBaseDirChanged(const QString&)),
+//              &(myDataPtr->myInterface),   SLOT(TODO(const QString&))
+//             );
+
       emit dataBaseDirChanged(myDataPtr->myCurrentBaseDir.absolutePath());
    }
 }

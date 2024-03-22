@@ -2,6 +2,7 @@
 
 MyTMSUUI_Data::MyTMSUUI_Data()
  : myCurrentBaseDir()
+ , myInterface()
 {
 
 }
