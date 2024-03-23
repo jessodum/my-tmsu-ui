@@ -1,7 +1,7 @@
 #include "mytmsuui_mainwindow.h"
 #include "ui_mytmsuui_mainwindow.h"
 #include <QFileDialog>
-#include <stdio.h> // TODO: remove
+#include <stdio.h> // TODO: remove debug printf's
 
 // ----------------------------------------------------------------------------
 MyTMSUUI_MainWindow::MyTMSUUI_MainWindow(QWidget* parent)

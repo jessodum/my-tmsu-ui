@@ -8,7 +8,9 @@ namespace MyTMSUUI_IF_NS
    enum ProcState
    {
       Idle,
-      InfoQuery
+      InfoQuery,
+      TagsDBQuery,
+      BuildImgFileList
    };
 }
 
@@ -42,6 +44,7 @@ class MyTMSUUI_Interface : public QObject
    QProcess myIFProc;
    MyTMSUUI_IF_NS::ProcState myState;
    QString myErrorStr;
+   QString myDBRootPath;
 };
 
 // =======

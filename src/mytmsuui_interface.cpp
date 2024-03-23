@@ -1,4 +1,5 @@
 #include "mytmsuui_interface.h"
+#include <QTextStream>
 #include <stdio.h> // TODO: remove debug printf's
 
 // ----------------------------------------------------------------------------
@@ -6,7 +7,8 @@ MyTMSUUI_Interface::MyTMSUUI_Interface(QObject* parent)
  : QObject(parent)
  , myIFProc()
  , myState(MyTMSUUI_IF_NS::Idle)
- , myErrorStr()
+ , myErrorStr("")
+ , myDBRootPath("")
 {
    myIFProc.setProgram("tmsu");
 
@@ -82,14 +84,43 @@ void MyTMSUUI_Interface::handleFinishedInfoQuery(int exitCode)
 {
    if (exitCode == 0)
    {
-      // TODO: InfoQuery Success
-      //       Move on to getting all tags & values from database
+      // InfoQuery Success
+
+      // Has the database root path changed?
+      QString outputRootPath = myDBRootPath;
+
+      QTextStream procOutputStream(myIFProc.readAllStandardOutput());
+      QString outputLine;
+      while (procOutputStream.readLineInto(&outputLine))
+      {
+         // Skip lines that don't start with "Root path: "
+         if (!outputLine.startsWith("Root path: "))
+         {
+            continue;
+         }
+         // else
+         // "Root path: "
+         //  12345678901 = 11 characters
+         outputRootPath = outputLine.last(outputLine.size() - 11);
+
+         // Skip remaining output
+         break;
+      }
+
+      if (outputRootPath != myDBRootPath)
+      {
+         // New database
+         // TODO: Move on to getting all tags & values from database
+      }
+      // else?
+      // TODO: Move on to updating list of image files based on new directory
 myErrorStr = "";
 goIdle();
    }
    else
    {
-      myErrorStr = "No tags database in directory tree";
+      myDBRootPath = "";
+      myErrorStr = "No (tags) database in directory tree";
       goIdle(true);
    }
 
