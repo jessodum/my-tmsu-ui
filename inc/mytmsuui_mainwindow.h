@@ -37,6 +37,7 @@ class MyTMSUUI_MainWindow : public QMainWindow
    void applyButtonClicked();
    void doUpdateRecurse(int newRecurseState);
    void radioClicked();
+   void setStatusUpdating();
 
  private:
    Ui::MyTMSUUI_MainWindow* myGuiPtr;

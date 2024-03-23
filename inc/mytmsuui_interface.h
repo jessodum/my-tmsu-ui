@@ -3,6 +3,15 @@
 
 #include <QProcess>
 
+namespace MyTMSUUI_IF_NS
+{
+   enum ProcState
+   {
+      Idle,
+      InfoQuery
+   };
+}
+
 class MyTMSUUI_Interface : public QObject
 {
  Q_OBJECT
@@ -17,9 +26,14 @@ class MyTMSUUI_Interface : public QObject
    void doNewBaseDir(const QString& newPath);
 
  protected:
+   void handleFinishedInfoQuery(int exitCode);
+
+ protected slots:
+   void handleFinishedProc(int exitCode, QProcess::ExitStatus howExited);
 
  private:
    QProcess myIFProc;
+   MyTMSUUI_IF_NS::ProcState myState;
 };
 
 // =======

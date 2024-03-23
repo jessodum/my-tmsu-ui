@@ -20,62 +20,65 @@ MyTMSUUI_MainWindow::MyTMSUUI_MainWindow(QWidget* parent)
 
    // Action: Quit
    connect(myGuiPtr->myQuitAction, SIGNAL(triggered()),
-                             this,   SLOT(close())
+                             this,   SLOT(    close())
           );
 
    // Action: Select base dir
-   connect(myGuiPtr->mySelectBaseDirAction, SIGNAL(triggered()),
+   connect(myGuiPtr->mySelectBaseDirAction, SIGNAL(      triggered()),
                                       this,   SLOT(doSelectBaseDir())
           );
 
    // Push Button: Select base dir
-   connect(myGuiPtr->mySelectBaseDirBtn, SIGNAL(clicked()),
+   connect(myGuiPtr->mySelectBaseDirBtn, SIGNAL(        clicked()),
                                    this,   SLOT(doSelectBaseDir())
           );
 
    // Push Button: First
-   connect(myGuiPtr->myFirstImgButton, SIGNAL(clicked()),
+   connect(myGuiPtr->myFirstImgButton, SIGNAL(           clicked()),
                                  this,   SLOT(firstButtonClicked())
           );
 
    // Push Button: Prev
-   connect(myGuiPtr->myPrevImgButton, SIGNAL(clicked()),
+   connect(myGuiPtr->myPrevImgButton, SIGNAL(          clicked()),
                                 this,   SLOT(prevButtonClicked())
           );
 
    // Push Button: Next
-   connect(myGuiPtr->myNextImgButton, SIGNAL(clicked()),
+   connect(myGuiPtr->myNextImgButton, SIGNAL(          clicked()),
                                 this,   SLOT(nextButtonClicked())
           );
 
    // Push Button: Last
-   connect(myGuiPtr->myLastImgButton, SIGNAL(clicked()),
+   connect(myGuiPtr->myLastImgButton, SIGNAL(          clicked()),
                                 this,   SLOT(lastButtonClicked())
           );
 
    // Push Button: Apply
-   connect(myGuiPtr->myApplyButton, SIGNAL(clicked()),
+   connect(myGuiPtr->myApplyButton, SIGNAL(           clicked()),
                               this,   SLOT(applyButtonClicked())
           );
 
    // Check Box: Recurse
-   connect(myGuiPtr->myRecurseCheckbox, SIGNAL(stateChanged(int)),
+   connect(myGuiPtr->myRecurseCheckbox, SIGNAL(   stateChanged(int)),
                                   this,   SLOT(doUpdateRecurse(int))
           );
 
    // Radio Button: Query
-   connect(myGuiPtr->myQueryRadioButton, SIGNAL(clicked()),
+   connect(myGuiPtr->myQueryRadioButton, SIGNAL(     clicked()),
                                    this,   SLOT(radioClicked())
           );
 
    // Radio Button: Set tags
-   connect(myGuiPtr->mySetTagsRadioButton, SIGNAL(clicked()),
+   connect(myGuiPtr->mySetTagsRadioButton, SIGNAL(     clicked()),
                                      this,   SLOT(radioClicked())
           );
 
    // this: Base dir changed
+   connect(this, SIGNAL(dataBaseDirChanged(const QString&)),
+           this,   SLOT( setStatusUpdating())
+          );
    connect(                            this, SIGNAL(dataBaseDirChanged(const QString&)),
-           myGuiPtr->mySelectedBaseDirLabel,   SLOT(setText(const QString&))
+           myGuiPtr->mySelectedBaseDirLabel,   SLOT(           setText(const QString&))
           );
 
    } // Block for folding
@@ -96,7 +99,7 @@ void MyTMSUUI_MainWindow::setDataObj(MyTMSUUI_Data* dataPtr)
    {
       // this: Base dir changed
       connect(                     this, SIGNAL(dataBaseDirChanged(const QString&)),
-              &(myDataPtr->myInterface),   SLOT(doNewBaseDir(const QString&))
+              &(myDataPtr->myInterface),   SLOT(      doNewBaseDir(const QString&))
              );
 
       emit dataBaseDirChanged(myDataPtr->myCurrentBaseDir.absolutePath());
@@ -194,3 +197,9 @@ void MyTMSUUI_MainWindow::radioClicked() // TODO
    return;
 }
 
+// ----------------------------------------------------------------------------
+void MyTMSUUI_MainWindow::setStatusUpdating()
+{
+   myGuiPtr->myStatusBar->showMessage("Updating...");
+   return;
+}
