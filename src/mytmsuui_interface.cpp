@@ -6,6 +6,7 @@ MyTMSUUI_Interface::MyTMSUUI_Interface(QObject* parent)
  : QObject(parent)
  , myIFProc()
  , myState(MyTMSUUI_IF_NS::Idle)
+ , myErrorStr()
 {
    myIFProc.setProgram("tmsu");
 
@@ -13,8 +14,7 @@ MyTMSUUI_Interface::MyTMSUUI_Interface(QObject* parent)
    // Setup Connections
    // -----------------
    connect(&myIFProc, SIGNAL(          finished(int, QProcess::ExitStatus)),
-                this,   SLOT(handleFinishedProc(int, QProcess::ExitStatus))
-          );
+                this,   SLOT(handleFinishedProc(int, QProcess::ExitStatus)) );
 }
 
 // ----------------------------------------------------------------------------
@@ -84,13 +84,13 @@ void MyTMSUUI_Interface::handleFinishedInfoQuery(int exitCode)
    {
       // TODO: InfoQuery Success
       //       Move on to getting all tags & values from database
-      printf("TODO: InfoQuery Success\n");
+myErrorStr = "";
+goIdle();
    }
    else
    {
-      // TODO: InfoQuery Failure
-      //       Report in MainWindow
-      printf("TODO: InfoQuery Failure\n");
+      myErrorStr = "No tags database in directory tree";
+      goIdle(true);
    }
 
    return;

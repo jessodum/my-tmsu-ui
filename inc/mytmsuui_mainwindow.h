@@ -2,6 +2,7 @@
 #define MYTMSUUI_MAINWINDOW_H
 
 #include <QMainWindow>
+#include "mytmsuui_data.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui
@@ -12,7 +13,6 @@ QT_END_NAMESPACE
 
 // Forward declarations
 class QLabel;
-class MyTMSUUI_Data;
 
 // ============================================================================
 
@@ -39,6 +39,7 @@ class MyTMSUUI_MainWindow : public QMainWindow
    void doUpdateRecurse(int newRecurseState);
    void radioClicked();
    void setStatusUpdating();
+   void interfaceGoneIdle(MyTMSUUI_IF_NS::ProcState lastState, bool withError = false);
 
  private:
    Ui::MyTMSUUI_MainWindow* myGuiPtr;

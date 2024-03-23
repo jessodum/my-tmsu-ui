@@ -1,6 +1,5 @@
 #include "mytmsuui_mainwindow.h"
 #include "ui_mytmsuui_mainwindow.h"
-#include "mytmsuui_data.h"
 #include <QFileDialog>
 #include <stdio.h> // TODO: remove
 
@@ -16,14 +15,14 @@ MyTMSUUI_MainWindow::MyTMSUUI_MainWindow(QWidget* parent)
    // Add ("normal") labels to StatusBar
    myGuiStatusBarNormalLabel = new QLabel(myGuiPtr->myStatusBar);
    myGuiStatusBarNormalLabel->setObjectName("myGuiStatusBarNormalLabel");
-   myGuiStatusBarNormalLabel->setStyleSheet(QString::fromUtf8("border-left: 1px ridge; border-radius: 0px;"));
+   myGuiStatusBarNormalLabel->setStyleSheet(QString::fromUtf8("border-right: 1px ridge; border-radius: 0px;"));
 
    myGuiStatusBarErrorLabel = new QLabel(myGuiPtr->myStatusBar);
    myGuiStatusBarErrorLabel->setObjectName("myGuiStatusBarErrorLabel");
    myGuiStatusBarErrorLabel->setStyleSheet(QString::fromUtf8("color: red;"));
 
-   myGuiPtr->myStatusBar->addPermanentWidget(myGuiStatusBarErrorLabel);
-   myGuiPtr->myStatusBar->addPermanentWidget(myGuiStatusBarNormalLabel);
+   myGuiPtr->myStatusBar->addWidget(myGuiStatusBarNormalLabel);
+   myGuiPtr->myStatusBar->addWidget(myGuiStatusBarErrorLabel);
 
    // -----------------
    // Setup Connections
@@ -32,66 +31,53 @@ MyTMSUUI_MainWindow::MyTMSUUI_MainWindow(QWidget* parent)
 
    // Action: Quit
    connect(myGuiPtr->myQuitAction, SIGNAL(triggered()),
-                             this,   SLOT(    close())
-          );
+                             this,   SLOT(    close()) );
 
    // Action: Select base dir
    connect(myGuiPtr->mySelectBaseDirAction, SIGNAL(      triggered()),
-                                      this,   SLOT(doSelectBaseDir())
-          );
+                                      this,   SLOT(doSelectBaseDir()) );
 
    // Push Button: Select base dir
    connect(myGuiPtr->mySelectBaseDirBtn, SIGNAL(        clicked()),
-                                   this,   SLOT(doSelectBaseDir())
-          );
+                                   this,   SLOT(doSelectBaseDir()) );
 
    // Push Button: First
    connect(myGuiPtr->myFirstImgButton, SIGNAL(           clicked()),
-                                 this,   SLOT(firstButtonClicked())
-          );
+                                 this,   SLOT(firstButtonClicked()) );
 
    // Push Button: Prev
    connect(myGuiPtr->myPrevImgButton, SIGNAL(          clicked()),
-                                this,   SLOT(prevButtonClicked())
-          );
+                                this,   SLOT(prevButtonClicked()) );
 
    // Push Button: Next
    connect(myGuiPtr->myNextImgButton, SIGNAL(          clicked()),
-                                this,   SLOT(nextButtonClicked())
-          );
+                                this,   SLOT(nextButtonClicked()) );
 
    // Push Button: Last
    connect(myGuiPtr->myLastImgButton, SIGNAL(          clicked()),
-                                this,   SLOT(lastButtonClicked())
-          );
+                                this,   SLOT(lastButtonClicked()) );
 
    // Push Button: Apply
    connect(myGuiPtr->myApplyButton, SIGNAL(           clicked()),
-                              this,   SLOT(applyButtonClicked())
-          );
+                              this,   SLOT(applyButtonClicked()) );
 
    // Check Box: Recurse
    connect(myGuiPtr->myRecurseCheckbox, SIGNAL(   stateChanged(int)),
-                                  this,   SLOT(doUpdateRecurse(int))
-          );
+                                  this,   SLOT(doUpdateRecurse(int)) );
 
    // Radio Button: Query
    connect(myGuiPtr->myQueryRadioButton, SIGNAL(     clicked()),
-                                   this,   SLOT(radioClicked())
-          );
+                                   this,   SLOT(radioClicked()) );
 
    // Radio Button: Set tags
    connect(myGuiPtr->mySetTagsRadioButton, SIGNAL(     clicked()),
-                                     this,   SLOT(radioClicked())
-          );
+                                     this,   SLOT(radioClicked()) );
 
    // this: Base dir changed
    connect(this, SIGNAL(dataBaseDirChanged(const QString&)),
-           this,   SLOT( setStatusUpdating())
-          );
+           this,   SLOT( setStatusUpdating()) );
    connect(                            this, SIGNAL(dataBaseDirChanged(const QString&)),
-           myGuiPtr->mySelectedBaseDirLabel,   SLOT(           setText(const QString&))
-          );
+           myGuiPtr->mySelectedBaseDirLabel,   SLOT(           setText(const QString&)) );
 
    } // Block for folding
 
@@ -111,8 +97,11 @@ void MyTMSUUI_MainWindow::setDataObj(MyTMSUUI_Data* dataPtr)
    {
       // this: Base dir changed
       connect(                     this, SIGNAL(dataBaseDirChanged(const QString&)),
-              &(myDataPtr->myInterface),   SLOT(      doNewBaseDir(const QString&))
-             );
+              &(myDataPtr->myInterface),   SLOT(      doNewBaseDir(const QString&)) );
+
+      // I/F: Gone idle
+      connect(&(myDataPtr->myInterface), SIGNAL(         goneIdle(MyTMSUUI_IF_NS::ProcState, bool)),
+                                   this,   SLOT(interfaceGoneIdle(MyTMSUUI_IF_NS::ProcState, bool)) );
 
       emit dataBaseDirChanged(myDataPtr->myCurrentBaseDir.absolutePath());
    }
@@ -215,3 +204,28 @@ void MyTMSUUI_MainWindow::setStatusUpdating()
    myGuiPtr->myStatusBar->showMessage("Updating...");
    return;
 }
+
+// ----------------------------------------------------------------------------
+void MyTMSUUI_MainWindow::interfaceGoneIdle(MyTMSUUI_IF_NS::ProcState lastState, bool withError)
+{
+   myGuiPtr->myStatusBar->clearMessage();
+
+   if (withError)
+   {
+      myGuiStatusBarErrorLabel->setText(myDataPtr->myInterface.getError());
+   }
+   else
+   {
+      myGuiStatusBarErrorLabel->setText("");
+   }
+
+   // TODO?
+   switch (lastState)
+   {
+      default:
+         break;
+   }
+
+   return;
+}
+
