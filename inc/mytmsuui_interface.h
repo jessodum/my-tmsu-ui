@@ -20,7 +20,9 @@ class MyTMSUUI_Interface : public QObject
    MyTMSUUI_Interface(QObject* parent = nullptr);
    ~MyTMSUUI_Interface();
 
-   QProcess* getIFProcess();
+   // Accessors
+   const QProcess* getIFProcess() const;
+   MyTMSUUI_IF_NS::ProcState getState() const;
 
  public slots:
    void doNewBaseDir(const QString& newPath);
@@ -40,9 +42,14 @@ class MyTMSUUI_Interface : public QObject
 // INLINES
 // =======
 
-inline QProcess* MyTMSUUI_Interface::getIFProcess()
+inline const QProcess* MyTMSUUI_Interface::getIFProcess() const
 {
    return &myIFProc;
+}
+
+inline MyTMSUUI_IF_NS::ProcState MyTMSUUI_Interface::getState() const
+{
+	return myState;
 }
 
 #endif

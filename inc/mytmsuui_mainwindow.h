@@ -11,6 +11,7 @@ namespace Ui
 QT_END_NAMESPACE
 
 // Forward declarations
+class QLabel;
 class MyTMSUUI_Data;
 
 // ============================================================================
@@ -41,6 +42,8 @@ class MyTMSUUI_MainWindow : public QMainWindow
 
  private:
    Ui::MyTMSUUI_MainWindow* myGuiPtr;
+   QLabel* myGuiStatusBarNormalLabel;
+   QLabel* myGuiStatusBarErrorLabel;
    MyTMSUUI_Data* myDataPtr;
 };
 

@@ -13,6 +13,18 @@ MyTMSUUI_MainWindow::MyTMSUUI_MainWindow(QWidget* parent)
    // Setup the UI widgets (based on the Designer "ui" file)
    myGuiPtr->setupUi(this);
 
+   // Add ("normal") labels to StatusBar
+   myGuiStatusBarNormalLabel = new QLabel(myGuiPtr->myStatusBar);
+   myGuiStatusBarNormalLabel->setObjectName("myGuiStatusBarNormalLabel");
+   myGuiStatusBarNormalLabel->setStyleSheet(QString::fromUtf8("border-left: 1px ridge; border-radius: 0px;"));
+
+   myGuiStatusBarErrorLabel = new QLabel(myGuiPtr->myStatusBar);
+   myGuiStatusBarErrorLabel->setObjectName("myGuiStatusBarErrorLabel");
+   myGuiStatusBarErrorLabel->setStyleSheet(QString::fromUtf8("color: red;"));
+
+   myGuiPtr->myStatusBar->addPermanentWidget(myGuiStatusBarErrorLabel);
+   myGuiPtr->myStatusBar->addPermanentWidget(myGuiStatusBarNormalLabel);
+
    // -----------------
    // Setup Connections
    // -----------------
