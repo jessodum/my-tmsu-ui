@@ -9,6 +9,9 @@ int main(int argc, char* argv[])
    //// Use the custom log message handler from "mytmsuui_logmsghandler.h"
    origLogMsgHandler = qInstallMessageHandler(MyTMSUUI_LogMsgHandler);
 
+   MyTMSUUI_SetLoggingFormat(); //// Custom log line formatting
+
+   qInfo("App Starting...");
    QApplication theApp(argc, argv);
    MyTMSUUI_MainWindow theMainWin;
    MyTMSUUI_Data dataObj;

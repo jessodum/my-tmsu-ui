@@ -35,4 +35,23 @@ void MyTMSUUI_LogMsgHandler(QtMsgType type, const QMessageLogContext& context, c
    // }
 }
 
+void MyTMSUUI_SetLoggingFormat()
+{
+   QString format;
+   format += "%{time yyyy-MMM-dd hh:mm:ss.zzz}";
+   //format += " // %{pid}.%{qthreadptr}";
+   format += " (PID: %{pid})";
+   format += " [";
+   format += "%{if-debug}DEBUG%{endif}";
+   format += "%{if-info}INFO %{endif}";
+   format += "%{if-warning}WARN %{endif}";
+   format += "%{if-critical}CRIT %{endif}";
+   format += "%{if-fatal}FATAL%{endif}";
+   format += "]";
+   format += " %{file} %{line}";
+   format += " { %{function} }";
+   format += " %{message}";
+   qSetMessagePattern(format);
+}
+
 #endif

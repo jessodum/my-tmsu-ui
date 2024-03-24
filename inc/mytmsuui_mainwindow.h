@@ -29,6 +29,9 @@ class MyTMSUUI_MainWindow : public QMainWindow
  signals:
    void dataBaseDirChanged(const QString& p);
 
+ protected:
+   virtual void closeEvent(QCloseEvent* event);
+
  protected slots:
    void doSelectBaseDir();
    void firstButtonClicked();

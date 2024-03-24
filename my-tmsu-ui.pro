@@ -24,6 +24,9 @@ QMAKE_CLEAN += $(TARGET)
 ## You can also select to disable deprecated APIs only up to a certain version of Qt.
 #DEFINES += QT_DISABLE_DEPRECATED_UP_TO=0x060000 # disables all APIs deprecated in Qt 6.0.0 and earlier
 
+## Allow source file location info in "release" build log file(s)
+DEFINES += QT_MESSAGELOGCONTEXT
+
 ## Input
 INCLUDEPATH += .
 INCLUDEPATH += inc

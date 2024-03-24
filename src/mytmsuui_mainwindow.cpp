@@ -108,6 +108,15 @@ void MyTMSUUI_MainWindow::setDataObj(MyTMSUUI_Data* dataPtr)
 }
 
 //// --------------------------------------------------------------------------
+void MyTMSUUI_MainWindow::closeEvent(QCloseEvent* event)
+{
+   // Call base class event handler
+   QMainWindow::closeEvent(event);
+
+   // Log closing
+   qInfo("Closing Main Window");
+}
+//// --------------------------------------------------------------------------
 void MyTMSUUI_MainWindow::doSelectBaseDir()
 {
    if (myDataPtr == nullptr)
