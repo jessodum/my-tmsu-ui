@@ -10,7 +10,7 @@ class MyTMSUUI_Data
    MyTMSUUI_Data();
    ~MyTMSUUI_Data();
 
-   // Properities
+   //// Properities
    QDir myCurrentBaseDir;
    MyTMSUUI_Interface myInterface;
 

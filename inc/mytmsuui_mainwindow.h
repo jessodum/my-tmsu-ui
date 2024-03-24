@@ -11,10 +11,10 @@ namespace Ui
 }
 QT_END_NAMESPACE
 
-// Forward declarations
+//// Forward declarations
 class QLabel;
 
-// ============================================================================
+//// ==========================================================================
 
 class MyTMSUUI_MainWindow : public QMainWindow
 {
@@ -48,4 +48,4 @@ class MyTMSUUI_MainWindow : public QMainWindow
    MyTMSUUI_Data* myDataPtr;
 };
 
-#endif // MYTMSUUI_MAINWINDOW_H
+#endif //// MYTMSUUI_MAINWINDOW_H

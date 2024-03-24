@@ -3,10 +3,10 @@
 
 #include <QProcess>
 
-// Forward declarations
+//// Forward declarations
 class MyTMSUUI_Data;
 
-// Public NS
+//// Public NS
 namespace MyTMSUUI_IF_NS
 {
    enum ProcState
@@ -21,9 +21,9 @@ namespace MyTMSUUI_IF_NS
    };
 }
 
-// =====
-// Class
-// =====
+//// =====
+//// Class
+//// =====
 class MyTMSUUI_Interface : public QObject
 {
  Q_OBJECT
@@ -32,12 +32,12 @@ class MyTMSUUI_Interface : public QObject
    MyTMSUUI_Interface(QObject* parent = nullptr);
    ~MyTMSUUI_Interface();
 
-   // Accessors: Get
+   //// Accessors: Get
    const QProcess* getIFProcess() const;
    MyTMSUUI_IF_NS::ProcState getState() const;
    const QString& getError() const;
 
-   // Accessors: Set
+   //// Accessors: Set
    void setDataObj(MyTMSUUI_Data* dataPtr);
 
  signals:
@@ -47,7 +47,22 @@ class MyTMSUUI_Interface : public QObject
    void doNewBaseDir(const QString& newPath);
 
  protected:
+
+   void ensureNotRunning();
+
+   //// Do commands
+   void doTagsDBQuery();
+   void doAllValuesDBQuery();
+   void doNextTagsByValueDBQuery();
+   void doImpliesDBQuery();
+
+   //// Handle specific command outputs
    void handleFinishedInfoQuery(int exitCode);
+   void handleFinishedTagsDBQuery(int exitCode);
+   void handleFinishedAllValuesDBQuery(int exitCode);
+   void handleFinishedTagsByValueDBQuery(int exitCode);
+   void handleFinishedImpliesDBQuery(int exitCode);
+
    void goIdle(bool withError = false);
 
  protected slots:
@@ -61,9 +76,9 @@ class MyTMSUUI_Interface : public QObject
    QString myDBRootPath;
 };
 
-// =======
-// INLINES
-// =======
+//// =======
+//// INLINES
+//// =======
 
 inline const QProcess* MyTMSUUI_Interface::getIFProcess() const
 {

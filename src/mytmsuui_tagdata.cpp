@@ -1,26 +1,26 @@
 #include "mytmsuui_tagdata.h"
 
-// ----------------------------------------------------------------------------
+//// --------------------------------------------------------------------------
 MyTMSUUI_TagData::MyTMSUUI_TagData()
 {
    my = new MyTMSUUI_TagDataShared();
 }
 
-// ----------------------------------------------------------------------------
+//// --------------------------------------------------------------------------
 MyTMSUUI_TagData::MyTMSUUI_TagData(const QString& tagName)
 {
    my = new MyTMSUUI_TagDataShared();
    setTagName(tagName);
 }
 
-// ----------------------------------------------------------------------------
+//// --------------------------------------------------------------------------
 MyTMSUUI_TagData::MyTMSUUI_TagData(const MyTMSUUI_TagData& other)
  : my (other.my)
 {
-   // Does nothing more than copy via initializer (yet)
+   //// Does nothing more than copy via initializer (yet)
 }
 
-// ----------------------------------------------------------------------------
+//// --------------------------------------------------------------------------
 bool MyTMSUUI_TagData::listOfPointersContains(const MyTMSUUI_TagDataPtrList& list, const QString& tagName)
 {
    bool retval = false;
@@ -37,7 +37,7 @@ bool MyTMSUUI_TagData::listOfPointersContains(const MyTMSUUI_TagDataPtrList& lis
    return retval;
 }
 
-// ----------------------------------------------------------------------------
+//// --------------------------------------------------------------------------
 MyTMSUUI_TagData* MyTMSUUI_TagData::findInListOfPointers(const MyTMSUUI_TagDataPtrList& list, const QString& tagName)
 {
    MyTMSUUI_TagData* retval = nullptr;
@@ -54,7 +54,7 @@ MyTMSUUI_TagData* MyTMSUUI_TagData::findInListOfPointers(const MyTMSUUI_TagDataP
    return retval;
 }
 
-// ----------------------------------------------------------------------------
+//// --------------------------------------------------------------------------
 void MyTMSUUI_TagData::addTagValue(const QString& value)
 {
    if (! my->valuesList.contains(value) )
@@ -63,7 +63,7 @@ void MyTMSUUI_TagData::addTagValue(const QString& value)
    }
 }
 
-// ----------------------------------------------------------------------------
+//// --------------------------------------------------------------------------
 void MyTMSUUI_TagData::implies(MyTMSUUI_TagData* otherTag)
 {
    if (! listOfPointersContains(my->impliesList, otherTag) )
@@ -77,10 +77,10 @@ void MyTMSUUI_TagData::implies(MyTMSUUI_TagData* otherTag)
    }
 }
 
-// ----------------------------------------------------------------------------
+//// --------------------------------------------------------------------------
 void MyTMSUUI_TagData::addImpliedBy(MyTMSUUI_TagData* otherTag)
 {
-   // (Should only be called by implies)
+   //// (Should only be called by implies)
    if (! listOfPointersContains(my->impliedByList, otherTag) )
    {
       my->impliedByList.append(otherTag);

@@ -5,28 +5,28 @@
 #include <QString>
 #include <QList>
 
-// Declare the class prior to its "Share Data" class,
-// which has list of pointers to the class.
-// See THIS IS THE CLASS TO BE USED below.
+//// Declare the class prior to its "Share Data" class,
+//// which has list of pointers to the class.
+//// See THIS IS THE CLASS TO BE USED below.
 class MyTMSUUI_TagData;
 
 // Type aliases
 typedef QList<MyTMSUUI_TagData> MyTMSUUI_TagDataList;
 typedef QList<MyTMSUUI_TagData*> MyTMSUUI_TagDataPtrList;
 
-// Put the data members into a QSharedData-derived class
-// to implement an "implicitly shared" (copy-on-write) class.
-// This allows ease in usage within Qt container classes.
+//// Put the data members into a QSharedData-derived class
+//// to implement an "implicitly shared" (copy-on-write) class.
+//// This allows ease in usage within Qt container classes.
 class MyTMSUUI_TagDataShared : public QSharedData
 {
  public:
-   // Default c'tor
+   //// Default c'tor
    MyTMSUUI_TagDataShared()
    {
-      // Does nothing (yet)
+      //// Does nothing (yet)
    }
 
-   // Copy c'tor
+   //// Copy c'tor
    MyTMSUUI_TagDataShared(const MyTMSUUI_TagDataShared& other)
     : QSharedData(other)
     ,       tagName(other.tagName)
@@ -34,45 +34,45 @@ class MyTMSUUI_TagDataShared : public QSharedData
     ,   impliesList(other.impliesList)
     , impliedByList(other.impliedByList)
    {
-      // Does nothing but initialize (yet)
+      //// Does nothing but initialize (yet)
    }
 
    // Default d'tor
    ~MyTMSUUI_TagDataShared()
    {
-      // Does nothing (yet)
+      //// Does nothing (yet)
    }
 
-   // Data Members
+   //// Data Members
    QString tagName;
    QList<QString> valuesList;
    MyTMSUUI_TagDataPtrList impliesList;
    MyTMSUUI_TagDataPtrList impliedByList;
 };
 
-// ==================================================
-// ========== THIS IS THE CLASS TO BE USED ==========
-// ==================================================
+//// ==================================================
+//// ========== THIS IS THE CLASS TO BE USED ==========
+//// ==================================================
 class MyTMSUUI_TagData
 {
  public:
-   // Default c'tor
+   //// Default c'tor
    MyTMSUUI_TagData();
 
-   // Explicit c'tor
+   //// Explicit c'tor
    explicit MyTMSUUI_TagData(const QString& tagName);
 
-   // Copy c'tor
+   //// Copy c'tor
    MyTMSUUI_TagData(const MyTMSUUI_TagData& other);
 
-   // The default d'tor provided by the compiler is sufficient.
+   //// The default d'tor provided by the compiler is sufficient.
 
-   // The implicit copy assignment operator provided by the compiler is sufficient.
+   //// The implicit copy assignment operator provided by the compiler is sufficient.
 
-   // Equality operator overload
+   //// Equality operator overload
    bool operator==(const MyTMSUUI_TagData& other) const;
 
-   // Static utilities for QList<MyTMSUUI_TagData*>
+   //// Static utilities for QList<MyTMSUUI_TagData*>
    static bool listOfPointersContains(const MyTMSUUI_TagDataPtrList& list, const QString& tagName);
    static bool listOfPointersContains(const MyTMSUUI_TagDataPtrList& list, const MyTMSUUI_TagData& tagObj);
    static bool listOfPointersContains(const MyTMSUUI_TagDataPtrList& list, MyTMSUUI_TagData* tagPtr);
@@ -80,7 +80,7 @@ class MyTMSUUI_TagData
    static MyTMSUUI_TagData* findInListOfPointers(const MyTMSUUI_TagDataPtrList& list, const MyTMSUUI_TagData& tagObj);
    static MyTMSUUI_TagData* findInListOfPointers(const MyTMSUUI_TagDataPtrList& list, MyTMSUUI_TagData* tagPtr);
 
-   // Accessors
+   //// Accessors
    QString getTagName() const;
    void setTagName(const QString& tagName);
 
@@ -93,15 +93,15 @@ class MyTMSUUI_TagData
    MyTMSUUI_TagDataPtrList getImpliedByList() const;
 
  protected:
-   void addImpliedBy(MyTMSUUI_TagData* otherTag); // Should only be called by implies
+   void addImpliedBy(MyTMSUUI_TagData* otherTag); //// Should only be called by implies
 
  private:
    QSharedDataPointer<MyTMSUUI_TagDataShared> my;
 };
 
-// =======
-// INLINES
-// =======
+//// =======
+//// INLINES
+//// =======
 
 inline bool MyTMSUUI_TagData::operator==(const MyTMSUUI_TagData& other) const
 {
