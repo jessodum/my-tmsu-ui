@@ -4,7 +4,7 @@ MyTMSUUI_Data::MyTMSUUI_Data()
  : myCurrentBaseDir()
  , myInterface()
 {
-   // Nothing to do here (yet)
+   myInterface.setDataObj(this);
 }
 
 MyTMSUUI_Data::~MyTMSUUI_Data()

@@ -3,6 +3,10 @@
 
 #include <QProcess>
 
+// Forward declarations
+class MyTMSUUI_Data;
+
+// Public NS
 namespace MyTMSUUI_IF_NS
 {
    enum ProcState
@@ -10,10 +14,16 @@ namespace MyTMSUUI_IF_NS
       Idle,
       InfoQuery,
       TagsDBQuery,
+      AllValuesDBQuery,
+      TagsByValueDBQuery,
+      ImpliesDBQuery,
       BuildImgFileList
    };
 }
 
+// =====
+// Class
+// =====
 class MyTMSUUI_Interface : public QObject
 {
  Q_OBJECT
@@ -22,10 +32,13 @@ class MyTMSUUI_Interface : public QObject
    MyTMSUUI_Interface(QObject* parent = nullptr);
    ~MyTMSUUI_Interface();
 
-   // Accessors
+   // Accessors: Get
    const QProcess* getIFProcess() const;
    MyTMSUUI_IF_NS::ProcState getState() const;
    const QString& getError() const;
+
+   // Accessors: Set
+   void setDataObj(MyTMSUUI_Data* dataPtr);
 
  signals:
    void goneIdle(MyTMSUUI_IF_NS::ProcState lastState, bool withError = false);
@@ -41,6 +54,7 @@ class MyTMSUUI_Interface : public QObject
    void handleFinishedProc(int exitCode, QProcess::ExitStatus howExited);
 
  private:
+   MyTMSUUI_Data* myDataPtr;
    QProcess myIFProc;
    MyTMSUUI_IF_NS::ProcState myState;
    QString myErrorStr;
@@ -64,6 +78,11 @@ inline MyTMSUUI_IF_NS::ProcState MyTMSUUI_Interface::getState() const
 inline const QString& MyTMSUUI_Interface::getError() const
 {
    return myErrorStr;
+}
+
+inline void MyTMSUUI_Interface::setDataObj(MyTMSUUI_Data* dataPtr)
+{
+   myDataPtr = dataPtr;
 }
 
 inline void MyTMSUUI_Interface::goIdle(bool withError)

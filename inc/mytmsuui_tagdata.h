@@ -10,6 +10,10 @@
 // See THIS IS THE CLASS TO BE USED below.
 class MyTMSUUI_TagData;
 
+// Type aliases
+typedef QList<MyTMSUUI_TagData> MyTMSUUI_TagDataList;
+typedef QList<MyTMSUUI_TagData*> MyTMSUUI_TagDataPtrList;
+
 // Put the data members into a QSharedData-derived class
 // to implement an "implicitly shared" (copy-on-write) class.
 // This allows ease in usage within Qt container classes.
@@ -42,8 +46,8 @@ class MyTMSUUI_TagDataShared : public QSharedData
    // Data Members
    QString tagName;
    QList<QString> valuesList;
-   QList<MyTMSUUI_TagData*> impliesList;
-   QList<MyTMSUUI_TagData*> impliedByList;
+   MyTMSUUI_TagDataPtrList impliesList;
+   MyTMSUUI_TagDataPtrList impliedByList;
 };
 
 // ==================================================
@@ -65,6 +69,17 @@ class MyTMSUUI_TagData
 
    // The implicit copy assignment operator provided by the compiler is sufficient.
 
+   // Equality operator overload
+   bool operator==(const MyTMSUUI_TagData& other) const;
+
+   // Static utilities for QList<MyTMSUUI_TagData*>
+   static bool listOfPointersContains(const MyTMSUUI_TagDataPtrList& list, const QString& tagName);
+   static bool listOfPointersContains(const MyTMSUUI_TagDataPtrList& list, const MyTMSUUI_TagData& tagObj);
+   static bool listOfPointersContains(const MyTMSUUI_TagDataPtrList& list, MyTMSUUI_TagData* tagPtr);
+   static MyTMSUUI_TagData* findInListOfPointers(const MyTMSUUI_TagDataPtrList& list, const QString& tagName);
+   static MyTMSUUI_TagData* findInListOfPointers(const MyTMSUUI_TagDataPtrList& list, const MyTMSUUI_TagData& tagObj);
+   static MyTMSUUI_TagData* findInListOfPointers(const MyTMSUUI_TagDataPtrList& list, MyTMSUUI_TagData* tagPtr);
+
    // Accessors
    QString getTagName() const;
    void setTagName(const QString& tagName);
@@ -72,10 +87,10 @@ class MyTMSUUI_TagData
    QList<QString> getValuesList() const;
    void addTagValue(const QString& value);
 
-   QList<MyTMSUUI_TagData*> getImpliesList() const;
+   MyTMSUUI_TagDataPtrList getImpliesList() const;
    void implies(MyTMSUUI_TagData* otherTag);
 
-   QList<MyTMSUUI_TagData*> getImpliedByList() const;
+   MyTMSUUI_TagDataPtrList getImpliedByList() const;
 
  protected:
    void addImpliedBy(MyTMSUUI_TagData* otherTag); // Should only be called by implies
@@ -87,6 +102,45 @@ class MyTMSUUI_TagData
 // =======
 // INLINES
 // =======
+
+inline bool MyTMSUUI_TagData::operator==(const MyTMSUUI_TagData& other) const
+{
+   return (getTagName() == other.getTagName());
+}
+
+inline bool MyTMSUUI_TagData::listOfPointersContains(const MyTMSUUI_TagDataPtrList& list, const MyTMSUUI_TagData& tagObj)
+{
+   return MyTMSUUI_TagData::listOfPointersContains(list, tagObj.getTagName());
+}
+
+inline bool MyTMSUUI_TagData::listOfPointersContains(const MyTMSUUI_TagDataPtrList& list, MyTMSUUI_TagData* tagPtr)
+{
+   if (tagPtr == nullptr)
+   {
+      return false;
+   }
+   else
+   {
+      return MyTMSUUI_TagData::listOfPointersContains(list, *tagPtr);
+   }
+}
+
+inline MyTMSUUI_TagData* MyTMSUUI_TagData::findInListOfPointers(const MyTMSUUI_TagDataPtrList& list, const MyTMSUUI_TagData& tagObj)
+{
+   return MyTMSUUI_TagData::findInListOfPointers(list, tagObj.getTagName());
+}
+
+inline MyTMSUUI_TagData* MyTMSUUI_TagData::findInListOfPointers(const MyTMSUUI_TagDataPtrList& list, MyTMSUUI_TagData* tagPtr)
+{
+   if (tagPtr == nullptr)
+   {
+      return nullptr;
+   }
+   else
+   {
+      return MyTMSUUI_TagData::findInListOfPointers(list, *tagPtr);
+   }
+}
 
 inline QString MyTMSUUI_TagData::getTagName() const
 {
@@ -103,12 +157,12 @@ inline QList<QString> MyTMSUUI_TagData::getValuesList() const
    return my->valuesList;
 }
 
-inline QList<MyTMSUUI_TagData*> MyTMSUUI_TagData::getImpliesList() const
+inline MyTMSUUI_TagDataPtrList MyTMSUUI_TagData::getImpliesList() const
 {
 	return my->impliesList;
 }
 
-inline QList<MyTMSUUI_TagData*> MyTMSUUI_TagData::getImpliedByList() const
+inline MyTMSUUI_TagDataPtrList MyTMSUUI_TagData::getImpliedByList() const
 {
 	return my->impliedByList;
 }

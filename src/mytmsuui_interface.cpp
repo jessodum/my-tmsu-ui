@@ -1,10 +1,12 @@
 #include "mytmsuui_interface.h"
+#include "mytmsuui_data.h"
 #include <QTextStream>
 #include <stdio.h> // TODO: remove debug printf's
 
 // ----------------------------------------------------------------------------
 MyTMSUUI_Interface::MyTMSUUI_Interface(QObject* parent)
  : QObject(parent)
+ , myDataPtr(nullptr)
  , myIFProc()
  , myState(MyTMSUUI_IF_NS::Idle)
  , myErrorStr("")
