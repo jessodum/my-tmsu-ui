@@ -40,7 +40,10 @@ class MyTMSUUI_MainWindow : public QMainWindow
    void lastButtonClicked();
    void applyButtonClicked();
    void doUpdateRecurse(int newRecurseState);
-   void radioClicked();
+   void radioQueryClicked();
+   void radioSetTagsClicked();
+   void radioAllClicked();
+   void radioNoneClicked();
    void setStatusUpdating();
    void interfaceGoneIdle(MyTMSUUI_IF_NS::ProcState lastState, bool withError = false);
 

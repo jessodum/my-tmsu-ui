@@ -66,12 +66,20 @@ MyTMSUUI_MainWindow::MyTMSUUI_MainWindow(QWidget* parent)
                                   this,   SLOT(doUpdateRecurse(int)) );
 
    //// Radio Button: Query
-   connect(myGuiPtr->myQueryRadioButton, SIGNAL(     clicked()),
-                                   this,   SLOT(radioClicked()) );
+   connect(myGuiPtr->myQueryRadioButton, SIGNAL(          clicked()),
+                                   this,   SLOT(radioQueryClicked()) );
 
    //// Radio Button: Set tags
-   connect(myGuiPtr->mySetTagsRadioButton, SIGNAL(     clicked()),
-                                     this,   SLOT(radioClicked()) );
+   connect(myGuiPtr->mySetTagsRadioButton, SIGNAL(            clicked()),
+                                     this,   SLOT(radioSetTagsClicked()) );
+
+   //// Radio Button: (Retrieve) All
+   connect(myGuiPtr->myRetrieveAllRadioButton, SIGNAL(        clicked()),
+                                         this,   SLOT(radioAllClicked()) );
+
+   //// Radio Button: (Retrieve) None
+   connect(myGuiPtr->myRetrieveNoneRadioButton, SIGNAL(         clicked()),
+                                          this,   SLOT(radioNoneClicked()) );
 
    //// this: Base dir changed
    connect(this, SIGNAL(dataBaseDirChanged(const QString&)),
@@ -201,9 +209,32 @@ void MyTMSUUI_MainWindow::doUpdateRecurse(int newRecurseState) //// TODO
 }
 
 //// --------------------------------------------------------------------------
-void MyTMSUUI_MainWindow::radioClicked() //// TODO
+void MyTMSUUI_MainWindow::radioQueryClicked() //// TODO
 {
-   qDebug("TODO radioClicked");
+   myGuiPtr->myRetrieveOptionsGroupBox->setEnabled(true);
+   qDebug("TODO radioQueryClicked");
+   return;
+}
+
+//// --------------------------------------------------------------------------
+void MyTMSUUI_MainWindow::radioSetTagsClicked() //// TODO
+{
+   myGuiPtr->myRetrieveOptionsGroupBox->setEnabled(false);
+   qDebug("TODO radioSetTagsClicked");
+   return;
+}
+
+//// --------------------------------------------------------------------------
+void MyTMSUUI_MainWindow::radioAllClicked() //// TODO
+{
+   qDebug("TODO radioAllClicked");
+   return;
+}
+
+//// --------------------------------------------------------------------------
+void MyTMSUUI_MainWindow::radioNoneClicked() //// TODO
+{
+   qDebug("TODO radioNoneClicked");
    return;
 }
 

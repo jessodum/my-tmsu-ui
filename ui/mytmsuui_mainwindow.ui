@@ -14,7 +14,7 @@
    <string>My TMSU UI</string>
   </property>
   <widget class="QWidget" name="myCentralWidget">
-   <layout class="QVBoxLayout" name="verticalLayout">
+   <layout class="QVBoxLayout" name="myCentralWidgetVLayout">
     <item>
      <layout class="QGridLayout" name="myTopAreaGridLayout">
       <item row="0" column="0">
@@ -131,6 +131,9 @@ QCheckBox::indicator:checked {image: url(:cb/img/cb_checked_blue.png);}</string>
           </item>
           <item>
            <widget class="QPushButton" name="myFirstImgButton">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
             <property name="text">
              <string>First</string>
             </property>
@@ -141,6 +144,9 @@ QCheckBox::indicator:checked {image: url(:cb/img/cb_checked_blue.png);}</string>
           </item>
           <item>
            <widget class="QPushButton" name="myPrevImgButton">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
             <property name="text">
              <string>Prev</string>
             </property>
@@ -164,6 +170,9 @@ QCheckBox::indicator:checked {image: url(:cb/img/cb_checked_blue.png);}</string>
           </item>
           <item>
            <widget class="QPushButton" name="myNextImgButton">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
             <property name="text">
              <string>Next</string>
             </property>
@@ -174,6 +183,9 @@ QCheckBox::indicator:checked {image: url(:cb/img/cb_checked_blue.png);}</string>
           </item>
           <item>
            <widget class="QPushButton" name="myLastImgButton">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
             <property name="text">
              <string>Last</string>
             </property>
@@ -224,17 +236,6 @@ QCheckBox::indicator:checked {image: url(:cb/img/cb_checked_blue.png);}</string>
          <number>8</number>
         </property>
         <item>
-         <widget class="QRadioButton" name="myQueryRadioButton">
-          <property name="styleSheet">
-           <string notr="true">QRadioButton::indicator:unchecked{image: url(:radio/img/radio_unchecked_grey.png);}
-QRadioButton::indicator:checked{image: url(:radio/img/radio_checked_blue.png);}</string>
-          </property>
-          <property name="text">
-           <string>Query</string>
-          </property>
-         </widget>
-        </item>
-        <item>
          <widget class="QRadioButton" name="mySetTagsRadioButton">
           <property name="styleSheet">
            <string notr="true">QRadioButton::indicator:unchecked{image: url(:radio/img/radio_unchecked_grey.png);}
@@ -246,6 +247,69 @@ QRadioButton::indicator:checked{image: url(:radio/img/radio_checked_blue.png);}<
           <property name="checked">
            <bool>true</bool>
           </property>
+          <attribute name="buttonGroup">
+           <string notr="true">myRightAreaButtonGroup</string>
+          </attribute>
+         </widget>
+        </item>
+        <item>
+         <widget class="QRadioButton" name="myQueryRadioButton">
+          <property name="styleSheet">
+           <string notr="true">QRadioButton::indicator:unchecked{image: url(:radio/img/radio_unchecked_grey.png);}
+QRadioButton::indicator:checked{image: url(:radio/img/radio_checked_blue.png);}</string>
+          </property>
+          <property name="text">
+           <string>Query</string>
+          </property>
+          <attribute name="buttonGroup">
+           <string notr="true">myRightAreaButtonGroup</string>
+          </attribute>
+         </widget>
+        </item>
+        <item>
+         <widget class="QGroupBox" name="myRetrieveOptionsGroupBox">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">QGroupBox {border: 0px; border-radius: 0px; margin-top: 1em; padding-left: 10px;}</string>
+          </property>
+          <property name="title">
+           <string>Files to retrieve if no tags are selected:</string>
+          </property>
+          <layout class="QVBoxLayout" name="myRetrieveOptionsLayout">
+           <item>
+            <widget class="QRadioButton" name="myRetrieveNoneRadioButton">
+             <property name="styleSheet">
+              <string notr="true">QRadioButton::indicator:unchecked{image: url(:radio/img/radio_unchecked_grey.png);}
+QRadioButton::indicator:checked{image: url(:radio/img/radio_checked_blue.png);}</string>
+             </property>
+             <property name="text">
+              <string>None</string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QRadioButton" name="myRetrieveAllRadioButton">
+             <property name="styleSheet">
+              <string notr="true">QRadioButton::indicator:unchecked{image: url(:radio/img/radio_unchecked_grey.png);}
+QRadioButton::indicator:checked{image: url(:radio/img/radio_checked_blue.png);}</string>
+             </property>
+             <property name="text">
+              <string>All</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
          </widget>
         </item>
         <item>
@@ -286,8 +350,8 @@ QRadioButton::indicator:checked{image: url(:radio/img/radio_checked_blue.png);}<
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>448</width>
-             <height>771</height>
+             <width>502</width>
+             <height>673</height>
             </rect>
            </property>
           </widget>
@@ -354,4 +418,7 @@ QRadioButton::indicator:checked{image: url(:radio/img/radio_checked_blue.png);}<
   <include location="resources.qrc"/>
  </resources>
  <connections/>
+ <buttongroups>
+  <buttongroup name="myRightAreaButtonGroup"/>
+ </buttongroups>
 </ui>
