@@ -1,6 +1,9 @@
 #include "mytmsuui_interface.h"
+
 #include "mytmsuui_data.h"
+#include "mytmsuui_tagdata.h"
 #include <QTextStream>
+#include <QRegularExpression>
 #include <QtLogging>
 
 //// --------------------------------------------------------------------------
@@ -11,6 +14,8 @@ MyTMSUUI_Interface::MyTMSUUI_Interface(QObject* parent)
  , myState(MyTMSUUI_IF_NS::Idle)
  , myErrorStr("")
  , myDBRootPath("")
+ , myValuesIterIdx(0)
+ , myCurrentValueIter("")
 {
    myIFProc.setProgram("tmsu");
 
@@ -106,10 +111,21 @@ void MyTMSUUI_Interface::doAllValuesDBQuery()
 //// --------------------------------------------------------------------------
 void MyTMSUUI_Interface::doNextTagsByValueDBQuery()
 {
+   if ((qsizetype)myValuesIterIdx >= (myDataPtr->myValuesList.size()) )
+   {
+      //// Reached the end of the Values list.
+      //// Move on to next step in the sequence.
+      doImpliesDBQuery();
+      return;
+   }
+   //// else
+
+   myCurrentValueIter = myDataPtr->myValuesList.at(myValuesIterIdx);
+
    ensureNotRunning();
 
    QStringList tmsuCmdArgs;
-   tmsuCmdArgs << "tags" << "-1" << "--value" << "TODO"; //// TODO
+   tmsuCmdArgs << "tags" << "-1" << "--value" << myCurrentValueIter;
 
    myIFProc.setArguments(tmsuCmdArgs);
 
@@ -169,7 +185,7 @@ void MyTMSUUI_Interface::handleFinishedProc(int exitCode, QProcess::ExitStatus h
          break;
 
       default:
-         qDebug("TODO: handleFinishedProc - Unhandled state %d (exit code %d)", myState, exitCode);
+         qWarning("Unhandled state %d (exit code %d)", myState, exitCode);
          break;
    }
 
@@ -209,11 +225,13 @@ void MyTMSUUI_Interface::handleFinishedInfoQuery(int exitCode)
       {
          //// New database
          myDBRootPath = outputRootPath;
+
+         //// Begin the sequence to (re-)build our tags list
          doTagsDBQuery();
       }
       else
       {
-      //// TODO: Move on to updating list of image files based on new directory
+         //// TODO: Move on to updating list of image files based on new directory
 goIdle();
       }
    }
@@ -235,12 +253,22 @@ void MyTMSUUI_Interface::handleFinishedTagsDBQuery(int exitCode)
       //// Command Success
       myErrorStr = "";
 
-      //// TODO:
-goIdle();
+      //// First, clear out (any) old tags from our data list
+      myDataPtr->clearTagsList();
+
+      QTextStream procOutputStream(myIFProc.readAllStandardOutput());
+      QString outputLine;
+      while (procOutputStream.readLineInto(&outputLine))
+      {
+         myDataPtr->myTagsList.append(new MyTMSUUI_TagData(outputLine));
+      }
+
+      //// Next step in the sequence
+      doAllValuesDBQuery();
    }
    else
    {
-      myErrorStr = "TODO Error";
+      myErrorStr = "Error getting list of Tags from database";
       goIdle(true);
    }
 
@@ -255,12 +283,25 @@ void MyTMSUUI_Interface::handleFinishedAllValuesDBQuery(int exitCode)
       //// Command Success
       myErrorStr = "";
 
-      //// TODO:
-goIdle();
+      //// First, clear out (any) old values from our data list
+      myDataPtr->myValuesList.clear();
+
+      QTextStream procOutputStream(myIFProc.readAllStandardOutput());
+      QString outputLine;
+      while (procOutputStream.readLineInto(&outputLine))
+      {
+         myDataPtr->myValuesList.append(outputLine);
+      }
+
+      //// Initialize iteration
+      myValuesIterIdx = 0;
+
+      //// Next step in the sequence
+      doNextTagsByValueDBQuery();
    }
    else
    {
-      myErrorStr = "TODO Error";
+      myErrorStr = "Error getting list of Values from database";
       goIdle(true);
    }
 
@@ -275,12 +316,35 @@ void MyTMSUUI_Interface::handleFinishedTagsByValueDBQuery(int exitCode)
       //// Command Success
       myErrorStr = "";
 
-      //// TODO:
-goIdle();
+      QTextStream procOutputStream(myIFProc.readAllStandardOutput());
+      QString outputLine;
+      while (procOutputStream.readLineInto(&outputLine))
+      {
+         if (outputLine == (myCurrentValueIter + ":"))
+         {
+            //// Skip output that's echoing the Value
+            continue;
+         }
+
+         //// Find the Tag data in our list and add the Value to its list
+         MyTMSUUI_TagData* tagDataPtr = MyTMSUUI_TagData::findInListOfPointers(myDataPtr->myTagsList, outputLine);
+         if (tagDataPtr != nullptr)
+         {
+            tagDataPtr->addTagValue(myCurrentValueIter);
+         }
+         else
+         {
+            qWarning("Could not find Tag Data in list for Tag %s", qUtf8Printable(outputLine));
+         }
+      }
+
+      //// Move on to next Value in our list
+      myValuesIterIdx++;
+      doNextTagsByValueDBQuery();
    }
    else
    {
-      myErrorStr = "TODO Error";
+      myErrorStr = "Error getting Tags using a Value";
       goIdle(true);
    }
 
@@ -295,12 +359,35 @@ void MyTMSUUI_Interface::handleFinishedImpliesDBQuery(int exitCode)
       //// Command Success
       myErrorStr = "";
 
-      //// TODO:
-goIdle();
+      QRegularExpression regex("^\\s*([-\\w]+) -> ([-\\w]+)\\s*$");
+
+      QTextStream procOutputStream(myIFProc.readAllStandardOutput());
+      QString outputLine;
+      while (procOutputStream.readLineInto(&outputLine))
+      {
+         QRegularExpressionMatch match = regex.match(outputLine);
+         if(match.hasMatch())
+         {
+            QString impliesTag = match.captured(1);
+            QString impliedTag = match.captured(2);
+
+            //// Find the Tag data for the "implies" Tag in our list
+            MyTMSUUI_TagData* impliesTagDataPtr = MyTMSUUI_TagData::findInListOfPointers(myDataPtr->myTagsList, impliesTag);
+
+            //// Find the Tag data for the "implied" Tag in our list
+            MyTMSUUI_TagData* impliedTagDataPtr = MyTMSUUI_TagData::findInListOfPointers(myDataPtr->myTagsList, impliedTag);
+
+            //// Add imply connection
+            impliesTagDataPtr->implies(impliedTagDataPtr);
+         }
+      }
+
+      //// Done with the sequence
+      goIdle();
    }
    else
    {
-      myErrorStr = "TODO Error";
+      myErrorStr = "Error getting list of implied Tags from database";
       goIdle(true);
    }
 

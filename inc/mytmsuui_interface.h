@@ -21,9 +21,9 @@ namespace MyTMSUUI_IF_NS
    };
 }
 
-//// =====
-//// Class
-//// =====
+//// =======
+////  Class
+//// =======
 class MyTMSUUI_Interface : public QObject
 {
  Q_OBJECT
@@ -74,6 +74,11 @@ class MyTMSUUI_Interface : public QObject
    MyTMSUUI_IF_NS::ProcState myState;
    QString myErrorStr;
    QString myDBRootPath;
+
+   //// Keeping track of the current Value as we iterate through them
+   //// in the sequence of TagsByValueDBQuery commands.
+   size_t myValuesIterIdx;
+   QString myCurrentValueIter;
 };
 
 //// =======
