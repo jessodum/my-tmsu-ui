@@ -36,12 +36,14 @@ HEADERS += inc/mytmsuui_interface.h
 HEADERS += inc/mytmsuui_logmsghandler.h
 HEADERS += inc/mytmsuui_mainwindow.h
 HEADERS += inc/mytmsuui_tagdata.h
+HEADERS += inc/mytmsuui_tagwidget.h
 
 SOURCES += src/main.cpp
 SOURCES += src/mytmsuui_data.cpp
 SOURCES += src/mytmsuui_interface.cpp
 SOURCES += src/mytmsuui_mainwindow.cpp
 SOURCES += src/mytmsuui_tagdata.cpp
+SOURCES += src/mytmsuui_tagwidget.cpp
 
 FORMS += ui/mytmsuui_mainwindow.ui
 FORMS += ui/mytmsuui_tagwidget.ui

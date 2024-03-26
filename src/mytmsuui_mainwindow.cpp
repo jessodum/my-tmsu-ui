@@ -1,5 +1,6 @@
 #include "mytmsuui_mainwindow.h"
 #include "ui_mytmsuui_mainwindow.h"
+#include "mytmsuui_tagwidget.h"
 #include <QFileDialog>
 #include <QtLogging>
 
@@ -130,11 +131,20 @@ void MyTMSUUI_MainWindow::rebuildTagWidgets()
 {
    //// TODO: Clear out any old widgets
 
+   MyTMSUUI_TagWidget* newTagWidget;
+   QVBoxLayout* tagWidgetsVLayout = new QVBoxLayout;
+
    //// Iterate over list of tags from Data Ptr
    for (MyTMSUUI_TagData* tagData : myDataPtr->myTagsList)
    {
+      newTagWidget = new MyTMSUUI_TagWidget(myGuiPtr->myTagsParentWidget);
+
+      newTagWidget->configure(tagData);
+
+      tagWidgetsVLayout->addWidget(newTagWidget);
    }
 
+   myGuiPtr->myTagsParentWidget->setLayout(tagWidgetsVLayout);
 }
 
 //// --------------------------------------------------------------------------
@@ -278,7 +288,9 @@ void MyTMSUUI_MainWindow::interfaceGoneIdle(MyTMSUUI_IF_NS::ProcState lastState,
          if (withError)
             break;
 
-         //// TODO: (Re-)build tag widgets
+         //// (Re-)build tag widgets
+         rebuildTagWidgets();
+
          //// TODO: Move on to updating list of image files based on new directory
          break;
 

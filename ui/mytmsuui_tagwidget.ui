@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>Form</class>
- <widget class="QWidget" name="Form">
+ <class>MyTMSUUI_TagWidget</class>
+ <widget class="QWidget" name="MyTMSUUI_TagWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
     <width>210</width>
-    <height>38</height>
+    <height>40</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -29,7 +29,7 @@
    <item>
     <widget class="QCheckBox" name="myTagCheckbox">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+      <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
@@ -80,7 +80,7 @@ QCheckBox::indicator:checked {image: url(:cb/img/cb_checked_blue.png);}</string>
       <bool>false</bool>
      </property>
      <property name="sizePolicy">
-      <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+      <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
@@ -94,8 +94,20 @@ QCheckBox::indicator:checked {image: url(:cb/img/cb_checked_blue.png);}</string>
      <property name="maximumSize">
       <size>
        <width>16777215</width>
-       <height>32</height>
+       <height>36</height>
       </size>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QComboBox {padding: 4px;} QComboBox QAbstractItemView {border: 1px solid black; color: black; background-color: white;}</string>
+     </property>
+     <property name="insertPolicy">
+      <enum>QComboBox::InsertAlphabetically</enum>
+     </property>
+     <property name="sizeAdjustPolicy">
+      <enum>QComboBox::AdjustToContents</enum>
+     </property>
+     <property name="placeholderText">
+      <string>(Not Set)</string>
      </property>
     </widget>
    </item>
