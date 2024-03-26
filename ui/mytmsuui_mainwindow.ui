@@ -109,6 +109,9 @@ QCheckBox::indicator:checked {image: url(:cb/img/cb_checked_blue.png);}</string>
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
       </property>
+      <property name="childrenCollapsible">
+       <bool>false</bool>
+      </property>
       <widget class="QWidget" name="layoutWidget">
        <layout class="QVBoxLayout" name="myLeftAreaVLayout">
         <property name="topMargin">
@@ -350,7 +353,7 @@ QRadioButton::indicator:checked{image: url(:radio/img/radio_checked_blue.png);}<
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>502</width>
+             <width>534</width>
              <height>673</height>
             </rect>
            </property>
