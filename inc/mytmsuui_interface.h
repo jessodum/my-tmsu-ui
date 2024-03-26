@@ -108,6 +108,7 @@ inline void MyTMSUUI_Interface::setDataObj(MyTMSUUI_Data* dataPtr)
 inline void MyTMSUUI_Interface::goIdle(bool withError)
 {
    MyTMSUUI_IF_NS::ProcState prevState = myState;
+   myState = MyTMSUUI_IF_NS::Idle;
    emit goneIdle(prevState, withError);
 }
 

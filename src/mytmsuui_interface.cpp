@@ -383,8 +383,7 @@ void MyTMSUUI_Interface::handleFinishedImpliesDBQuery(int exitCode)
       }
 
       //// Done with the sequence
-      //// TODO: ? Move on to updating list of image files based on new directory
-goIdle();
+      goIdle();
    }
    else
    {

@@ -124,6 +124,19 @@ void MyTMSUUI_MainWindow::closeEvent(QCloseEvent* event)
    // Log closing
    qInfo("Closing Main Window");
 }
+
+//// --------------------------------------------------------------------------
+void MyTMSUUI_MainWindow::rebuildTagWidgets()
+{
+   //// TODO: Clear out any old widgets
+
+   //// Iterate over list of tags from Data Ptr
+   for (MyTMSUUI_TagData* tagData : myDataPtr->myTagsList)
+   {
+   }
+
+}
+
 //// --------------------------------------------------------------------------
 void MyTMSUUI_MainWindow::doSelectBaseDir()
 {
@@ -259,9 +272,16 @@ void MyTMSUUI_MainWindow::interfaceGoneIdle(MyTMSUUI_IF_NS::ProcState lastState,
       myGuiStatusBarErrorLabel->setText("");
    }
 
-   //// TODO?
    switch (lastState)
    {
+      case MyTMSUUI_IF_NS::ImpliesDBQuery:
+         if (withError)
+            break;
+
+         //// TODO: (Re-)build tag widgets
+         //// TODO: Move on to updating list of image files based on new directory
+         break;
+
       default:
          break;
    }
