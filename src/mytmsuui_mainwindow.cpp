@@ -123,7 +123,7 @@ void MyTMSUUI_MainWindow::closeEvent(QCloseEvent* event)
    QMainWindow::closeEvent(event);
 
    // Log closing
-   qInfo("Closing Main Window");
+   qInfo("Closing Main Window\n");
 }
 
 //// --------------------------------------------------------------------------

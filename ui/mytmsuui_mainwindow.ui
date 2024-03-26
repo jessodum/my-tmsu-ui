@@ -141,7 +141,8 @@ QCheckBox::indicator:checked {image: url(:cb/img/cb_checked_blue.png);}</string>
              <string>First</string>
             </property>
             <property name="icon">
-             <iconset theme="go-first"/>
+             <iconset resource="resources.qrc">
+              <normaloff>:/nav/img/nav_first.png</normaloff>:/nav/img/nav_first.png</iconset>
             </property>
            </widget>
           </item>
@@ -154,7 +155,8 @@ QCheckBox::indicator:checked {image: url(:cb/img/cb_checked_blue.png);}</string>
              <string>Prev</string>
             </property>
             <property name="icon">
-             <iconset theme="go-previous"/>
+             <iconset resource="resources.qrc">
+              <normaloff>:/nav/img/nav_prev.png</normaloff>:/nav/img/nav_prev.png</iconset>
             </property>
            </widget>
           </item>
@@ -180,7 +182,8 @@ QCheckBox::indicator:checked {image: url(:cb/img/cb_checked_blue.png);}</string>
              <string>Next</string>
             </property>
             <property name="icon">
-             <iconset theme="go-next"/>
+             <iconset resource="resources.qrc">
+              <normaloff>:/nav/img/nav_next.png</normaloff>:/nav/img/nav_next.png</iconset>
             </property>
            </widget>
           </item>
@@ -193,7 +196,8 @@ QCheckBox::indicator:checked {image: url(:cb/img/cb_checked_blue.png);}</string>
              <string>Last</string>
             </property>
             <property name="icon">
-             <iconset theme="go-last"/>
+             <iconset resource="resources.qrc">
+              <normaloff>:/nav/img/nav_last.png</normaloff>:/nav/img/nav_last.png</iconset>
             </property>
            </widget>
           </item>
@@ -219,6 +223,12 @@ QCheckBox::indicator:checked {image: url(:cb/img/cb_checked_blue.png);}</string>
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>1000</width>
+            <height>0</height>
+           </size>
           </property>
           <property name="frameShape">
            <enum>QFrame::Box</enum>
@@ -353,7 +363,7 @@ QRadioButton::indicator:checked{image: url(:radio/img/radio_checked_blue.png);}<
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>534</width>
+             <width>391</width>
              <height>673</height>
             </rect>
            </property>
