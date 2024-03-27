@@ -11,9 +11,8 @@ MyTMSUUI_TagWidget::MyTMSUUI_TagWidget(QWidget* parent)
    myGuiPtr->setupUi(this);
 
    //// -----------------
-   //// Setup Connections
+   //// TODO: Setup Connections
    //// -----------------
-//// TODO:
 }
 
 //// --------------------------------------------------------------------------

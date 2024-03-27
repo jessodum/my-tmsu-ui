@@ -12,8 +12,7 @@ RCC_DIR = src
 
 QT = core gui widgets
 
-##TODO: comment out when done
-CONFIG += debug
+CONFIG += debug ##TODO: comment out when done
 
 QMAKE_CLEAN += $(TARGET)
 
