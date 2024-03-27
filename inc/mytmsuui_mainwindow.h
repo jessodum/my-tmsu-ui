@@ -31,6 +31,7 @@ class MyTMSUUI_MainWindow : public QMainWindow
 
  protected:
    virtual void closeEvent(QCloseEvent* event);
+   void clearTagWidgets();
    void rebuildTagWidgets();
 
  protected slots:

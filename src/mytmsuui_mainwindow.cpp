@@ -127,9 +127,38 @@ void MyTMSUUI_MainWindow::closeEvent(QCloseEvent* event)
 }
 
 //// --------------------------------------------------------------------------
+void MyTMSUUI_MainWindow::clearTagWidgets()
+{
+   QVBoxLayout* tagWidgetsVLayout = (QVBoxLayout*)myGuiPtr->myTagsParentWidget->layout();
+
+   if (tagWidgetsVLayout == nullptr)
+   {
+      qWarning("No layout set for Tags Parent Widget");
+      return;
+   }
+
+   int idx = tagWidgetsVLayout->count() - 1;
+
+   while (idx >= 0)
+   {
+      if (tagWidgetsVLayout->itemAt(idx)->widget() != nullptr)
+      {
+         QLayoutItem* layoutItem = tagWidgetsVLayout->takeAt(idx);
+         delete layoutItem->widget();
+         delete layoutItem;
+      }
+
+      idx--;
+   }
+}
+
+//// --------------------------------------------------------------------------
 void MyTMSUUI_MainWindow::rebuildTagWidgets()
 {
-   //// TODO: Clear out any old widgets
+   //// Clear out any old widgets
+   clearTagWidgets();
+
+   size_t widgetNum = 0;
 
    MyTMSUUI_TagWidget* newTagWidget;
    QVBoxLayout* tagWidgetsVLayout = new QVBoxLayout;
@@ -138,6 +167,7 @@ void MyTMSUUI_MainWindow::rebuildTagWidgets()
    for (MyTMSUUI_TagData* tagData : myDataPtr->myTagsList)
    {
       newTagWidget = new MyTMSUUI_TagWidget(myGuiPtr->myTagsParentWidget);
+      newTagWidget->setObjectName(QString("tagWidget") + QString::number(widgetNum++));
 
       newTagWidget->configure(tagData);
 
@@ -284,6 +314,14 @@ void MyTMSUUI_MainWindow::interfaceGoneIdle(MyTMSUUI_IF_NS::ProcState lastState,
 
    switch (lastState)
    {
+      case MyTMSUUI_IF_NS::InfoQuery:
+         if (withError)
+         {
+            clearTagWidgets();
+         }
+
+         break;
+
       case MyTMSUUI_IF_NS::ImpliesDBQuery:
          if (withError)
             break;
