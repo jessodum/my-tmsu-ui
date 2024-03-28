@@ -75,6 +75,19 @@ void MyTMSUUI_Interface::doNewBaseDir(const QString& newPath)
 }
 
 //// --------------------------------------------------------------------------
+void MyTMSUUI_Interface::retrieveFilesList(bool queryTagsSpecified)
+{
+   if (queryTagsSpecified)
+   {
+      //// TODO: use "tmsu files" query
+   }
+   else
+   {
+      //// TODO: do basic file listing (via QDir?)
+   }
+}
+
+//// --------------------------------------------------------------------------
 void MyTMSUUI_Interface::doTagsDBQuery()
 {
    ensureNotRunning();

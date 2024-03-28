@@ -14,6 +14,7 @@ class MyTMSUUI_Data
 
    //// Properities
    QDir myCurrentBaseDir;
+   bool myRecurseEnabled;
    MyTMSUUI_Interface myInterface;
    MyTMSUUI_TagDataPtrList myTagsList;
    QList<QString> myValuesList;

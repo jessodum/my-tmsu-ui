@@ -255,9 +255,14 @@ void MyTMSUUI_MainWindow::applyButtonClicked() //// TODO
 }
 
 //// --------------------------------------------------------------------------
-void MyTMSUUI_MainWindow::doUpdateRecurse(int newRecurseState) //// TODO
+void MyTMSUUI_MainWindow::doUpdateRecurse(int newRecurseState)
 {
-   qDebug("TODO doUpdateRecurse %d", newRecurseState);
+   if (myDataPtr == nullptr)
+   {
+      statusBar()->showMessage("INTERNAL ERROR: Missing data object - cannot set the 'recurse enabled' flag");
+   }
+
+   myDataPtr->myRecurseEnabled = (newRecurseState == Qt::Checked);
    return;
 }
 

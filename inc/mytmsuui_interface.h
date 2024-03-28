@@ -45,6 +45,7 @@ class MyTMSUUI_Interface : public QObject
 
  public slots:
    void doNewBaseDir(const QString& newPath);
+   void retrieveFilesList(bool queryTagsSpecified);
 
  protected:
 
