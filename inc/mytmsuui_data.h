@@ -4,7 +4,6 @@
 #include "mytmsuui_interface.h"
 #include "mytmsuui_tagdata.h"
 #include <QDir>
-#include <QList>
 
 class MyTMSUUI_Data
 {
@@ -14,10 +13,11 @@ class MyTMSUUI_Data
 
    //// Properities
    QDir myCurrentBaseDir;
+   QStringList myCurrentFilesList;
    bool myRecurseEnabled;
    MyTMSUUI_Interface myInterface;
    MyTMSUUI_TagDataPtrList myTagsList;
-   QList<QString> myValuesList;
+   QStringList myValuesList;
 
    void clearTagsList();
 

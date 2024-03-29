@@ -3,6 +3,7 @@
 //// --------------------------------------------------------------------------
 MyTMSUUI_Data::MyTMSUUI_Data()
  : myCurrentBaseDir()
+ , myCurrentFilesList()
  , myRecurseEnabled(false)
  , myInterface()
  , myTagsList()

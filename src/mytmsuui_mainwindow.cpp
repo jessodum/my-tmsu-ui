@@ -323,6 +323,12 @@ void MyTMSUUI_MainWindow::interfaceGoneIdle(MyTMSUUI_IF_NS::ProcState lastState,
          if (withError)
          {
             clearTagWidgets();
+            //// TODO: Clear file list, etc?
+         }
+         else
+         {
+            //// Update list of image files based on new directory
+            myDataPtr->myInterface.retrieveFilesList(false); //// TODO: determine if any tags selected for query
          }
 
          break;
@@ -334,7 +340,15 @@ void MyTMSUUI_MainWindow::interfaceGoneIdle(MyTMSUUI_IF_NS::ProcState lastState,
          //// (Re-)build tag widgets
          rebuildTagWidgets();
 
-         //// TODO: Move on to updating list of image files based on new directory
+         //// Update list of image files based on new directory/database
+         myDataPtr->myInterface.retrieveFilesList(false);
+         break;
+
+      case MyTMSUUI_IF_NS::BuildFilesList:
+         if (withError)
+            break;
+
+         //// TODO: Update widgets for new files list
          break;
 
       default:

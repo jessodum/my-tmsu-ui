@@ -4,6 +4,7 @@
 #include <QSharedData>
 #include <QString>
 #include <QList>
+#include <QStringList>
 
 //// Declare the class prior to its "Share Data" class,
 //// which has list of pointers to the class.
@@ -45,7 +46,7 @@ class MyTMSUUI_TagDataShared : public QSharedData
 
    //// Data Members
    QString tagName;
-   QList<QString> valuesList;
+   QStringList valuesList;
    MyTMSUUI_TagDataPtrList impliesList;
    MyTMSUUI_TagDataPtrList impliedByList;
 };
@@ -84,7 +85,7 @@ class MyTMSUUI_TagData
    QString getTagName() const;
    void setTagName(const QString& tagName);
 
-   QList<QString> getValuesList() const;
+   QStringList getValuesList() const;
    void addTagValue(const QString& value);
 
    MyTMSUUI_TagDataPtrList getImpliesList() const;
@@ -152,7 +153,7 @@ inline void MyTMSUUI_TagData::setTagName(const QString& tagName)
    my->tagName = tagName;
 }
 
-inline QList<QString> MyTMSUUI_TagData::getValuesList() const
+inline QStringList MyTMSUUI_TagData::getValuesList() const
 {
    return my->valuesList;
 }

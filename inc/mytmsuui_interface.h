@@ -17,7 +17,7 @@ namespace MyTMSUUI_IF_NS
       AllValuesDBQuery,
       TagsByValueDBQuery,
       ImpliesDBQuery,
-      BuildImgFileList
+      BuildFilesList
    };
 }
 

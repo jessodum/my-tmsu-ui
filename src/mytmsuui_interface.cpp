@@ -2,6 +2,7 @@
 
 #include "mytmsuui_data.h"
 #include "mytmsuui_tagdata.h"
+#include <QDirIterator>
 #include <QTextStream>
 #include <QRegularExpression>
 #include <QtLogging>
@@ -77,14 +78,58 @@ void MyTMSUUI_Interface::doNewBaseDir(const QString& newPath)
 //// --------------------------------------------------------------------------
 void MyTMSUUI_Interface::retrieveFilesList(bool queryTagsSpecified)
 {
+   myState = MyTMSUUI_IF_NS::BuildFilesList;
+   if (myDataPtr == nullptr)
+   {
+      myErrorStr = "No data object to store file listing";
+      goIdle(true);
+      return;
+   }
+   //// else
+
+   bool useRecursion = myDataPtr->myRecurseEnabled;
+
+   QStringList newFilesList;
+
    if (queryTagsSpecified)
    {
       //// TODO: use "tmsu files" query
    }
    else
    {
-      //// TODO: do basic file listing (via QDir?)
+      QDir tmpBaseDir(myDataPtr->myCurrentBaseDir);
+      tmpBaseDir.setFilter(QDir::Files |
+                           QDir::NoSymLinks |
+                           QDir::NoDotAndDotDot |
+                           QDir::Hidden |
+                           QDir::CaseSensitive);
+      tmpBaseDir.setSorting(QDir::Name |
+                            QDir::DirsFirst);
+
+      if (useRecursion)
+      {
+         QDirIterator dirIter(tmpBaseDir, QDirIterator::Subdirectories);
+         while (dirIter.hasNext())
+         {
+            newFilesList << tmpBaseDir.relativeFilePath(dirIter.next());
+         }
+      }
+      else
+      {
+         newFilesList = tmpBaseDir.entryList();
+      }
    }
+
+//// TODO: Remove this debug output
+for (QString currFile : newFilesList)
+{
+	qDebug("File listing: %s", qUtf8Printable(currFile));
+}
+qDebug("DONE");
+   //// TODO: Check for empty list
+   myDataPtr->myCurrentFilesList = newFilesList;
+   goIdle();
+   return;
 }
 
 //// --------------------------------------------------------------------------
@@ -244,8 +289,11 @@ void MyTMSUUI_Interface::handleFinishedInfoQuery(int exitCode)
       }
       else
       {
-         //// TODO: Move on to updating list of image files based on new directory
-goIdle();
+         //// Move on to updating list of image files based on new directory
+         //// (Note: the main window will handle calling retrieveFilesList from
+         ////        its "interface idle" handling slot, because it will know
+         ////        whether any query tags are selected.)
+         goIdle();
       }
    }
    else
