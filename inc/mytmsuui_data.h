@@ -14,6 +14,7 @@ class MyTMSUUI_Data
    //// Properities
    QDir myCurrentBaseDir;
    QStringList myCurrentFilesList;
+   qsizetype myCurrentImageNum;
    bool myRecurseEnabled;
    MyTMSUUI_Interface myInterface;
    MyTMSUUI_TagDataPtrList myTagsList;

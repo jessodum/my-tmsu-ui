@@ -4,6 +4,7 @@
 MyTMSUUI_Data::MyTMSUUI_Data()
  : myCurrentBaseDir()
  , myCurrentFilesList()
+ , myCurrentImageNum(0)
  , myRecurseEnabled(false)
  , myInterface()
  , myTagsList()

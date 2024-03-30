@@ -137,6 +137,7 @@ void MyTMSUUI_MainWindow::clearTagWidgets()
       qWarning("No layout set for Tags Parent Widget");
       return;
    }
+   //// else
 
    int idx = tagWidgetsVLayout->count() - 1;
 
@@ -184,8 +185,10 @@ void MyTMSUUI_MainWindow::prepFilesListForDisplay()
    if (myDataPtr == nullptr)
    {
       qCritical("null data object (how did this happen?)");
+      statusBar()->showMessage("INTERNAL ERROR: Missing data object - cannot access files list");
       return;
    }
+   //// else
 
    //// Use a copy of the File List for iterating, as we'll be removing unwanted
    //// (i.e., non-image) files from the Data list.
@@ -217,10 +220,12 @@ void MyTMSUUI_MainWindow::beginDisplayList()
    if (myDataPtr == nullptr)
    {
       qCritical("null data object (how did this happen?)");
+      statusBar()->showMessage("INTERNAL ERROR: Missing data object - cannot access files list");
       return;
    }
+   //// else
 
-   myGuiPtr->myStatusBar->clearMessage();
+   statusBar()->clearMessage();
 
    if (myDataPtr->myCurrentFilesList.isEmpty())
    {
@@ -236,13 +241,103 @@ void MyTMSUUI_MainWindow::beginDisplayList()
 }
 
 //// --------------------------------------------------------------------------
-void MyTMSUUI_MainWindow::goToImage(qsizetype number) //// TODO 
+void MyTMSUUI_MainWindow::goToImage(qsizetype number)
 {
+   if (myDataPtr == nullptr)
+   {
+      qCritical("null data object (how did this happen?)");
+      statusBar()->showMessage("INTERNAL ERROR: Missing data object - cannot access files list");
+      return;
+   }
+   //// else
+
+   if (myDataPtr->myCurrentFilesList.isEmpty())
+   {
+      statusBar()->showMessage("INTERNAL ERROR: Files list is empty - cannot go to image");
+      return;
+   }
+   //// else
+
+   if (number > myDataPtr->myCurrentFilesList.size())
+   {
+      goToImage(1);
+      return;
+   }
+   //// else
+
+   if (number < 1)
+   {
+      goToLastImage();
+      return;
+   }
+   //// else
+
+   myDataPtr->myCurrentImageNum = number;
+   setNavEnabledStates();
+
+   qsizetype index = number - 1;
+   QString currentFilename = myDataPtr->myCurrentFilesList.at(index);
+   //// TODO:
+
+   statusBar()->clearMessage();
+   QString imgNumberStatus("Image ");
+   imgNumberStatus += QString::number(number);
+   imgNumberStatus += " of ";
+   imgNumberStatus += QString::number(myDataPtr->myCurrentFilesList.size());
+   imgNumberStatus += ": ";
+   imgNumberStatus += currentFilename;
+   myGuiStatusBarNormalLabel->setText(imgNumberStatus);
+   return;
 }
 
 //// --------------------------------------------------------------------------
-void MyTMSUUI_MainWindow::goToLastImage() //// TODO 
+void MyTMSUUI_MainWindow::goToLastImage()
 {
+   if (myDataPtr == nullptr)
+   {
+      qCritical("null data object (how did this happen?)");
+      statusBar()->showMessage("INTERNAL ERROR: Missing data object - cannot access files list");
+      return;
+   }
+   //// else
+
+   if (myDataPtr->myCurrentFilesList.isEmpty())
+   {
+      statusBar()->showMessage("INTERNAL ERROR: Files list is empty - cannot go to image");
+      return;
+   }
+   //// else
+
+   goToImage(myDataPtr->myCurrentFilesList.size());
+   return;
+}
+
+//// --------------------------------------------------------------------------
+void MyTMSUUI_MainWindow::setNavEnabledStates()
+{
+   if (myDataPtr == nullptr)
+   {
+      qCritical("null data object (how did this happen?)");
+      statusBar()->showMessage("INTERNAL ERROR: Missing data object - cannot access current image number");
+      return;
+   }
+   //// else
+
+   if (myDataPtr->myCurrentFilesList.size() < 1)
+   {
+      myGuiPtr->myFirstImgButton->setEnabled(false);
+      myGuiPtr->myPrevImgButton->setEnabled(false);
+      myGuiPtr->myNextImgButton->setEnabled(false);
+      myGuiPtr->myLastImgButton->setEnabled(false);
+      return;
+   }
+   //// else
+
+   myGuiPtr->myFirstImgButton->setEnabled(myDataPtr->myCurrentImageNum > 1);
+   myGuiPtr->myPrevImgButton->setEnabled(myDataPtr->myCurrentFilesList.size() > 1);
+   myGuiPtr->myNextImgButton->setEnabled(myDataPtr->myCurrentFilesList.size() > 1);
+   myGuiPtr->myLastImgButton->setEnabled(myDataPtr->myCurrentImageNum < myDataPtr->myCurrentFilesList.size());
+   return;
 }
 
 //// --------------------------------------------------------------------------
@@ -250,9 +345,11 @@ void MyTMSUUI_MainWindow::doSelectBaseDir()
 {
    if (myDataPtr == nullptr)
    {
+      qCritical("null data object (how did this happen?)");
       statusBar()->showMessage("INTERNAL ERROR: Missing data object - cannot set a base directory");
       return;
    }
+   //// else
 
    //// Keep track of change to the selected base directory
    QString oldDir(myDataPtr->myCurrentBaseDir.absolutePath());
@@ -288,30 +385,54 @@ void MyTMSUUI_MainWindow::doSelectBaseDir()
 }
 
 //// --------------------------------------------------------------------------
-void MyTMSUUI_MainWindow::firstButtonClicked() //// TODO
+void MyTMSUUI_MainWindow::firstButtonClicked()
 {
-   qDebug("TODO firstButtonClicked");
+   goToImage(1);
    return;
 }
 
 //// --------------------------------------------------------------------------
-void MyTMSUUI_MainWindow::prevButtonClicked() //// TODO
+void MyTMSUUI_MainWindow::prevButtonClicked()
 {
-   qDebug("TODO prevButtonClicked");
+   if (myDataPtr == nullptr)
+   {
+      qCritical("null data object (how did this happen?)");
+      statusBar()->showMessage("INTERNAL ERROR: Missing data object - cannot access current image number");
+      return;
+   }
+   //// else
+
+   goToImage(myDataPtr->myCurrentImageNum - 1);
    return;
 }
 
 //// --------------------------------------------------------------------------
-void MyTMSUUI_MainWindow::nextButtonClicked() //// TODO
+void MyTMSUUI_MainWindow::nextButtonClicked()
 {
-   qDebug("TODO nextButtonClicked");
+   if (myDataPtr == nullptr)
+   {
+      qCritical("null data object (how did this happen?)");
+      statusBar()->showMessage("INTERNAL ERROR: Missing data object - cannot access current image number");
+      return;
+   }
+   //// else
+
+   goToImage(myDataPtr->myCurrentImageNum + 1);
    return;
 }
 
 //// --------------------------------------------------------------------------
-void MyTMSUUI_MainWindow::lastButtonClicked() //// TODO
+void MyTMSUUI_MainWindow::lastButtonClicked()
 {
-   qDebug("TODO lastButtonClicked");
+   if (myDataPtr == nullptr)
+   {
+      qCritical("null data object (how did this happen?)");
+      statusBar()->showMessage("INTERNAL ERROR: Missing data object - cannot access files list");
+      return;
+   }
+   //// else
+
+   goToImage(myDataPtr->myCurrentFilesList.size());
    return;
 }
 
@@ -327,9 +448,11 @@ void MyTMSUUI_MainWindow::doUpdateRecurse(int newRecurseState)
 {
    if (myDataPtr == nullptr)
    {
+      qCritical("null data object (how did this happen?)");
       statusBar()->showMessage("INTERNAL ERROR: Missing data object - cannot set the 'recurse enabled' flag");
       return;
    }
+   //// else
 
    myDataPtr->myRecurseEnabled = (newRecurseState == Qt::Checked);
    myDataPtr->myInterface.retrieveFilesList(false); //// TODO: determine if any tags selected for query
@@ -369,14 +492,14 @@ void MyTMSUUI_MainWindow::radioNoneClicked() //// TODO
 //// --------------------------------------------------------------------------
 void MyTMSUUI_MainWindow::setStatusUpdating()
 {
-   myGuiPtr->myStatusBar->showMessage("Updating...");
+   statusBar()->showMessage("Updating...");
    return;
 }
 
 //// --------------------------------------------------------------------------
 void MyTMSUUI_MainWindow::interfaceGoneIdle(MyTMSUUI_IF_NS::ProcState lastState, bool withError)
 {
-   myGuiPtr->myStatusBar->clearMessage();
+   statusBar()->clearMessage();
 
    if (withError)
    {
@@ -394,6 +517,7 @@ void MyTMSUUI_MainWindow::interfaceGoneIdle(MyTMSUUI_IF_NS::ProcState lastState,
          {
             clearTagWidgets();
             //// TODO: Clear file list, etc?
+            setNavEnabledStates();
          }
          else
          {
@@ -420,6 +544,7 @@ void MyTMSUUI_MainWindow::interfaceGoneIdle(MyTMSUUI_IF_NS::ProcState lastState,
          if (withError)
          {
             //// TODO: Clear file list, etc?
+            setNavEnabledStates();
          }
          else
          {

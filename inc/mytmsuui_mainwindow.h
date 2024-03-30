@@ -37,6 +37,7 @@ class MyTMSUUI_MainWindow : public QMainWindow
    void beginDisplayList();
    void goToImage(qsizetype number);
    void goToLastImage();
+   void setNavEnabledStates();
 
  protected slots:
    void doSelectBaseDir();
