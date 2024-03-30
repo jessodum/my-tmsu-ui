@@ -3,6 +3,7 @@
 #include "mytmsuui_tagwidget.h"
 #include <QFileDialog>
 #include <QImageReader>
+#include <QMovie>
 #include <QtLogging>
 
 //// --------------------------------------------------------------------------
@@ -273,13 +274,16 @@ void MyTMSUUI_MainWindow::goToImage(qsizetype number)
    //// else
 
    myDataPtr->myCurrentImageNum = number;
-   setNavEnabledStates();
-
-   qsizetype index = number - 1;
-   QString currentFilename = myDataPtr->myCurrentFilesList.at(index);
-   //// TODO:
+   updateUiForCurrentImage();
 
    statusBar()->clearMessage();
+   QString currentFilename = myDataPtr->getCurrentFilename();
+   if (currentFilename.isEmpty())
+   {
+      qCritical("Failed to get current filename (how did this happen?)");
+      currentFilename = "(GET FILENAME FAILED)";
+   }
+
    QString imgNumberStatus("Image ");
    imgNumberStatus += QString::number(number);
    imgNumberStatus += " of ";
@@ -313,6 +317,56 @@ void MyTMSUUI_MainWindow::goToLastImage()
 }
 
 //// --------------------------------------------------------------------------
+void MyTMSUUI_MainWindow::updateUiForCurrentImage()
+{
+   if (myDataPtr == nullptr)
+   {
+      qCritical("null data object (how did this happen?)");
+      statusBar()->showMessage("INTERNAL ERROR: Missing data object - cannot access image data");
+      return;
+   }
+   //// else
+
+   setNavEnabledStates();
+
+   //// Clear previous content
+   QMovie* oldMoviePtr = myGuiPtr->myImageWidget->movie();
+   if (oldMoviePtr != nullptr)
+   {
+      delete oldMoviePtr;
+   }
+
+   myGuiPtr->myImageWidget->clear();
+
+   //// Determine if image is animated.
+   if (isCurrentImageAnim())
+   {
+      QMovie* anim = new QMovie(myDataPtr->getCurrentFileFullPath());
+      myGuiPtr->myImageWidget->setMovie(anim);
+      anim->start();
+      //// TODO: scale max image size?
+   }
+   else
+   {
+      QPixmap img(myDataPtr->getCurrentFileFullPath());
+
+      //// TODO: Use a config system (qgetenv + QSettings + QCommandLineArgs) for max image height
+      if (img.height() > MyTMSUUI_MainWin_NS::MAX_IMAGE_HEIGHT)
+      {
+         QPixmap scaledImg = img.scaledToHeight(MyTMSUUI_MainWin_NS::MAX_IMAGE_HEIGHT);
+         myGuiPtr->myImageWidget->setPixmap(scaledImg);
+      }
+      //// TODO: max image width?
+      else
+      {
+         myGuiPtr->myImageWidget->setPixmap(img);
+      }
+   }
+
+   //// TODO: Read image's tags and set in tag widgets (if "Set" radio selected)
+}
+
+//// --------------------------------------------------------------------------
 void MyTMSUUI_MainWindow::setNavEnabledStates()
 {
    if (myDataPtr == nullptr)
@@ -338,6 +392,30 @@ void MyTMSUUI_MainWindow::setNavEnabledStates()
    myGuiPtr->myNextImgButton->setEnabled(myDataPtr->myCurrentFilesList.size() > 1);
    myGuiPtr->myLastImgButton->setEnabled(myDataPtr->myCurrentImageNum < myDataPtr->myCurrentFilesList.size());
    return;
+}
+
+//// --------------------------------------------------------------------------
+bool MyTMSUUI_MainWindow::isCurrentImageAnim()
+{
+   if (myDataPtr == nullptr)
+   {
+      qCritical("null data object (how did this happen?)");
+      statusBar()->showMessage("INTERNAL ERROR: Missing data object - cannot access image data");
+      return false;
+   }
+   //// else
+
+   QString imgFullPath = myDataPtr->getCurrentFileFullPath();
+   if (imgFullPath.isEmpty())
+   {
+      qCritical("Failed to get current filename (how did this happen?)");
+      return false;
+   }
+   //// else
+
+   QImageReader imgReader(imgFullPath);
+   imgReader.setDecideFormatFromContent(true);
+   return ( imgReader.supportsAnimation() && (imgReader.imageCount() > 1) );
 }
 
 //// --------------------------------------------------------------------------

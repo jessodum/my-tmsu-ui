@@ -21,11 +21,40 @@ class MyTMSUUI_Data
    QStringList myValuesList;
 
    void clearTagsList();
+   QString getCurrentFilename();
+   QString getCurrentFileFullPath();
 
  protected:
 
  private:
 
 };
+
+//// =======
+//// INLINES
+//// =======
+
+inline QString MyTMSUUI_Data::getCurrentFilename()
+{
+   if ((myCurrentFilesList.size() > 0) && (myCurrentImageNum > 0))
+   {
+      return myCurrentFilesList.at(myCurrentImageNum - 1);
+   }
+   //// else
+
+   return "";
+}
+
+inline QString MyTMSUUI_Data::getCurrentFileFullPath()
+{
+   QString filename = getCurrentFilename();
+   if (!filename.isEmpty())
+   {
+      return (myCurrentBaseDir.absolutePath() + "/" + filename);
+   }
+   //// else
+
+   return "";
+}
 
 #endif

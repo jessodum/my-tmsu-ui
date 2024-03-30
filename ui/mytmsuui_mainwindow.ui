@@ -239,6 +239,9 @@ QCheckBox::indicator:checked {image: url(:cb/img/cb_checked_blue.png);}</string>
           <property name="text">
            <string/>
           </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
          </widget>
         </item>
        </layout>
@@ -363,7 +366,7 @@ QRadioButton::indicator:checked{image: url(:radio/img/radio_checked_blue.png);}<
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>391</width>
+             <width>313</width>
              <height>673</height>
             </rect>
            </property>

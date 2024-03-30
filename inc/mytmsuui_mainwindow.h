@@ -11,6 +11,11 @@ namespace Ui
 }
 QT_END_NAMESPACE
 
+namespace MyTMSUUI_MainWin_NS
+{
+   static const int MAX_IMAGE_HEIGHT = 1140;
+}
+
 //// Forward declarations
 class QLabel;
 
@@ -37,7 +42,9 @@ class MyTMSUUI_MainWindow : public QMainWindow
    void beginDisplayList();
    void goToImage(qsizetype number);
    void goToLastImage();
+   void updateUiForCurrentImage();
    void setNavEnabledStates();
+   bool isCurrentImageAnim();
 
  protected slots:
    void doSelectBaseDir();
