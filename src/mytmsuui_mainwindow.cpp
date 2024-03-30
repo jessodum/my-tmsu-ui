@@ -344,19 +344,19 @@ void MyTMSUUI_MainWindow::updateUiForCurrentImage()
       QMovie* anim = new QMovie(myDataPtr->getCurrentFileFullPath());
       myGuiPtr->myImageWidget->setMovie(anim);
       anim->start();
-      //// TODO: scale max image size?
+      //// TODO-MAINT: scale max image size?
    }
    else
    {
       QPixmap img(myDataPtr->getCurrentFileFullPath());
 
-      //// TODO: Use a config system (qgetenv + QSettings + QCommandLineArgs) for max image height
+      //// TODO-FUTURE: Use a config system (qgetenv + QSettings + QCommandLineArgs) for max image height
       if (img.height() > MyTMSUUI_MainWin_NS::MAX_IMAGE_HEIGHT)
       {
          QPixmap scaledImg = img.scaledToHeight(MyTMSUUI_MainWin_NS::MAX_IMAGE_HEIGHT);
          myGuiPtr->myImageWidget->setPixmap(scaledImg);
       }
-      //// TODO: max image width?
+      //// TODO-MAINT: max image width?
       else
       {
          myGuiPtr->myImageWidget->setPixmap(img);

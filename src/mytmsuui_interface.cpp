@@ -42,7 +42,7 @@ void MyTMSUUI_Interface::ensureNotRunning()
    }
 
    //// else
-   //// What's still running? (TODO: Check myState?)
+   //// What's still running? (TODO-FUTURE: Check myState?)
 
    //// End it
    myIFProc.terminate();
@@ -218,7 +218,7 @@ void MyTMSUUI_Interface::handleFinishedProc(int exitCode, QProcess::ExitStatus h
 {
    if (howExited == QProcess::CrashExit)
    {
-      //// TODO: Handle crashed "tmsu"?
+      //// TODO-FUTURE: Handle crashed "tmsu"?
       return;
    }
 

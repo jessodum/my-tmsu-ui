@@ -14,7 +14,7 @@ void MyTMSUUI_LogMsgHandler(QtMsgType type, const QMessageLogContext& context, c
 
    //// Since these are static, they will only happen once.
    static QString logFilePath = QStandardPaths::writableLocation(QStandardPaths::HomeLocation)
-                              + "/.my-tmsu-ui.log"; // TODO: Investigate how to rotate the log files.
+                              + "/.my-tmsu-ui.log"; // TODO-FUTURE: Investigate how to rotate the log files.
    static FILE* logFilePtr = fopen(qPrintable(logFilePath), "a");
 
    if (logFilePtr != NULL)
