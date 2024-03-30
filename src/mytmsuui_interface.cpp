@@ -79,6 +79,7 @@ void MyTMSUUI_Interface::doNewBaseDir(const QString& newPath)
 void MyTMSUUI_Interface::retrieveFilesList(bool queryTagsSpecified)
 {
    myState = MyTMSUUI_IF_NS::BuildFilesList;
+
    if (myDataPtr == nullptr)
    {
       myErrorStr = "No data object to store file listing";
@@ -120,13 +121,14 @@ void MyTMSUUI_Interface::retrieveFilesList(bool queryTagsSpecified)
       }
    }
 
-//// TODO: Remove this debug output
-for (QString currFile : newFilesList)
-{
-	qDebug("File listing: %s", qUtf8Printable(currFile));
-}
-qDebug("DONE");
-   //// TODO: Check for empty list
+   if (newFilesList.isEmpty())
+   {
+      myDataPtr->myCurrentFilesList.clear();
+      myErrorStr = "No files found";
+      goIdle(true);
+      return;
+   }
+
    myDataPtr->myCurrentFilesList = newFilesList;
    goIdle();
    return;

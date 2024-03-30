@@ -48,3 +48,6 @@ FORMS += ui/mytmsuui_mainwindow.ui
 FORMS += ui/mytmsuui_tagwidget.ui
 
 RESOURCES += ui/resources.qrc
+
+## Other libraries
+LIBS += -lwebp

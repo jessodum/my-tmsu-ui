@@ -2,6 +2,7 @@
 #include "ui_mytmsuui_mainwindow.h"
 #include "mytmsuui_tagwidget.h"
 #include <QFileDialog>
+#include <QImageReader>
 #include <QtLogging>
 
 //// --------------------------------------------------------------------------
@@ -178,6 +179,73 @@ void MyTMSUUI_MainWindow::rebuildTagWidgets()
 }
 
 //// --------------------------------------------------------------------------
+void MyTMSUUI_MainWindow::prepFilesListForDisplay()
+{
+   if (myDataPtr == nullptr)
+   {
+      qCritical("null data object (how did this happen?)");
+      return;
+   }
+
+   //// Use a copy of the File List for iterating, as we'll be removing unwanted
+   //// (i.e., non-image) files from the Data list.
+   QStringList tmpFilesList = myDataPtr->myCurrentFilesList;
+
+   for (QString currentFile : tmpFilesList)
+   {
+      QString currFileFullPath = myDataPtr->myCurrentBaseDir.absolutePath() + "/" + currentFile;
+      QImageReader imgReader(currFileFullPath);
+      imgReader.setDecideFormatFromContent(true);
+
+      QByteArray imgFormat = imgReader.format();
+      if (imgFormat.isEmpty())
+      {
+         qWarning("(%s) %s; removing it from the files list", qUtf8Printable(imgReader.errorString()), qUtf8Printable(currentFile));
+         if (!(myDataPtr->myCurrentFilesList.removeOne(currentFile)) )
+         {
+            qWarning("Failed to remove it from the files list!");
+         }
+      }
+   }
+
+   return;
+}
+
+//// --------------------------------------------------------------------------
+void MyTMSUUI_MainWindow::beginDisplayList()
+{
+   if (myDataPtr == nullptr)
+   {
+      qCritical("null data object (how did this happen?)");
+      return;
+   }
+
+   myGuiPtr->myStatusBar->clearMessage();
+
+   if (myDataPtr->myCurrentFilesList.isEmpty())
+   {
+      myGuiStatusBarNormalLabel->setText("");
+      myGuiStatusBarErrorLabel->setText("No image files in current base directory");
+      return;
+   }
+   //// else
+
+   goToImage(1);
+
+   return;
+}
+
+//// --------------------------------------------------------------------------
+void MyTMSUUI_MainWindow::goToImage(qsizetype number) //// TODO 
+{
+}
+
+//// --------------------------------------------------------------------------
+void MyTMSUUI_MainWindow::goToLastImage() //// TODO 
+{
+}
+
+//// --------------------------------------------------------------------------
 void MyTMSUUI_MainWindow::doSelectBaseDir()
 {
    if (myDataPtr == nullptr)
@@ -260,9 +328,11 @@ void MyTMSUUI_MainWindow::doUpdateRecurse(int newRecurseState)
    if (myDataPtr == nullptr)
    {
       statusBar()->showMessage("INTERNAL ERROR: Missing data object - cannot set the 'recurse enabled' flag");
+      return;
    }
 
    myDataPtr->myRecurseEnabled = (newRecurseState == Qt::Checked);
+   myDataPtr->myInterface.retrieveFilesList(false); //// TODO: determine if any tags selected for query
    return;
 }
 
@@ -328,6 +398,7 @@ void MyTMSUUI_MainWindow::interfaceGoneIdle(MyTMSUUI_IF_NS::ProcState lastState,
          else
          {
             //// Update list of image files based on new directory
+            setStatusUpdating();
             myDataPtr->myInterface.retrieveFilesList(false); //// TODO: determine if any tags selected for query
          }
 
@@ -338,6 +409,7 @@ void MyTMSUUI_MainWindow::interfaceGoneIdle(MyTMSUUI_IF_NS::ProcState lastState,
             break;
 
          //// (Re-)build tag widgets
+         setStatusUpdating();
          rebuildTagWidgets();
 
          //// Update list of image files based on new directory/database
@@ -346,9 +418,17 @@ void MyTMSUUI_MainWindow::interfaceGoneIdle(MyTMSUUI_IF_NS::ProcState lastState,
 
       case MyTMSUUI_IF_NS::BuildFilesList:
          if (withError)
-            break;
+         {
+            //// TODO: Clear file list, etc?
+         }
+         else
+         {
+            //// Update widgets for new files list
+            setStatusUpdating();
+            prepFilesListForDisplay();
+            beginDisplayList();
+         }
 
-         //// TODO: Update widgets for new files list
          break;
 
       default:

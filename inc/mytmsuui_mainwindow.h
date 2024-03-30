@@ -33,6 +33,10 @@ class MyTMSUUI_MainWindow : public QMainWindow
    virtual void closeEvent(QCloseEvent* event);
    void clearTagWidgets();
    void rebuildTagWidgets();
+   void prepFilesListForDisplay();
+   void beginDisplayList();
+   void goToImage(qsizetype number);
+   void goToLastImage();
 
  protected slots:
    void doSelectBaseDir();
