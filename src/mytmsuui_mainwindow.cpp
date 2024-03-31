@@ -341,10 +341,29 @@ void MyTMSUUI_MainWindow::updateUiForCurrentImage()
    //// Determine if image is animated.
    if (isCurrentImageAnim())
    {
+      bool needsToShrink = false;
+      QSize scaledSize;
+      {
+         QImageReader animImgReader(myDataPtr->getCurrentFileFullPath());
+         //// TODO-FUTURE: Use a config system (qgetenv + QSettings + QCommandLineArgs) for max image height
+         if (animImgReader.size().height() > MyTMSUUI_MainWin_NS::MAX_IMAGE_HEIGHT)
+         {
+            needsToShrink = true;
+            QImage animFrame = animImgReader.read();
+            scaledSize = (animFrame.scaledToHeight(MyTMSUUI_MainWin_NS::MAX_IMAGE_HEIGHT)).size();
+         }
+         //// TODO-MAINT: max image width?
+      }
+
       QMovie* anim = new QMovie(myDataPtr->getCurrentFileFullPath());
+
+      if (needsToShrink)
+      {
+         anim->setScaledSize(scaledSize);
+      }
+
       myGuiPtr->myImageWidget->setMovie(anim);
       anim->start();
-      //// TODO-MAINT: scale max image size?
    }
    else
    {
@@ -533,6 +552,7 @@ void MyTMSUUI_MainWindow::doUpdateRecurse(int newRecurseState)
    //// else
 
    myDataPtr->myRecurseEnabled = (newRecurseState == Qt::Checked);
+   setStatusUpdating();
    myDataPtr->myInterface.retrieveFilesList(false); //// TODO: determine if any tags selected for query
    return;
 }
