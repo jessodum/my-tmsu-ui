@@ -35,6 +35,7 @@ HEADERS += inc/mytmsuui_interface.h
 HEADERS += inc/mytmsuui_logmsghandler.h
 HEADERS += inc/mytmsuui_mainwindow.h
 HEADERS += inc/mytmsuui_tagdata.h
+HEADERS += inc/mytmsuui_taggedvalue.h
 HEADERS += inc/mytmsuui_tagwidget.h
 
 SOURCES += src/main.cpp

@@ -3,6 +3,7 @@
 
 #include "mytmsuui_interface.h"
 #include "mytmsuui_tagdata.h"
+#include "mytmsuui_taggedvalue.h"
 #include <QDir>
 
 class MyTMSUUI_Data
@@ -13,9 +14,10 @@ class MyTMSUUI_Data
 
    //// Properities
    QDir myCurrentBaseDir;
+   bool myRecurseEnabled;
    QStringList myCurrentFilesList;
    qsizetype myCurrentImageNum;
-   bool myRecurseEnabled;
+   QList<MyTMSUUI_TaggedValue> myCurrentImgTaggedValList;
    MyTMSUUI_Interface myInterface;
    MyTMSUUI_TagDataPtrList myTagsList;
    QStringList myValuesList;

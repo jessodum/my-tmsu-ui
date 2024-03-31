@@ -17,7 +17,8 @@ namespace MyTMSUUI_IF_NS
       AllValuesDBQuery,
       TagsByValueDBQuery,
       ImpliesDBQuery,
-      BuildFilesList
+      BuildFilesList,
+      RetrieveFileTags
    };
 }
 
@@ -46,6 +47,7 @@ class MyTMSUUI_Interface : public QObject
  public slots:
    void doNewBaseDir(const QString& newPath);
    void retrieveFilesList(bool queryTagsSpecified);
+   void retrieveFileTags(const QString& filename);
 
  protected:
 
@@ -63,6 +65,7 @@ class MyTMSUUI_Interface : public QObject
    void handleFinishedAllValuesDBQuery(int exitCode);
    void handleFinishedTagsByValueDBQuery(int exitCode);
    void handleFinishedImpliesDBQuery(int exitCode);
+   void handleFinishedRetrieveFileTags(int exitCode);
 
    void goIdle(bool withError = false);
 

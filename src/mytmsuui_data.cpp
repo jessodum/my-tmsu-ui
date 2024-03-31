@@ -3,9 +3,10 @@
 //// --------------------------------------------------------------------------
 MyTMSUUI_Data::MyTMSUUI_Data()
  : myCurrentBaseDir()
+ , myRecurseEnabled(false)
  , myCurrentFilesList()
  , myCurrentImageNum(0)
- , myRecurseEnabled(false)
+ , myCurrentImgTaggedValList()
  , myInterface()
  , myTagsList()
  , myValuesList()

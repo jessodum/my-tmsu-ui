@@ -135,6 +135,23 @@ void MyTMSUUI_Interface::retrieveFilesList(bool queryTagsSpecified)
 }
 
 //// --------------------------------------------------------------------------
+void MyTMSUUI_Interface::retrieveFileTags(const QString& filename)
+{
+   ensureNotRunning();
+
+   QStringList tmsuCmdArgs;
+   tmsuCmdArgs << "tags" << "-1" << "--color=always" << filename;
+
+   myIFProc.setArguments(tmsuCmdArgs);
+
+   myState = MyTMSUUI_IF_NS::RetrieveFileTags;
+
+   myIFProc.start(QIODeviceBase::ReadOnly);
+
+   return;
+}
+
+//// --------------------------------------------------------------------------
 void MyTMSUUI_Interface::doTagsDBQuery()
 {
    ensureNotRunning();
@@ -242,6 +259,10 @@ void MyTMSUUI_Interface::handleFinishedProc(int exitCode, QProcess::ExitStatus h
 
       case MyTMSUUI_IF_NS::ImpliesDBQuery:
          handleFinishedImpliesDBQuery(exitCode);
+         break;
+
+      case MyTMSUUI_IF_NS::RetrieveFileTags:
+         handleFinishedRetrieveFileTags(exitCode);
          break;
 
       default:
@@ -451,6 +472,113 @@ void MyTMSUUI_Interface::handleFinishedImpliesDBQuery(int exitCode)
    else
    {
       myErrorStr = "Error getting list of implied Tags from database";
+      goIdle(true);
+   }
+
+   return;
+}
+
+//// --------------------------------------------------------------------------
+void MyTMSUUI_Interface::handleFinishedRetrieveFileTags(int exitCode)
+{
+   if (exitCode == 0)
+   {
+      //// Command Success
+      myErrorStr = "";
+      myDataPtr->myCurrentImgTaggedValList.clear();
+
+      QRegularExpression regex("^([-\\w]+)(=([-\\w]+))?$");
+
+      QByteArray outputBytes(myIFProc.readAllStandardOutput());
+
+      QString tagLine;
+      QTextStream tagLineStream(&tagLine);
+      bool firstLine = true; //// First line of output is the filename
+
+      QString escapeCode;
+      QTextStream escapeCodeStream(&escapeCode);
+      bool readingEscapeCode = false;
+
+      MyTMSUUI_Tagged_NS::ImpliedState currentImpliedState
+         = MyTMSUUI_Tagged_NS::NormalExplicitTag;
+
+      for (char byte : outputBytes)
+      {
+         if (byte == 0x0a) //// '\n'
+         {
+            if (firstLine)
+            {
+               //// Just ignore first line
+               firstLine = false;
+            }
+            else
+            {
+               MyTMSUUI_TaggedValue newTaggedValue;
+               newTaggedValue.myImpliedState = currentImpliedState;
+
+               //// Parse tagLine
+               QRegularExpressionMatch match = regex.match(tagLine);
+               if(match.hasMatch())
+               {
+                  newTaggedValue.myTagName = match.captured(1);
+                  if ( match.hasCaptured(2) || (match.captured(2).length() > 0) )
+                  {
+                     newTaggedValue.myValue = match.captured(3);
+                  }
+
+                  myDataPtr->myCurrentImgTaggedValList << newTaggedValue;
+               }
+               else
+               {
+                  qWarning("tags output unrecognized: %s", qUtf8Printable(tagLine));
+               }
+            }
+
+            //// Reset
+            tagLine = "";
+            currentImpliedState = MyTMSUUI_Tagged_NS::NormalExplicitTag;
+         }
+         else if (readingEscapeCode)
+         {
+            if (byte == 'm')
+            {
+               readingEscapeCode = false;
+
+               //// Parse escapeCode
+               if (escapeCode == "33")
+               {
+                  currentImpliedState = MyTMSUUI_Tagged_NS::BothTag;
+               }
+               else if (escapeCode == "36")
+               {
+                  currentImpliedState = MyTMSUUI_Tagged_NS::ImpliedTag;
+               }
+               //// else (escapeCode == "0") >>> "reset"
+            }
+            else if (byte != '[')
+            {
+               //// Should be a numeric digit
+               escapeCodeStream << byte;
+            }
+         }
+         else if (byte == 0x1b) //// <esc>
+         {
+            readingEscapeCode = true;
+            escapeCode = ""; //// Reset
+         }
+         else
+         {
+            //// Not part of the escape code, so must be part of tagLine.
+            tagLineStream << byte;
+         }
+      }
+
+      goIdle();
+   }
+   else
+   {
+      myErrorStr = "Error retrieving tags for the filename";
+      //// TODO-MAINT: Get error message from stderr?
       goIdle(true);
    }
 

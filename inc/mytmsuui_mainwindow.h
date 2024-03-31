@@ -33,6 +33,7 @@ class MyTMSUUI_MainWindow : public QMainWindow
 
  signals:
    void dataBaseDirChanged(const QString& p);
+   void imageUpdated(const QString& f);
 
  protected:
    virtual void closeEvent(QCloseEvent* event);

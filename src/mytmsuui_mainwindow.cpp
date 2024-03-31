@@ -110,6 +110,10 @@ void MyTMSUUI_MainWindow::setDataObj(MyTMSUUI_Data* dataPtr)
       connect(                     this, SIGNAL(dataBaseDirChanged(const QString&)),
               &(myDataPtr->myInterface),   SLOT(      doNewBaseDir(const QString&)) );
 
+      //// this: Image updated
+      connect(                     this, SIGNAL(    imageUpdated(const QString&)),
+              &(myDataPtr->myInterface),   SLOT(retrieveFileTags(const QString&)) );
+
       //// I/f: Gone idle
       connect(&(myDataPtr->myInterface), SIGNAL(         goneIdle(MyTMSUUI_IF_NS::ProcState, bool)),
                                    this,   SLOT(interfaceGoneIdle(MyTMSUUI_IF_NS::ProcState, bool)) );
@@ -382,7 +386,13 @@ void MyTMSUUI_MainWindow::updateUiForCurrentImage()
       }
    }
 
-   //// TODO: Read image's tags and set in tag widgets (if "Set" radio selected)
+   //// Read image's tags and set in tag widgets (if "Set" radio selected)
+//   if (/*TODO: "set" radio checked*/)
+   {
+      emit imageUpdated(myDataPtr->getCurrentFilename());
+   }
+
+   return;
 }
 
 //// --------------------------------------------------------------------------
