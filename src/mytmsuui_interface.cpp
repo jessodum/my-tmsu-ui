@@ -10,6 +10,7 @@
 //// --------------------------------------------------------------------------
 MyTMSUUI_Interface::MyTMSUUI_Interface(QObject* parent)
  : QObject(parent)
+ , myQueryTagsList()
  , myDataPtr(nullptr)
  , myIFProc()
  , myState(MyTMSUUI_IF_NS::Idle)

@@ -39,8 +39,11 @@ class MyTMSUUI_MainWindow : public QMainWindow
    virtual void closeEvent(QCloseEvent* event);
    void clearTagWidgets();
    void rebuildTagWidgets();
+   void updateInterfaceFilesList();
+   void updateInterfaceQueryTagsList();
    void prepFilesListForDisplay();
-   void beginDisplayList();
+   void beginDisplayList(bool emptyListIsOK = false);
+   void setTaggedValuesInWidgets();
    void goToImage(qsizetype number);
    void goToLastImage();
    void updateUiForCurrentImage();

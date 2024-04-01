@@ -25,6 +25,12 @@ class MyTMSUUI_TagWidget : public QWidget
 
    void configure(MyTMSUUI_TagData* tagData);
 
+   //// Accessors: Get
+   bool isChecked() const;
+   //checkedState getCheckedState() const; //// TODO
+   QString getTagName() const;
+   QString getValue() const;
+
  protected:
 
  private:

@@ -6,6 +6,24 @@
 #include <QMovie>
 #include <QtLogging>
 
+#define ENSURE_DATA_PTR_COMMON(whynot) \
+   if (myDataPtr == nullptr) \
+   { \
+      qCritical("null data object (how did this happen?)"); \
+      QString statusBarMsg("INTERNAL ERROR: Missing data object - "); \
+      statusBarMsg += whynot; \
+      statusBar()->showMessage(statusBarMsg);
+
+#define ENSURE_DATA_PTR(whynot) \
+ENSURE_DATA_PTR_COMMON(whynot) \
+      return; \
+   }
+
+#define ENSURE_DATA_PTR_RETURN_FALSE(whynot) \
+ENSURE_DATA_PTR_COMMON(whynot) \
+      return false; \
+   }
+
 //// --------------------------------------------------------------------------
 MyTMSUUI_MainWindow::MyTMSUUI_MainWindow(QWidget* parent)
  : QMainWindow(parent)
@@ -185,15 +203,76 @@ void MyTMSUUI_MainWindow::rebuildTagWidgets()
 }
 
 //// --------------------------------------------------------------------------
-void MyTMSUUI_MainWindow::prepFilesListForDisplay()
+void MyTMSUUI_MainWindow::updateInterfaceFilesList()
 {
-   if (myDataPtr == nullptr)
+   ENSURE_DATA_PTR("cannot access interface object")
+
+   bool queryTagsSpecified = false;
+
+   if (myGuiPtr->myQueryRadioButton->isChecked())
    {
-      qCritical("null data object (how did this happen?)");
-      statusBar()->showMessage("INTERNAL ERROR: Missing data object - cannot access files list");
+      updateInterfaceQueryTagsList();
+      queryTagsSpecified = (myDataPtr->myInterface.myQueryTagsList.count() > 0);
+
+      if (!queryTagsSpecified && myGuiPtr->myRetrieveNoneRadioButton->isChecked())
+      {
+         myDataPtr->myCurrentFilesList.clear();
+         //// TODO: Clear file list, etc?
+         setNavEnabledStates();
+         beginDisplayList(true);
+         return;
+      }
+
+   }
+
+   myDataPtr->myInterface.retrieveFilesList(queryTagsSpecified);
+   return;
+}
+
+//// --------------------------------------------------------------------------
+void MyTMSUUI_MainWindow::updateInterfaceQueryTagsList()
+{
+   ENSURE_DATA_PTR("cannot access interface object")
+
+   myDataPtr->myInterface.myQueryTagsList.clear();
+
+   QVBoxLayout* tagWidgetsVLayout = (QVBoxLayout*)myGuiPtr->myTagsParentWidget->layout();
+
+   if (tagWidgetsVLayout == nullptr)
+   {
+      qWarning("No layout set for Tags Parent Widget");
       return;
    }
    //// else
+
+   for (int idx = 0; idx < tagWidgetsVLayout->count(); ++idx)
+   {
+      QLayoutItem* layoutItem = tagWidgetsVLayout->itemAt(idx);
+      QWidget* widget = layoutItem->widget();
+
+      if (widget == nullptr)
+      {
+         continue;
+      }
+      //// else
+
+      MyTMSUUI_TagWidget* tagWidget = (MyTMSUUI_TagWidget*)widget;
+      if (tagWidget->isChecked())
+      {
+         MyTMSUUI_TaggedValue newQueryTag;
+         newQueryTag.myTagName = tagWidget->getTagName();
+         newQueryTag.myValue = tagWidget->getValue();
+         myDataPtr->myInterface.myQueryTagsList << newQueryTag;
+      }
+   }
+
+   return;
+}
+
+//// --------------------------------------------------------------------------
+void MyTMSUUI_MainWindow::prepFilesListForDisplay()
+{
+   ENSURE_DATA_PTR("cannot access files list")
 
    //// Use a copy of the File List for iterating, as we'll be removing unwanted
    //// (i.e., non-image) files from the Data list.
@@ -220,22 +299,24 @@ void MyTMSUUI_MainWindow::prepFilesListForDisplay()
 }
 
 //// --------------------------------------------------------------------------
-void MyTMSUUI_MainWindow::beginDisplayList()
+void MyTMSUUI_MainWindow::beginDisplayList(bool emptyListIsOK)
 {
-   if (myDataPtr == nullptr)
-   {
-      qCritical("null data object (how did this happen?)");
-      statusBar()->showMessage("INTERNAL ERROR: Missing data object - cannot access files list");
-      return;
-   }
-   //// else
+   ENSURE_DATA_PTR("cannot access files list")
 
    statusBar()->clearMessage();
 
    if (myDataPtr->myCurrentFilesList.isEmpty())
    {
-      myGuiStatusBarNormalLabel->setText("");
-      myGuiStatusBarErrorLabel->setText("No image files in current base directory");
+      if (emptyListIsOK)
+      {
+         myGuiStatusBarNormalLabel->setText("No images due to no tags in query");
+         myGuiStatusBarErrorLabel->setText("");
+      }
+      else
+      {
+         myGuiStatusBarNormalLabel->setText("");
+         myGuiStatusBarErrorLabel->setText("No image files in current base directory");
+      }
       return;
    }
    //// else
@@ -246,15 +327,17 @@ void MyTMSUUI_MainWindow::beginDisplayList()
 }
 
 //// --------------------------------------------------------------------------
+void MyTMSUUI_MainWindow::setTaggedValuesInWidgets()
+{
+   ENSURE_DATA_PTR("cannot access interface object")
+
+   //// TODO:
+}
+
+//// --------------------------------------------------------------------------
 void MyTMSUUI_MainWindow::goToImage(qsizetype number)
 {
-   if (myDataPtr == nullptr)
-   {
-      qCritical("null data object (how did this happen?)");
-      statusBar()->showMessage("INTERNAL ERROR: Missing data object - cannot access files list");
-      return;
-   }
-   //// else
+   ENSURE_DATA_PTR("cannot access files list")
 
    if (myDataPtr->myCurrentFilesList.isEmpty())
    {
@@ -301,13 +384,7 @@ void MyTMSUUI_MainWindow::goToImage(qsizetype number)
 //// --------------------------------------------------------------------------
 void MyTMSUUI_MainWindow::goToLastImage()
 {
-   if (myDataPtr == nullptr)
-   {
-      qCritical("null data object (how did this happen?)");
-      statusBar()->showMessage("INTERNAL ERROR: Missing data object - cannot access files list");
-      return;
-   }
-   //// else
+   ENSURE_DATA_PTR("cannot access files list")
 
    if (myDataPtr->myCurrentFilesList.isEmpty())
    {
@@ -323,13 +400,7 @@ void MyTMSUUI_MainWindow::goToLastImage()
 //// --------------------------------------------------------------------------
 void MyTMSUUI_MainWindow::updateUiForCurrentImage()
 {
-   if (myDataPtr == nullptr)
-   {
-      qCritical("null data object (how did this happen?)");
-      statusBar()->showMessage("INTERNAL ERROR: Missing data object - cannot access image data");
-      return;
-   }
-   //// else
+   ENSURE_DATA_PTR("cannot access image data")
 
    setNavEnabledStates();
 
@@ -387,7 +458,7 @@ void MyTMSUUI_MainWindow::updateUiForCurrentImage()
    }
 
    //// Read image's tags and set in tag widgets (if "Set" radio selected)
-//   if (/*TODO: "set" radio checked*/)
+   if (myGuiPtr->mySetTagsRadioButton->isChecked())
    {
       emit imageUpdated(myDataPtr->getCurrentFilename());
    }
@@ -398,13 +469,7 @@ void MyTMSUUI_MainWindow::updateUiForCurrentImage()
 //// --------------------------------------------------------------------------
 void MyTMSUUI_MainWindow::setNavEnabledStates()
 {
-   if (myDataPtr == nullptr)
-   {
-      qCritical("null data object (how did this happen?)");
-      statusBar()->showMessage("INTERNAL ERROR: Missing data object - cannot access current image number");
-      return;
-   }
-   //// else
+   ENSURE_DATA_PTR("cannot access current image number")
 
    if (myDataPtr->myCurrentFilesList.size() < 1)
    {
@@ -426,13 +491,7 @@ void MyTMSUUI_MainWindow::setNavEnabledStates()
 //// --------------------------------------------------------------------------
 bool MyTMSUUI_MainWindow::isCurrentImageAnim()
 {
-   if (myDataPtr == nullptr)
-   {
-      qCritical("null data object (how did this happen?)");
-      statusBar()->showMessage("INTERNAL ERROR: Missing data object - cannot access image data");
-      return false;
-   }
-   //// else
+   ENSURE_DATA_PTR_RETURN_FALSE("cannot access image data")
 
    QString imgFullPath = myDataPtr->getCurrentFileFullPath();
    if (imgFullPath.isEmpty())
@@ -450,13 +509,7 @@ bool MyTMSUUI_MainWindow::isCurrentImageAnim()
 //// --------------------------------------------------------------------------
 void MyTMSUUI_MainWindow::doSelectBaseDir()
 {
-   if (myDataPtr == nullptr)
-   {
-      qCritical("null data object (how did this happen?)");
-      statusBar()->showMessage("INTERNAL ERROR: Missing data object - cannot set a base directory");
-      return;
-   }
-   //// else
+   ENSURE_DATA_PTR("cannot set a base directory")
 
    //// Keep track of change to the selected base directory
    QString oldDir(myDataPtr->myCurrentBaseDir.absolutePath());
@@ -501,13 +554,7 @@ void MyTMSUUI_MainWindow::firstButtonClicked()
 //// --------------------------------------------------------------------------
 void MyTMSUUI_MainWindow::prevButtonClicked()
 {
-   if (myDataPtr == nullptr)
-   {
-      qCritical("null data object (how did this happen?)");
-      statusBar()->showMessage("INTERNAL ERROR: Missing data object - cannot access current image number");
-      return;
-   }
-   //// else
+   ENSURE_DATA_PTR("cannot access current image number")
 
    goToImage(myDataPtr->myCurrentImageNum - 1);
    return;
@@ -516,13 +563,7 @@ void MyTMSUUI_MainWindow::prevButtonClicked()
 //// --------------------------------------------------------------------------
 void MyTMSUUI_MainWindow::nextButtonClicked()
 {
-   if (myDataPtr == nullptr)
-   {
-      qCritical("null data object (how did this happen?)");
-      statusBar()->showMessage("INTERNAL ERROR: Missing data object - cannot access current image number");
-      return;
-   }
-   //// else
+   ENSURE_DATA_PTR("cannot access current image number")
 
    goToImage(myDataPtr->myCurrentImageNum + 1);
    return;
@@ -531,13 +572,7 @@ void MyTMSUUI_MainWindow::nextButtonClicked()
 //// --------------------------------------------------------------------------
 void MyTMSUUI_MainWindow::lastButtonClicked()
 {
-   if (myDataPtr == nullptr)
-   {
-      qCritical("null data object (how did this happen?)");
-      statusBar()->showMessage("INTERNAL ERROR: Missing data object - cannot access files list");
-      return;
-   }
-   //// else
+   ENSURE_DATA_PTR("cannot access files list")
 
    goToImage(myDataPtr->myCurrentFilesList.size());
    return;
@@ -553,17 +588,11 @@ void MyTMSUUI_MainWindow::applyButtonClicked() //// TODO
 //// --------------------------------------------------------------------------
 void MyTMSUUI_MainWindow::doUpdateRecurse(int newRecurseState)
 {
-   if (myDataPtr == nullptr)
-   {
-      qCritical("null data object (how did this happen?)");
-      statusBar()->showMessage("INTERNAL ERROR: Missing data object - cannot set the 'recurse enabled' flag");
-      return;
-   }
-   //// else
+   ENSURE_DATA_PTR("cannot set the 'recurse enabled' flag")
 
    myDataPtr->myRecurseEnabled = (newRecurseState == Qt::Checked);
    setStatusUpdating();
-   myDataPtr->myInterface.retrieveFilesList(false); //// TODO: determine if any tags selected for query
+   updateInterfaceFilesList();
    return;
 }
 
@@ -631,7 +660,7 @@ void MyTMSUUI_MainWindow::interfaceGoneIdle(MyTMSUUI_IF_NS::ProcState lastState,
          {
             //// Update list of image files based on new directory
             setStatusUpdating();
-            myDataPtr->myInterface.retrieveFilesList(false); //// TODO: determine if any tags selected for query
+            updateInterfaceFilesList();
          }
 
          break;
@@ -645,7 +674,7 @@ void MyTMSUUI_MainWindow::interfaceGoneIdle(MyTMSUUI_IF_NS::ProcState lastState,
          rebuildTagWidgets();
 
          //// Update list of image files based on new directory/database
-         myDataPtr->myInterface.retrieveFilesList(false);
+         updateInterfaceFilesList();
          break;
 
       case MyTMSUUI_IF_NS::BuildFilesList:
@@ -662,6 +691,14 @@ void MyTMSUUI_MainWindow::interfaceGoneIdle(MyTMSUUI_IF_NS::ProcState lastState,
             beginDisplayList();
          }
 
+         break;
+
+      case MyTMSUUI_IF_NS::RetrieveFileTags:
+         if (withError)
+            //// TODO-MAINT: handle RetrieveFileTags withError?
+            break;
+
+         setTaggedValuesInWidgets();
          break;
 
       default:

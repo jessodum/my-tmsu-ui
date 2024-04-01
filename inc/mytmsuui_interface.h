@@ -1,6 +1,7 @@
 #ifndef MYTMSUUI_INTERFACE_H
 #define MYTMSUUI_INTERFACE_H
 
+#include "mytmsuui_taggedvalue.h"
 #include <QProcess>
 
 //// Forward declarations
@@ -32,6 +33,8 @@ class MyTMSUUI_Interface : public QObject
  public:
    MyTMSUUI_Interface(QObject* parent = nullptr);
    ~MyTMSUUI_Interface();
+
+   QList<MyTMSUUI_TaggedValue> myQueryTagsList;
 
    //// Accessors: Get
    const QProcess* getIFProcess() const;

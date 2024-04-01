@@ -38,3 +38,30 @@ void MyTMSUUI_TagWidget::configure(MyTMSUUI_TagData* tagData)
    }
 }
 
+//// --------------------------------------------------------------------------
+bool MyTMSUUI_TagWidget::isChecked() const
+{
+   return myGuiPtr->myTagCheckbox->isChecked();
+}
+
+//// --------------------------------------------------------------------------
+QString MyTMSUUI_TagWidget::getTagName() const
+{
+   return myGuiPtr->myTagCheckbox->text();
+}
+
+//// --------------------------------------------------------------------------
+QString MyTMSUUI_TagWidget::getValue() const
+{
+   QString retval("");
+
+   if (myGuiPtr->myValueSelectBox->isEnabled())
+   {
+      QString currentText = myGuiPtr->myValueSelectBox->currentText();
+
+      retval = (currentText.isEmpty() ? myGuiPtr->myValueSelectBox->placeholderText() : currentText);
+   }
+
+   return retval;
+}
+
