@@ -5,11 +5,16 @@
 
 namespace MyTMSUUI_Tagged_NS
 {
-   enum ImpliedState
+   enum CheckedState
    {
-      NormalExplicitTag,
-      ImpliedTag,
-      BothTag
+      Unchecked,
+      SetExplicitTag,
+      SetImpliedTag,
+      SetBothTag,
+      ToBeUnchecked,
+      ToBeSetExplicitTag,
+      ToBeSetImpliedTag,
+      ToBeSetBothTag
    };
 }
 
@@ -17,12 +22,12 @@ struct MyTMSUUI_TaggedValue
 {
    QString myTagName;
    QString myValue;
-   MyTMSUUI_Tagged_NS::ImpliedState myImpliedState;
+   MyTMSUUI_Tagged_NS::CheckedState myCheckedState;
 
    MyTMSUUI_TaggedValue()
     : myTagName("")
     , myValue("")
-    , myImpliedState(MyTMSUUI_Tagged_NS::NormalExplicitTag)
+    , myCheckedState(MyTMSUUI_Tagged_NS::Unchecked)
    {
       //// Does nothing but initialize (yet)
    }

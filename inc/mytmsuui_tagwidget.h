@@ -1,6 +1,7 @@
 #ifndef MYTMSUUI_TAGWIDGET_H
 #define MYTMSUUI_TAGWIDGET_H
 
+#include "mytmsuui_taggedvalue.h"
 #include <QWidget>
 
 QT_BEGIN_NAMESPACE
@@ -27,15 +28,40 @@ class MyTMSUUI_TagWidget : public QWidget
 
    //// Accessors: Get
    bool isChecked() const;
-   //checkedState getCheckedState() const; //// TODO
+   MyTMSUUI_Tagged_NS::CheckedState getCheckedState() const;
    QString getTagName() const;
    QString getValue() const;
 
+   //// Accessors: Set
+   void setCheckedState(MyTMSUUI_Tagged_NS::CheckedState state, bool toggleIfNeeded = false);
+
+ public slots:
+   void resetUserClicked();
+
+ signals:
+   void tagToggled(const QString& tagName, bool byUserClick);
+
  protected:
+   void updateCheckboxStyle();
+
+ protected slots:
+   void doCheckboxClicked();
+   void doCheckboxToggled();
 
  private:
    Ui::MyTMSUUI_TagWidget* myGuiPtr;
+   MyTMSUUI_Tagged_NS::CheckedState myCheckedState;
+   bool myToggledByUserClick;
 
 };
+
+//// =======
+//// INLINES
+//// =======
+
+inline MyTMSUUI_Tagged_NS::CheckedState MyTMSUUI_TagWidget::getCheckedState() const
+{
+   return myCheckedState;
+}
 
 #endif // MYTMSUUI_TAGWIDGET_H

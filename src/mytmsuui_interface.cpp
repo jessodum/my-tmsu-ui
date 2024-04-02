@@ -500,8 +500,8 @@ void MyTMSUUI_Interface::handleFinishedRetrieveFileTags(int exitCode)
       QTextStream escapeCodeStream(&escapeCode);
       bool readingEscapeCode = false;
 
-      MyTMSUUI_Tagged_NS::ImpliedState currentImpliedState
-         = MyTMSUUI_Tagged_NS::NormalExplicitTag;
+      MyTMSUUI_Tagged_NS::CheckedState currentCheckedState
+         = MyTMSUUI_Tagged_NS::SetExplicitTag;
 
       for (char byte : outputBytes)
       {
@@ -515,7 +515,7 @@ void MyTMSUUI_Interface::handleFinishedRetrieveFileTags(int exitCode)
             else
             {
                MyTMSUUI_TaggedValue newTaggedValue;
-               newTaggedValue.myImpliedState = currentImpliedState;
+               newTaggedValue.myCheckedState = currentCheckedState;
 
                //// Parse tagLine
                QRegularExpressionMatch match = regex.match(tagLine);
@@ -537,7 +537,7 @@ void MyTMSUUI_Interface::handleFinishedRetrieveFileTags(int exitCode)
 
             //// Reset
             tagLine = "";
-            currentImpliedState = MyTMSUUI_Tagged_NS::NormalExplicitTag;
+            currentCheckedState = MyTMSUUI_Tagged_NS::SetExplicitTag;
          }
          else if (readingEscapeCode)
          {
@@ -548,11 +548,11 @@ void MyTMSUUI_Interface::handleFinishedRetrieveFileTags(int exitCode)
                //// Parse escapeCode
                if (escapeCode == "33")
                {
-                  currentImpliedState = MyTMSUUI_Tagged_NS::BothTag;
+                  currentCheckedState = MyTMSUUI_Tagged_NS::SetBothTag;
                }
                else if (escapeCode == "36")
                {
-                  currentImpliedState = MyTMSUUI_Tagged_NS::ImpliedTag;
+                  currentCheckedState = MyTMSUUI_Tagged_NS::SetImpliedTag;
                }
                //// else (escapeCode == "0") >>> "reset"
             }

@@ -28,6 +28,8 @@ ENSURE_DATA_PTR_COMMON(whynot) \
 MyTMSUUI_MainWindow::MyTMSUUI_MainWindow(QWidget* parent)
  : QMainWindow(parent)
  , myGuiPtr(new Ui::MyTMSUUI_MainWindow)
+ , myGuiStatusBarNormalLabel(nullptr)
+ , myGuiStatusBarErrorLabel(nullptr)
  , myDataPtr(nullptr)
 {
    //// Setup the UI widgets (based on the Designer "ui" file)
@@ -83,8 +85,8 @@ MyTMSUUI_MainWindow::MyTMSUUI_MainWindow(QWidget* parent)
                               this,   SLOT(applyButtonClicked()) );
 
    //// Check Box: Recurse
-   connect(myGuiPtr->myRecurseCheckbox, SIGNAL(   stateChanged(int)),
-                                  this,   SLOT(doUpdateRecurse(int)) );
+   connect(myGuiPtr->myRecurseCheckbox, SIGNAL(        toggled(bool)),
+                                  this,   SLOT(doUpdateRecurse(bool)) );
 
    //// Radio Button: Query
    connect(myGuiPtr->myQueryRadioButton, SIGNAL(          clicked()),
@@ -175,6 +177,8 @@ void MyTMSUUI_MainWindow::clearTagWidgets()
 
       idx--;
    }
+
+   return;
 }
 
 //// --------------------------------------------------------------------------
@@ -197,6 +201,11 @@ void MyTMSUUI_MainWindow::rebuildTagWidgets()
       newTagWidget->configure(tagData);
 
       tagWidgetsVLayout->addWidget(newTagWidget);
+
+      connect(newTagWidget, SIGNAL(      tagToggled(const QString&, bool)),
+                      this,   SLOT(handleTagToggled(const QString&, bool)) );
+      connect(newTagWidget, SIGNAL(      tagToggled(const QString&, bool)),
+              newTagWidget,   SLOT(resetUserClicked()) );
    }
 
    myGuiPtr->myTagsParentWidget->setLayout(tagWidgetsVLayout);
@@ -586,11 +595,11 @@ void MyTMSUUI_MainWindow::applyButtonClicked() //// TODO
 }
 
 //// --------------------------------------------------------------------------
-void MyTMSUUI_MainWindow::doUpdateRecurse(int newRecurseState)
+void MyTMSUUI_MainWindow::doUpdateRecurse(bool newRecurseState)
 {
    ENSURE_DATA_PTR("cannot set the 'recurse enabled' flag")
 
-   myDataPtr->myRecurseEnabled = (newRecurseState == Qt::Checked);
+   myDataPtr->myRecurseEnabled = newRecurseState;
    setStatusUpdating();
    updateInterfaceFilesList();
    return;
@@ -706,5 +715,11 @@ void MyTMSUUI_MainWindow::interfaceGoneIdle(MyTMSUUI_IF_NS::ProcState lastState,
    }
 
    return;
+}
+
+//// --------------------------------------------------------------------------
+void MyTMSUUI_MainWindow::handleTagToggled(const QString& tagName, bool byUserClick) //// TODO
+{
+   qDebug("TODO Tag toggled %s (byUserClick = %d)", qUtf8Printable(tagName), byUserClick);
 }
 

@@ -57,13 +57,14 @@ class MyTMSUUI_MainWindow : public QMainWindow
    void nextButtonClicked();
    void lastButtonClicked();
    void applyButtonClicked();
-   void doUpdateRecurse(int newRecurseState);
+   void doUpdateRecurse(bool newRecurseState);
    void radioQueryClicked();
    void radioSetTagsClicked();
    void radioAllClicked();
    void radioNoneClicked();
    void setStatusUpdating();
    void interfaceGoneIdle(MyTMSUUI_IF_NS::ProcState lastState, bool withError = false);
+   void handleTagToggled(const QString& tagName, bool byUserClick);
 
  private:
    Ui::MyTMSUUI_MainWindow* myGuiPtr;
