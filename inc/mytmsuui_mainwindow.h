@@ -55,6 +55,8 @@ class MyTMSUUI_MainWindow : public QMainWindow
    bool isCurrentImageAnim();
 
    TagWidgetList getTagWidgetList();
+   MyTMSUUI_TagWidget* findTagWidget(const QString& tagName);
+   void buildImpliedTagChainsList(QList<QString>* listToBuild, const QString& impliesTagName);
 
  protected slots:
    void doSelectBaseDir();
