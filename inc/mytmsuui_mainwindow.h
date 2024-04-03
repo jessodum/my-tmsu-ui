@@ -18,6 +18,10 @@ namespace MyTMSUUI_MainWin_NS
 
 //// Forward declarations
 class QLabel;
+class MyTMSUUI_TagWidget;
+
+//// Typedefs (type aliases)
+typedef QList<MyTMSUUI_TagWidget*> TagWidgetList;
 
 //// ==========================================================================
 
@@ -50,6 +54,8 @@ class MyTMSUUI_MainWindow : public QMainWindow
    void setNavEnabledStates();
    bool isCurrentImageAnim();
 
+   TagWidgetList getTagWidgetList();
+
  protected slots:
    void doSelectBaseDir();
    void firstButtonClicked();
@@ -71,6 +77,7 @@ class MyTMSUUI_MainWindow : public QMainWindow
    QLabel* myGuiStatusBarNormalLabel;
    QLabel* myGuiStatusBarErrorLabel;
    MyTMSUUI_Data* myDataPtr;
+   bool myToggleOtherTagsAllowed;
 };
 
 #endif //// MYTMSUUI_MAINWINDOW_H

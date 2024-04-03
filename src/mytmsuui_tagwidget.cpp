@@ -64,7 +64,7 @@ QString MyTMSUUI_TagWidget::getValue() const
 {
    QString retval("");
 
-   if (myGuiPtr->myValueSelectBox->isEnabled())
+   if (usesValues())
    {
       QString currentText = myGuiPtr->myValueSelectBox->currentText();
 
@@ -72,6 +72,25 @@ QString MyTMSUUI_TagWidget::getValue() const
    }
 
    return retval;
+}
+
+//// --------------------------------------------------------------------------
+void MyTMSUUI_TagWidget::setValue(const QString& value)
+{
+   if (usesValues())
+   {
+      myGuiPtr->myValueSelectBox->setCurrentText(value);
+   }
+   else
+   {
+      qWarning("Attempt to set a value on tag widget that doesn't use values is invalid");
+   }
+}
+
+//// --------------------------------------------------------------------------
+bool MyTMSUUI_TagWidget::usesValues() const
+{
+   return myGuiPtr->myValueSelectBox->isEnabled();
 }
 
 //// --------------------------------------------------------------------------
@@ -140,6 +159,12 @@ void MyTMSUUI_TagWidget::setCheckedState(MyTMSUUI_Tagged_NS::CheckedState state,
 void MyTMSUUI_TagWidget::resetUserClicked()
 {
    myToggledByUserClick = true;
+}
+
+//// --------------------------------------------------------------------------
+void MyTMSUUI_TagWidget::resetValuesSelect()
+{
+   myGuiPtr->myValueSelectBox->setCurrentIndex(-1);
 }
 
 //// --------------------------------------------------------------------------

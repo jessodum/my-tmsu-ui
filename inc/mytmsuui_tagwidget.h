@@ -31,12 +31,15 @@ class MyTMSUUI_TagWidget : public QWidget
    MyTMSUUI_Tagged_NS::CheckedState getCheckedState() const;
    QString getTagName() const;
    QString getValue() const;
+   bool usesValues() const;
 
    //// Accessors: Set
    void setCheckedState(MyTMSUUI_Tagged_NS::CheckedState state, bool toggleIfNeeded = false);
+   void setValue(const QString& value);
 
  public slots:
    void resetUserClicked();
+   void resetValuesSelect();
 
  signals:
    void tagToggled(const QString& tagName, bool byUserClick);

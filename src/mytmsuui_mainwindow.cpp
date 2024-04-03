@@ -24,6 +24,10 @@ ENSURE_DATA_PTR_COMMON(whynot) \
       return false; \
    }
 
+//// ==========================================================================
+//// Public
+//// ==========================================================================
+
 //// --------------------------------------------------------------------------
 MyTMSUUI_MainWindow::MyTMSUUI_MainWindow(QWidget* parent)
  : QMainWindow(parent)
@@ -31,6 +35,7 @@ MyTMSUUI_MainWindow::MyTMSUUI_MainWindow(QWidget* parent)
  , myGuiStatusBarNormalLabel(nullptr)
  , myGuiStatusBarErrorLabel(nullptr)
  , myDataPtr(nullptr)
+ , myToggleOtherTagsAllowed(true)
 {
    //// Setup the UI widgets (based on the Designer "ui" file)
    myGuiPtr->setupUi(this);
@@ -142,6 +147,10 @@ void MyTMSUUI_MainWindow::setDataObj(MyTMSUUI_Data* dataPtr)
    }
 }
 
+//// ==========================================================================
+//// Protected
+//// ==========================================================================
+
 //// --------------------------------------------------------------------------
 void MyTMSUUI_MainWindow::closeEvent(QCloseEvent* event)
 {
@@ -245,27 +254,10 @@ void MyTMSUUI_MainWindow::updateInterfaceQueryTagsList()
 
    myDataPtr->myInterface.myQueryTagsList.clear();
 
-   QVBoxLayout* tagWidgetsVLayout = (QVBoxLayout*)myGuiPtr->myTagsParentWidget->layout();
+   TagWidgetList twList = getTagWidgetList();
 
-   if (tagWidgetsVLayout == nullptr)
+   for (MyTMSUUI_TagWidget* tagWidget : twList)
    {
-      qWarning("No layout set for Tags Parent Widget");
-      return;
-   }
-   //// else
-
-   for (int idx = 0; idx < tagWidgetsVLayout->count(); ++idx)
-   {
-      QLayoutItem* layoutItem = tagWidgetsVLayout->itemAt(idx);
-      QWidget* widget = layoutItem->widget();
-
-      if (widget == nullptr)
-      {
-         continue;
-      }
-      //// else
-
-      MyTMSUUI_TagWidget* tagWidget = (MyTMSUUI_TagWidget*)widget;
       if (tagWidget->isChecked())
       {
          MyTMSUUI_TaggedValue newQueryTag;
@@ -340,7 +332,48 @@ void MyTMSUUI_MainWindow::setTaggedValuesInWidgets()
 {
    ENSURE_DATA_PTR("cannot access interface object")
 
-   //// TODO:
+   if (myGuiPtr->myQueryRadioButton->isChecked())
+   {
+      qWarning("Attempt to set tagged values while 'Query' radio button set is invalid");
+      return;
+   }
+
+   //// Prevent handleTagToggled from updating other tags' checkmarks during this procedure.
+   myToggleOtherTagsAllowed = false;
+
+   TagWidgetList tagWidgetsList = getTagWidgetList();
+
+   //// First uncheck all tag widgets
+   for (MyTMSUUI_TagWidget* tagWidget : tagWidgetsList)
+   {
+      tagWidget->setCheckedState(MyTMSUUI_Tagged_NS::Unchecked, true);
+      if (tagWidget->usesValues())
+      {
+         tagWidget->resetValuesSelect();
+      }
+   }
+
+   for (MyTMSUUI_TaggedValue taggedVal : myDataPtr->myCurrentImgTaggedValList)
+   {
+      for (MyTMSUUI_TagWidget* tagWidget : tagWidgetsList)
+      {
+         if (tagWidget->getTagName() == taggedVal.myTagName)
+         {
+            tagWidget->setCheckedState(taggedVal.myCheckedState, true);
+            if ( tagWidget->usesValues() && !taggedVal.myValue.isEmpty() )
+            {
+               tagWidget->setValue(taggedVal.myValue);
+            }
+
+            //// Found it; stop searching
+            break;
+         }
+      }
+   }
+
+   myToggleOtherTagsAllowed = true; //// Restore
+
+   return;
 }
 
 //// --------------------------------------------------------------------------
@@ -514,6 +547,40 @@ bool MyTMSUUI_MainWindow::isCurrentImageAnim()
    imgReader.setDecideFormatFromContent(true);
    return ( imgReader.supportsAnimation() && (imgReader.imageCount() > 1) );
 }
+
+//// --------------------------------------------------------------------------
+TagWidgetList MyTMSUUI_MainWindow::getTagWidgetList()
+{
+   TagWidgetList retList;
+   QVBoxLayout* tagWidgetsVLayout = (QVBoxLayout*)myGuiPtr->myTagsParentWidget->layout();
+
+   if (tagWidgetsVLayout == nullptr)
+   {
+      qWarning("No layout set for Tags Parent Widget");
+      return retList; //// Empty list
+   }
+   //// else
+
+   for (int idx = 0; idx < tagWidgetsVLayout->count(); ++idx)
+   {
+      QLayoutItem* layoutItem = tagWidgetsVLayout->itemAt(idx);
+      QWidget* widget = layoutItem->widget();
+
+      if (widget == nullptr)
+      {
+         continue;
+      }
+      //// else
+
+      retList << (MyTMSUUI_TagWidget*)widget;
+   }
+
+   return retList;
+}
+
+//// ==========================================================================
+//// Protected Slots
+//// ==========================================================================
 
 //// --------------------------------------------------------------------------
 void MyTMSUUI_MainWindow::doSelectBaseDir()
@@ -721,5 +788,9 @@ void MyTMSUUI_MainWindow::interfaceGoneIdle(MyTMSUUI_IF_NS::ProcState lastState,
 void MyTMSUUI_MainWindow::handleTagToggled(const QString& tagName, bool byUserClick) //// TODO
 {
    qDebug("TODO Tag toggled %s (byUserClick = %d)", qUtf8Printable(tagName), byUserClick);
+   if (!myToggleOtherTagsAllowed)
+   {
+      //// TODO: return?
+   }
 }
 
