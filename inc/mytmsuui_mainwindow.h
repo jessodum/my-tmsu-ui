@@ -68,6 +68,7 @@ class MyTMSUUI_MainWindow : public QMainWindow
    void doUpdateRecurse(bool newRecurseState);
    void radioQueryClicked();
    void radioSetTagsClicked();
+   void radioUntaggedClicked();
    void radioAllClicked();
    void radioNoneClicked();
    void setStatusUpdating();

@@ -4,6 +4,7 @@
 MyTMSUUI_Data::MyTMSUUI_Data()
  : myCurrentBaseDir()
  , myRecurseEnabled(false)
+ , myEmptyQueryAction(MyTMSUUI_IF_NS::RetrieveNone)
  , myCurrentFilesList()
  , myCurrentImageNum(0)
  , myCurrentImgTaggedValList()

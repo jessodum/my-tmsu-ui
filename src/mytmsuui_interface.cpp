@@ -98,6 +98,8 @@ void MyTMSUUI_Interface::retrieveFilesList(bool queryTagsSpecified)
       QStringList tmsuCmdArgs;
       tmsuCmdArgs << "files" << "--file" << "--path=.";
 
+      //// TODO-FUTURE: Handle complex queries ( or, not, ()'s )
+      ////              (see 'tmsu help files' for full list of operators)
       for (MyTMSUUI_TaggedValue queryTag : myQueryTagsList)
       {
          QString queryArg = queryTag.myTagName;
@@ -114,7 +116,25 @@ void MyTMSUUI_Interface::retrieveFilesList(bool queryTagsSpecified)
       myIFProc.start(QIODeviceBase::ReadOnly);
       return;
    }
-   //// else
+   else if (myDataPtr->myEmptyQueryAction == MyTMSUUI_IF_NS::RetrieveUntagged)
+   {
+      ensureNotRunning();
+
+      QStringList tmsuCmdArgs;
+      tmsuCmdArgs << "untagged" << "--no-dereference";
+
+      if (!useRecursion)
+      {
+         tmsuCmdArgs << "--directory";
+      }
+
+      myIFProc.setArguments(tmsuCmdArgs);
+
+      myIFProc.start(QIODeviceBase::ReadOnly);
+      return;
+   }
+   //// else (Empty Query Action == RetrieveAll,
+   ////       because MainWindow wouldn't call us for RetrieveNone)
 
    QStringList newFilesList;
    QDir tmpBaseDir(myDataPtr->myCurrentBaseDir);

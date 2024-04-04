@@ -15,6 +15,7 @@ class MyTMSUUI_Data
    //// Properities
    QDir myCurrentBaseDir;
    bool myRecurseEnabled;
+   MyTMSUUI_IF_NS::EmptyQueryAction myEmptyQueryAction;
    QStringList myCurrentFilesList;
    qsizetype myCurrentImageNum;
    QList<MyTMSUUI_TaggedValue> myCurrentImgTaggedValList;

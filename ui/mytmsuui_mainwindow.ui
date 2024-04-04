@@ -301,16 +301,13 @@ QRadioButton::indicator:checked{image: url(:radio/img/radio_checked_blue.png);}<
           </property>
           <layout class="QVBoxLayout" name="myRetrieveOptionsLayout">
            <item>
-            <widget class="QRadioButton" name="myRetrieveNoneRadioButton">
+            <widget class="QRadioButton" name="myRetrieveUntaggedRadioButton">
              <property name="styleSheet">
               <string notr="true">QRadioButton::indicator:unchecked{image: url(:radio/img/radio_unchecked_grey.png);}
 QRadioButton::indicator:checked{image: url(:radio/img/radio_checked_blue.png);}</string>
              </property>
              <property name="text">
-              <string>None</string>
-             </property>
-             <property name="checked">
-              <bool>true</bool>
+              <string>Untagged Only</string>
              </property>
             </widget>
            </item>
@@ -322,6 +319,20 @@ QRadioButton::indicator:checked{image: url(:radio/img/radio_checked_blue.png);}<
              </property>
              <property name="text">
               <string>All</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QRadioButton" name="myRetrieveNoneRadioButton">
+             <property name="styleSheet">
+              <string notr="true">QRadioButton::indicator:unchecked{image: url(:radio/img/radio_unchecked_grey.png);}
+QRadioButton::indicator:checked{image: url(:radio/img/radio_checked_blue.png);}</string>
+             </property>
+             <property name="text">
+              <string>None</string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
              </property>
             </widget>
            </item>
@@ -367,7 +378,7 @@ QRadioButton::indicator:checked{image: url(:radio/img/radio_checked_blue.png);}<
              <x>0</x>
              <y>0</y>
              <width>313</width>
-             <height>673</height>
+             <height>644</height>
             </rect>
            </property>
           </widget>

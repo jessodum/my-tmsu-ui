@@ -101,6 +101,10 @@ MyTMSUUI_MainWindow::MyTMSUUI_MainWindow(QWidget* parent)
    connect(myGuiPtr->mySetTagsRadioButton, SIGNAL(            clicked()),
                                      this,   SLOT(radioSetTagsClicked()) );
 
+   //// Radio Button: (Retrieve) Untagged
+   connect(myGuiPtr->myRetrieveUntaggedRadioButton, SIGNAL(             clicked()),
+                                              this,   SLOT(radioUntaggedClicked()) );
+
    //// Radio Button: (Retrieve) All
    connect(myGuiPtr->myRetrieveAllRadioButton, SIGNAL(        clicked()),
                                          this,   SLOT(radioAllClicked()) );
@@ -232,7 +236,7 @@ void MyTMSUUI_MainWindow::updateInterfaceFilesList()
       updateInterfaceQueryTagsList();
       queryTagsSpecified = (myDataPtr->myInterface.myQueryTagsList.count() > 0);
 
-      if (!queryTagsSpecified && myGuiPtr->myRetrieveNoneRadioButton->isChecked())
+      if ( !queryTagsSpecified && (myDataPtr->myEmptyQueryAction == MyTMSUUI_IF_NS::RetrieveNone) )
       {
          myDataPtr->myCurrentFilesList.clear();
          //// TODO: Clear file list, etc?
@@ -713,7 +717,7 @@ void MyTMSUUI_MainWindow::applyButtonClicked()
       updateInterfaceQueryTagsList();
       bool queryTagsSpecified = (myDataPtr->myInterface.myQueryTagsList.count() > 0);
 
-      if (!queryTagsSpecified && myGuiPtr->myRetrieveNoneRadioButton->isChecked())
+      if ( !queryTagsSpecified && (myDataPtr->myEmptyQueryAction == MyTMSUUI_IF_NS::RetrieveNone) )
       {
          myDataPtr->myCurrentFilesList.clear();
          //// TODO: Clear file list, etc?
@@ -784,16 +788,26 @@ void MyTMSUUI_MainWindow::radioSetTagsClicked()
 }
 
 //// --------------------------------------------------------------------------
-void MyTMSUUI_MainWindow::radioAllClicked() //// TODO
+void MyTMSUUI_MainWindow::radioUntaggedClicked()
 {
-   qDebug("TODO radioAllClicked");
+   ENSURE_DATA_PTR("cannot set the 'empty query action' flag")
+   myDataPtr->myEmptyQueryAction = MyTMSUUI_IF_NS::RetrieveUntagged;
    return;
 }
 
 //// --------------------------------------------------------------------------
-void MyTMSUUI_MainWindow::radioNoneClicked() //// TODO
+void MyTMSUUI_MainWindow::radioAllClicked()
 {
-   qDebug("TODO radioNoneClicked");
+   ENSURE_DATA_PTR("cannot set the 'empty query action' flag")
+   myDataPtr->myEmptyQueryAction = MyTMSUUI_IF_NS::RetrieveAll;
+   return;
+}
+
+//// --------------------------------------------------------------------------
+void MyTMSUUI_MainWindow::radioNoneClicked()
+{
+   ENSURE_DATA_PTR("cannot set the 'empty query action' flag")
+   myDataPtr->myEmptyQueryAction = MyTMSUUI_IF_NS::RetrieveNone;
    return;
 }
 

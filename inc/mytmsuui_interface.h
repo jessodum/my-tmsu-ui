@@ -21,6 +21,13 @@ namespace MyTMSUUI_IF_NS
       BuildFilesList,
       RetrieveFileTags
    };
+
+   enum EmptyQueryAction
+   {
+      RetrieveNone,
+      RetrieveAll,
+      RetrieveUntagged
+   };
 }
 
 //// =======
