@@ -702,9 +702,34 @@ void MyTMSUUI_MainWindow::lastButtonClicked()
 }
 
 //// --------------------------------------------------------------------------
-void MyTMSUUI_MainWindow::applyButtonClicked() //// TODO
+void MyTMSUUI_MainWindow::applyButtonClicked()
 {
-   qDebug("TODO applyButtonClicked");
+   ENSURE_DATA_PTR("cannot access interface object")
+
+   //// Which mode? Query or Set?
+   if (myGuiPtr->myQueryRadioButton->isChecked())
+   {
+      //// Query mode
+      updateInterfaceQueryTagsList();
+      bool queryTagsSpecified = (myDataPtr->myInterface.myQueryTagsList.count() > 0);
+
+      if (!queryTagsSpecified && myGuiPtr->myRetrieveNoneRadioButton->isChecked())
+      {
+         myDataPtr->myCurrentFilesList.clear();
+         //// TODO: Clear file list, etc?
+         setNavEnabledStates();
+         beginDisplayList(true);
+         return;
+      }
+      //// else
+
+      myDataPtr->myInterface.retrieveFilesList(queryTagsSpecified);
+   }
+   else
+   {
+      //// TODO: Set mode
+   }
+
    return;
 }
 

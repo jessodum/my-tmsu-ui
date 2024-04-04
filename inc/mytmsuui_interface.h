@@ -69,6 +69,7 @@ class MyTMSUUI_Interface : public QObject
    void handleFinishedTagsByValueDBQuery(int exitCode);
    void handleFinishedImpliesDBQuery(int exitCode);
    void handleFinishedRetrieveFileTags(int exitCode);
+   void handleFinishedBuildFilesList(int exitCode);
 
    void goIdle(bool withError = false);
 
