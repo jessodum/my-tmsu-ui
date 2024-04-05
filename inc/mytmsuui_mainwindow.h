@@ -52,11 +52,12 @@ class MyTMSUUI_MainWindow : public QMainWindow
    void goToLastImage();
    void updateUiForCurrentImage();
    void setNavEnabledStates();
-   bool isCurrentImageAnim();
+   void uncheckAllTagWidgets();
+   void buildImpliedTagChainsList(QList<QString>* listToBuild, const QString& impliesTagName);
 
+   bool isCurrentImageAnim();
    TagWidgetList getTagWidgetList();
    MyTMSUUI_TagWidget* findTagWidget(const QString& tagName);
-   void buildImpliedTagChainsList(QList<QString>* listToBuild, const QString& impliesTagName);
 
  protected slots:
    void doSelectBaseDir();

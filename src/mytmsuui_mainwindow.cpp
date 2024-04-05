@@ -203,9 +203,15 @@ void MyTMSUUI_MainWindow::rebuildTagWidgets()
    clearTagWidgets();
 
    size_t widgetNum = 0;
+   bool setNewLayout = false;
 
    MyTMSUUI_TagWidget* newTagWidget;
-   QVBoxLayout* tagWidgetsVLayout = new QVBoxLayout;
+   QVBoxLayout* tagWidgetsVLayout = (QVBoxLayout*)myGuiPtr->myTagsParentWidget->layout();
+   if (tagWidgetsVLayout == nullptr)
+   {
+      tagWidgetsVLayout = new QVBoxLayout;
+      setNewLayout = true;
+   }
 
    //// Iterate over list of tags from Data Ptr
    for (MyTMSUUI_TagData* tagData : myDataPtr->myTagsList)
@@ -223,7 +229,10 @@ void MyTMSUUI_MainWindow::rebuildTagWidgets()
               newTagWidget,   SLOT(resetUserClicked()) );
    }
 
-   myGuiPtr->myTagsParentWidget->setLayout(tagWidgetsVLayout);
+   if (setNewLayout)
+   {
+      myGuiPtr->myTagsParentWidget->setLayout(tagWidgetsVLayout);
+   }
 }
 
 //// --------------------------------------------------------------------------
@@ -241,7 +250,6 @@ void MyTMSUUI_MainWindow::updateInterfaceFilesList()
       if ( !queryTagsSpecified && (myDataPtr->myEmptyQueryAction == MyTMSUUI_IF_NS::RetrieveNone) )
       {
          myDataPtr->myCurrentFilesList.clear();
-         //// TODO: Clear file list, etc?
          setNavEnabledStates();
          beginDisplayList(true);
          return;
@@ -314,6 +322,8 @@ void MyTMSUUI_MainWindow::beginDisplayList(bool emptyListIsOK)
 
    if (myDataPtr->myCurrentFilesList.isEmpty())
    {
+      myGuiPtr->myImageWidget->clear();
+      uncheckAllTagWidgets();
       if (emptyListIsOK)
       {
          myGuiStatusBarNormalLabel->setText("No images due to no tags in query");
@@ -537,6 +547,50 @@ void MyTMSUUI_MainWindow::setNavEnabledStates()
 }
 
 //// --------------------------------------------------------------------------
+void MyTMSUUI_MainWindow::uncheckAllTagWidgets()
+{
+   TagWidgetList tagWidgetsList = getTagWidgetList();
+   for (MyTMSUUI_TagWidget* tagWidget : tagWidgetsList)
+   {
+      tagWidget->setCheckedState(MyTMSUUI_Tagged_NS::Unchecked, true);
+      if (tagWidget->usesValues())
+      {
+         tagWidget->resetValuesSelect();
+      }
+   }
+
+   return;
+}
+
+//// --------------------------------------------------------------------------
+void MyTMSUUI_MainWindow::buildImpliedTagChainsList(QList<QString>* listToBuild,
+                                                    const QString& impliesTagName)
+{
+   ENSURE_DATA_PTR("cannot access tags list")
+
+   MyTMSUUI_TagData* tData
+      = MyTMSUUI_TagData::findInListOfPointers(myDataPtr->myTagsList, impliesTagName);
+
+   if (tData == nullptr)
+   {
+      qCritical("Failed to get tag data for %s", qUtf8Printable(impliesTagName));
+      return;
+   }
+
+   for(MyTMSUUI_TagData* impliedTagData : tData->getImpliesList())
+   {
+      QString impliedTagName = impliedTagData->getTagName();
+      if (!listToBuild->contains(impliedTagName))
+      {
+         listToBuild->append(impliedTagName);
+         buildImpliedTagChainsList(listToBuild, impliedTagName);
+      }
+   }
+
+   return;
+}
+
+//// --------------------------------------------------------------------------
 bool MyTMSUUI_MainWindow::isCurrentImageAnim()
 {
    ENSURE_DATA_PTR_RETURN_FALSE("cannot access image data")
@@ -601,34 +655,6 @@ MyTMSUUI_TagWidget* MyTMSUUI_MainWindow::findTagWidget(const QString& tagName)
    }
 
    return retval;
-}
-
-//// --------------------------------------------------------------------------
-void MyTMSUUI_MainWindow::buildImpliedTagChainsList(QList<QString>* listToBuild,
-                                                    const QString& impliesTagName)
-{
-   ENSURE_DATA_PTR("cannot access tags list")
-
-   MyTMSUUI_TagData* tData
-      = MyTMSUUI_TagData::findInListOfPointers(myDataPtr->myTagsList, impliesTagName);
-
-   if (tData == nullptr)
-   {
-      qCritical("Failed to get tag data for %s", qUtf8Printable(impliesTagName));
-      return;
-   }
-
-   for(MyTMSUUI_TagData* impliedTagData : tData->getImpliesList())
-   {
-      QString impliedTagName = impliedTagData->getTagName();
-      if (!listToBuild->contains(impliedTagName))
-      {
-         listToBuild->append(impliedTagName);
-         buildImpliedTagChainsList(listToBuild, impliedTagName);
-      }
-   }
-
-   return;
 }
 
 //// ==========================================================================
@@ -722,7 +748,6 @@ void MyTMSUUI_MainWindow::applyButtonClicked()
       if ( !queryTagsSpecified && (myDataPtr->myEmptyQueryAction == MyTMSUUI_IF_NS::RetrieveNone) )
       {
          myDataPtr->myCurrentFilesList.clear();
-         //// TODO: Clear file list, etc?
          setNavEnabledStates();
          beginDisplayList(true);
          return;
@@ -812,20 +837,10 @@ void MyTMSUUI_MainWindow::radioQueryClicked()
 {
    myGuiPtr->myRetrieveOptionsGroupBox->setEnabled(true);
 
-   //// Uncheck all tag widgets
-
    //// Prevent handleTagToggled from updating other tags' checkmarks during Query mode.
    myToggleOtherTagsAllowed = false;
 
-   TagWidgetList tagWidgetsList = getTagWidgetList();
-   for (MyTMSUUI_TagWidget* tagWidget : tagWidgetsList)
-   {
-      tagWidget->setCheckedState(MyTMSUUI_Tagged_NS::Unchecked, true);
-      if (tagWidget->usesValues())
-      {
-         tagWidget->resetValuesSelect();
-      }
-   }
+   uncheckAllTagWidgets();
 
    return;
 }
@@ -897,8 +912,11 @@ void MyTMSUUI_MainWindow::interfaceGoneIdle(MyTMSUUI_IF_NS::ProcState lastState,
          if (withError)
          {
             clearTagWidgets();
-            //// TODO: Clear file list, etc?
+            myDataPtr->myCurrentFilesList.clear();
             setNavEnabledStates();
+            myGuiPtr->myImageWidget->clear();
+            myGuiStatusBarNormalLabel->setText("");
+            myGuiPtr->myApplyButton->setEnabled(false);
          }
          else
          {
@@ -918,14 +936,18 @@ void MyTMSUUI_MainWindow::interfaceGoneIdle(MyTMSUUI_IF_NS::ProcState lastState,
          rebuildTagWidgets();
 
          //// Update list of image files based on new directory/database
+         myGuiPtr->myApplyButton->setEnabled(true);
          updateInterfaceFilesList();
          break;
 
       case MyTMSUUI_IF_NS::BuildFilesList:
          if (withError)
          {
-            //// TODO: Clear file list, etc?
+            myDataPtr->myCurrentFilesList.clear();
             setNavEnabledStates();
+            uncheckAllTagWidgets();
+            myGuiPtr->myImageWidget->clear();
+            myGuiStatusBarNormalLabel->setText("");
          }
          else
          {
