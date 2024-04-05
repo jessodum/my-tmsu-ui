@@ -12,7 +12,9 @@ RCC_DIR = src
 
 QT = core gui widgets
 
-CONFIG += debug ##TODO-FINAL: comment out when done
+## Uncomment and re-qmake, re-make to enable qDebug().
+## (But see also ~/.config/QtProject/qtlogging.ini)
+#CONFIG += debug
 
 QMAKE_CLEAN += $(TARGET)
 
