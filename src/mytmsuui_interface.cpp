@@ -11,6 +11,8 @@
 MyTMSUUI_Interface::MyTMSUUI_Interface(QObject* parent)
  : QObject(parent)
  , myQueryTagsList()
+ , myTagsToSetList()
+ , myTagsToUnsetList()
  , myDataPtr(nullptr)
  , myIFProc()
  , myState(MyTMSUUI_IF_NS::Idle)
@@ -43,7 +45,7 @@ void MyTMSUUI_Interface::ensureNotRunning()
    }
 
    //// else
-   //// What's still running? (TODO-FUTURE: Check myState?)
+   //// What's still running? (TODO-MAINT: Check myState?)
 
    //// End it
    myIFProc.terminate();
@@ -190,6 +192,77 @@ void MyTMSUUI_Interface::retrieveFileTags(const QString& filename)
 }
 
 //// --------------------------------------------------------------------------
+void MyTMSUUI_Interface::setTags(const QString& filename)
+{
+   myState = MyTMSUUI_IF_NS::SetTags;
+
+   //// Make sure there are tags to set
+   if (myTagsToSetList.size() == 0)
+   {
+      //// No tags to set. Any tags to unset?
+      if (myTagsToUnsetList.size() > 0)
+      {
+         unsetTags(filename);
+      }
+      else
+      {
+         myErrorStr = "No tags to set or unset";
+         goIdle(true);
+      }
+      return;
+   }
+   //// else
+
+   ensureNotRunning();
+
+   QStringList tmsuCmdArgs;
+   tmsuCmdArgs << "tag" << filename;
+
+   for (QString tag : myTagsToSetList)
+   {
+      tmsuCmdArgs << tag;
+   }
+
+   myIFProc.setArguments(tmsuCmdArgs);
+
+   myIFProc.start(QIODeviceBase::ReadOnly);
+
+   return;
+}
+
+//// --------------------------------------------------------------------------
+void MyTMSUUI_Interface::unsetTags(const QString& filename)
+{
+   myState = MyTMSUUI_IF_NS::UnsetTags;
+
+   //// Make sure there are tags to set
+   if (myTagsToUnsetList.size() == 0)
+   {
+      //// No tags to unset. This is probably okay.
+      myErrorStr = "";
+      goIdle();
+      return;
+   }
+   //// else
+
+   ensureNotRunning();
+
+   QStringList tmsuCmdArgs;
+   tmsuCmdArgs << "untag" << filename;
+
+   for (QString tag : myTagsToUnsetList)
+   {
+      tmsuCmdArgs << tag;
+   }
+
+   myIFProc.setArguments(tmsuCmdArgs);
+
+   myIFProc.start(QIODeviceBase::ReadOnly);
+
+   return;
+}
+
+//// --------------------------------------------------------------------------
 void MyTMSUUI_Interface::doTagsDBQuery()
 {
    ensureNotRunning();
@@ -273,7 +346,7 @@ void MyTMSUUI_Interface::handleFinishedProc(int exitCode, QProcess::ExitStatus h
 {
    if (howExited == QProcess::CrashExit)
    {
-      //// TODO-FUTURE: Handle crashed "tmsu"?
+      //// TODO-MAINT: Handle crashed "tmsu"?
       return;
    }
 
@@ -305,6 +378,14 @@ void MyTMSUUI_Interface::handleFinishedProc(int exitCode, QProcess::ExitStatus h
 
       case MyTMSUUI_IF_NS::BuildFilesList:
          handleFinishedBuildFilesList(exitCode);
+         break;
+
+      case MyTMSUUI_IF_NS::SetTags:
+         handleFinishedSetTags(exitCode);
+         break;
+
+      case MyTMSUUI_IF_NS::UnsetTags:
+         handleFinishedUnsetTags(exitCode);
          break;
 
       default:
@@ -670,6 +751,67 @@ void MyTMSUUI_Interface::handleFinishedBuildFilesList(int exitCode)
    }
 
    myDataPtr->myCurrentFilesList = newFilesList;
+   goIdle();
+   return;
+}
+
+//// --------------------------------------------------------------------------
+void MyTMSUUI_Interface::handleFinishedSetTags(int exitCode)
+{
+   if (exitCode != 0)
+   {
+      myErrorStr = "Error setting tags";
+      //// TODO-MAINT: Get error message from stderr?
+      ////   (NOTE: There may have been a partial command success in setting tags)
+      goIdle(true);
+      return;
+   }
+   //// else
+
+   //// Command Success
+   myErrorStr = "";
+
+   //// Shouldn't be anything to read from stdout.
+   //// Move on to unsetting tags...
+   if (myTagsToUnsetList.size() == 0)
+   {
+      //// No tags to unset... all done!
+      goIdle();
+      return;
+   }
+   //// else
+
+   if (myDataPtr == nullptr)
+   {
+      myErrorStr = "Cannot get current image filename (no data object)";
+      goIdle(true);
+      return;
+   }
+   //// else
+
+   unsetTags(myDataPtr->getCurrentFilename());
+   return;
+}
+
+//// --------------------------------------------------------------------------
+void MyTMSUUI_Interface::handleFinishedUnsetTags(int exitCode)
+{
+   if (exitCode != 0)
+   {
+      //// This is likely to happen when ToBeSetImpliesTag is from a
+      //// ToBeSetExplicitTag, rather than from a ToBeUnchecked causing
+      //// SetBothTag --> ToBeSetImpliesTag.
+
+      //// In other words, it might not be a real error.
+
+      qWarning("Error unsetting tags");
+      //// TODO-MAINT: Get error message from stderr?
+      ////   (NOTE: There may have been a partial command success in unsetting tags)
+   }
+
+   myErrorStr = "";
+
+   //// Shouldn't need to read anything from stdout.
    goIdle();
    return;
 }

@@ -37,6 +37,8 @@ MyTMSUUI_MainWindow::MyTMSUUI_MainWindow(QWidget* parent)
  , myDataPtr(nullptr)
  , myToggleOtherTagsAllowed(true)
 {
+   //// TODO-FUTURE: Add feature to hide unchecked TagWidgets.
+
    //// Setup the UI widgets (based on the Designer "ui" file)
    myGuiPtr->setupUi(this);
 
@@ -731,7 +733,64 @@ void MyTMSUUI_MainWindow::applyButtonClicked()
    }
    else
    {
-      //// TODO: Set mode
+      if (myDataPtr->getCurrentFilename().isEmpty())
+      {
+         //// TODO-MAINT: Set status bar error string?
+         qWarning("No current image file to apply tags");
+         return;
+      }
+      //// else
+
+      //// Build lists of tags to set/unset
+      QStringList tagsToSet;
+      QStringList tagsToUnset;
+      for (MyTMSUUI_TagWidget* tagWidget : getTagWidgetList())
+      {
+         MyTMSUUI_Tagged_NS::CheckedState checkedState = tagWidget->getCheckedState();
+         if (checkedState == MyTMSUUI_Tagged_NS::ToBeSetExplicitTag || checkedState == MyTMSUUI_Tagged_NS::ToBeSetBothTag)
+         {
+            QString tagToSetString = tagWidget->getTagName();
+            if (tagWidget->usesValues())
+            {
+               if (tagWidget->getValue() == tagWidget->getValuePlaceholderText())
+               {
+                  qCritical("Cannot set tag %s=%s <---PLACEHOLDER TEXT", qUtf8Printable(tagToSetString), qUtf8Printable(tagWidget->getValue()));
+                  continue;
+               }
+               else
+               {
+                  tagToSetString += "=";
+                  tagToSetString += tagWidget->getValue();
+               }
+            }
+            tagsToSet << tagToSetString;
+         }
+         else if (checkedState == MyTMSUUI_Tagged_NS::ToBeUnchecked || checkedState == MyTMSUUI_Tagged_NS::ToBeSetImpliedTag)
+         {
+            QString tagToUnsetString = tagWidget->getTagName();
+            if (tagWidget->usesValues())
+            {
+               if (tagWidget->getValue() == tagWidget->getValuePlaceholderText())
+               {
+                  qCritical("Cannot unset tag %s=%s <---PLACEHOLDER TEXT", qUtf8Printable(tagToUnsetString), qUtf8Printable(tagWidget->getValue()));
+                  continue;
+               }
+               else
+               {
+                  tagToUnsetString += "=";
+                  tagToUnsetString += tagWidget->getValue();
+               }
+            }
+            tagsToUnset << tagToUnsetString;
+         }
+      }
+
+      myDataPtr->myInterface.myTagsToSetList = tagsToSet;
+      myDataPtr->myInterface.myTagsToUnsetList = tagsToUnset;
+
+      //// Begin tag set/unset sequence with setting tags
+      //// (setTags() and unsetTags() will appropriately handle their empty lists)
+      myDataPtr->myInterface.setTags(myDataPtr->getCurrentFilename());
    }
 
    return;
@@ -886,6 +945,20 @@ void MyTMSUUI_MainWindow::interfaceGoneIdle(MyTMSUUI_IF_NS::ProcState lastState,
          setTaggedValuesInWidgets();
          break;
 
+      case MyTMSUUI_IF_NS::SetTags:
+      case MyTMSUUI_IF_NS::UnsetTags:
+         if (withError)
+         {
+            //// TODO-MAINT: handle RetrieveFileTags withError?
+         }
+         else
+         {
+            statusBar()->showMessage("Applied", 4000); //// 4 seconds
+         }
+
+         myDataPtr->myInterface.retrieveFileTags(myDataPtr->getCurrentFilename());
+         break;
+
       default:
          break;
    }
@@ -905,16 +978,14 @@ void MyTMSUUI_MainWindow::handleTagToggled(const QString& tagName, bool byUserCl
       }
       else
       {
-         //// TODO-MAINT: Remove debug log
-         qDebug("handleTagToggled called for %s (byUserClick = %d) but ToggleOtherTagsAllowed = false; issue?", qUtf8Printable(tagName), byUserClick);
+         //// TODO-MAINT: Is this condition an issue?
          return;
       }
    }
 
    if (!byUserClick)
    {
-      //// TODO-MAINT: Remove debug log
-      qDebug("Not doing handleTagToggled for tag %s (not called by user click); issue?", qUtf8Printable(tagName));
+      //// TODO-MAINT: Is this condition an issue?
       return;
    }
    //// else
@@ -982,8 +1053,6 @@ void MyTMSUUI_MainWindow::handleTagToggled(const QString& tagName, bool byUserCl
 
    for (QString impliedTagName : impliedTagNamesToUpdateList)
    {
-      //// TODO-MAINT: Remove debug log
-      qDebug("Implied tag to update: %s", qUtf8Printable(impliedTagName));
       MyTMSUUI_TagWidget* tWidget = findTagWidget(impliedTagName);
       if (tWidget != nullptr)
       {
@@ -1000,8 +1069,7 @@ void MyTMSUUI_MainWindow::handleTagToggled(const QString& tagName, bool byUserCl
                  tWidget->setCheckedState(MyTMSUUI_Tagged_NS::ToBeSetBothTag, true);
                  break;
                 default:
-                 //// TODO-MAINT: Remove debug log
-                 qDebug("How to handle implied tag %d when user clicks GRAY --> GREEN ???", tWidget->getCheckedState());
+                 //// TODO-MAINT: Is this condition an issue?
                  break;
                }
                break;
@@ -1016,8 +1084,7 @@ void MyTMSUUI_MainWindow::handleTagToggled(const QString& tagName, bool byUserCl
                  tWidget->setCheckedState(MyTMSUUI_Tagged_NS::SetBothTag, true);
                  break;
                 default:
-                 //// TODO-MAINT: Remove debug log
-                 qDebug("How to handle implied tag %d when user clicks RED --> BLUE ???", tWidget->getCheckedState());
+                 //// TODO-MAINT: Is this condition an issue?
                  break;
                }
                break;
@@ -1032,8 +1099,7 @@ void MyTMSUUI_MainWindow::handleTagToggled(const QString& tagName, bool byUserCl
                  tWidget->setCheckedState(MyTMSUUI_Tagged_NS::ToBeSetImpliedTag, true);
                  break;
                 default:
-                 //// TODO-MAINT: Remove debug log
-                 qDebug("How to handle implied tag %d when user clicks BLUE --> RED ???", tWidget->getCheckedState());
+                 //// TODO-MAINT: Is this condition an issue?
                  break;
                }
                break;
@@ -1048,16 +1114,14 @@ void MyTMSUUI_MainWindow::handleTagToggled(const QString& tagName, bool byUserCl
                  tWidget->setCheckedState(MyTMSUUI_Tagged_NS::ToBeSetExplicitTag, true);
                  break;
                 default:
-                 //// TODO-MAINT: Remove debug log
-                 qDebug("How to handle implied tag %d when user clicks GREEN --> GRAY ???", tWidget->getCheckedState());
+                 //// TODO-MAINT: Is this condition an issue?
                  break;
                }
                break;
 
             case MyTMSUUI_Tagged_NS::ToBeSetBothTag : //// PURPLE/PINK --> YELLOW
             case MyTMSUUI_Tagged_NS::ToBeSetImpliedTag : //// ORANGE/YELLOW --> PINK
-               //// TODO-MAINT: Remove debug log
-               qDebug("How to handle implied tag(s) when user clicks ??? --> %d ???", tagWidget->getCheckedState());
+               //// TODO-MAINT: Is this condition an issue?
                break;
 
             default:

@@ -75,6 +75,12 @@ QString MyTMSUUI_TagWidget::getValue() const
 }
 
 //// --------------------------------------------------------------------------
+QString MyTMSUUI_TagWidget::getValuePlaceholderText() const
+{
+   return usesValues() ? myGuiPtr->myValueSelectBox->placeholderText() : "";
+}
+
+//// --------------------------------------------------------------------------
 void MyTMSUUI_TagWidget::setValue(const QString& value)
 {
    if (usesValues())

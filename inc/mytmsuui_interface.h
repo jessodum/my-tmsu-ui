@@ -19,7 +19,9 @@ namespace MyTMSUUI_IF_NS
       TagsByValueDBQuery,
       ImpliesDBQuery,
       BuildFilesList,
-      RetrieveFileTags
+      RetrieveFileTags,
+      SetTags,
+      UnsetTags
    };
 
    enum EmptyQueryAction
@@ -42,6 +44,8 @@ class MyTMSUUI_Interface : public QObject
    ~MyTMSUUI_Interface();
 
    QList<MyTMSUUI_TaggedValue> myQueryTagsList;
+   QStringList myTagsToSetList;
+   QStringList myTagsToUnsetList;
 
    //// Accessors: Get
    const QProcess* getIFProcess() const;
@@ -58,6 +62,8 @@ class MyTMSUUI_Interface : public QObject
    void doNewBaseDir(const QString& newPath);
    void retrieveFilesList(bool queryTagsSpecified);
    void retrieveFileTags(const QString& filename);
+   void setTags(const QString& filename);
+   void unsetTags(const QString& filename);
 
  protected:
 
@@ -77,6 +83,8 @@ class MyTMSUUI_Interface : public QObject
    void handleFinishedImpliesDBQuery(int exitCode);
    void handleFinishedRetrieveFileTags(int exitCode);
    void handleFinishedBuildFilesList(int exitCode);
+   void handleFinishedSetTags(int exitCode);
+   void handleFinishedUnsetTags(int exitCode);
 
    void goIdle(bool withError = false);
 
