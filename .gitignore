@@ -78,3 +78,6 @@ bin/*
 # JDO hidden files
 *.bunker
 
+# General directory of things to ignore
+no-track/
+
