@@ -63,27 +63,3 @@ void MyTMSUUI_TagData::addTagValue(const QString& value)
    }
 }
 
-//// --------------------------------------------------------------------------
-void MyTMSUUI_TagData::implies(MyTMSUUI_TagData* otherTag)
-{
-   if (! listOfPointersContains(my->impliesList, otherTag) )
-   {
-      my->impliesList.append(otherTag);
-   }
-
-   if (! listOfPointersContains(otherTag->getImpliedByList(), this) )
-   {
-      otherTag->addImpliedBy(this);
-   }
-}
-
-//// --------------------------------------------------------------------------
-void MyTMSUUI_TagData::addImpliedBy(MyTMSUUI_TagData* otherTag)
-{
-   //// (Should only be called by implies)
-   if (! listOfPointersContains(my->impliedByList, otherTag) )
-   {
-      my->impliedByList.append(otherTag);
-   }
-}
-

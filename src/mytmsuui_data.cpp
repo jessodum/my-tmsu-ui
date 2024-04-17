@@ -11,6 +11,7 @@ MyTMSUUI_Data::MyTMSUUI_Data()
  , myInterface()
  , myTagsList()
  , myValuesList()
+ , myImplicationsList()
 {
    myInterface.setDataObj(this);
 }

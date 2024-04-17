@@ -572,6 +572,9 @@ void MyTMSUUI_Interface::handleFinishedImpliesDBQuery(int exitCode)
    //// Command Success
    myErrorStr = "";
 
+   //// First, clear out (any) old implications from our data list
+   myDataPtr->myImplicationsList.clear();
+
    QRegularExpression regex("^\\s*([-\\w]+)(=([-\\w]+))? -> ([-\\w]+)(=([-\\w]+))?\\s*$");
 
    QTextStream procOutputStream(myIFProc.readAllStandardOutput());
