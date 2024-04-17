@@ -572,7 +572,7 @@ void MyTMSUUI_Interface::handleFinishedImpliesDBQuery(int exitCode)
    //// Command Success
    myErrorStr = "";
 
-   QRegularExpression regex("^\\s*([-\\w]+) -> ([-\\w]+)\\s*$");
+   QRegularExpression regex("^\\s*([-\\w]+)(=([-\\w]+))? -> ([-\\w]+)(=([-\\w]+))?\\s*$");
 
    QTextStream procOutputStream(myIFProc.readAllStandardOutput());
    QString outputLine;
@@ -582,16 +582,39 @@ void MyTMSUUI_Interface::handleFinishedImpliesDBQuery(int exitCode)
       if(match.hasMatch())
       {
          QString impliesTag = match.captured(1);
-         QString impliedTag = match.captured(2);
+         QString impliedTag = match.captured(4);
 
          //// Find the Tag data for the "implies" Tag in our list
          MyTMSUUI_TagData* impliesTagDataPtr = MyTMSUUI_TagData::findInListOfPointers(myDataPtr->myTagsList, impliesTag);
 
+         if (!(match.captured(2).isNull()))
+         {
+            impliesTagDataPtr->addTagValue(match.captured(3));
+         }
+
          //// Find the Tag data for the "implied" Tag in our list
          MyTMSUUI_TagData* impliedTagDataPtr = MyTMSUUI_TagData::findInListOfPointers(myDataPtr->myTagsList, impliedTag);
 
+         if (!(match.captured(5).isNull()))
+         {
+            impliedTagDataPtr->addTagValue(match.captured(6));
+         }
+
          //// Add imply connection
          impliesTagDataPtr->implies(impliedTagDataPtr);
+QString dbImpliesTag(impliesTagDataPtr->getTagName());
+if (impliesTagDataPtr->getValuesList().size() > 0)
+{
+	dbImpliesTag += "=";
+	dbImpliesTag += impliesTagDataPtr->getValuesList()[0];
+}
+QString dbImpliedTag(impliedTagDataPtr->getTagName());
+if (impliedTagDataPtr->getValuesList().size() > 0)
+{
+	dbImpliedTag += "=";
+	dbImpliedTag += impliedTagDataPtr->getValuesList()[0];
+}
+qDebug("JDO: %s -> %s", qUtf8Printable(dbImpliesTag), qUtf8Printable(dbImpliedTag));
       }
    }
 
