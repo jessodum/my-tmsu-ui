@@ -13,6 +13,11 @@ MyTMSUUI_TagWidget::MyTMSUUI_TagWidget(QWidget* parent)
    //// Setup the UI widgets (based on the Designer "ui" file)
    myGuiPtr->setupUi(this);
 
+   //// Install event filter (to filter out mouse wheel events) on the ComboBox.
+   //// (Note: "this" class overrides the eventFilter() function; thus we become
+   ////  an event filter object).
+   myGuiPtr->myValueSelectBox->installEventFilter(this);
+
    //// -----------------
    //// Setup Connections
    //// -----------------
@@ -220,6 +225,30 @@ void MyTMSUUI_TagWidget::updateCheckboxStyle()
    {
       myGuiPtr->myTagCheckbox->setStyleSheet(newStyleString);
    }
+}
+
+//// --------------------------------------------------------------------------
+bool MyTMSUUI_TagWidget::eventFilter(QObject* watchedObj, QEvent* event)
+{
+   if (watchedObj == myGuiPtr->myValueSelectBox)
+   {
+      //// Ignore ONLY the "wheel" event on the ComboBox.
+      if (event->type() == QEvent::Wheel)
+      {
+         event->ignore(); //// We will not be handling this event, but maybe
+                          //// the parent widget will.
+
+         return true; //// Don't let the filter continue processing.
+      }
+      //// else
+
+      //// Continue on with filtering for all other events.
+      return false;
+   }
+   //// else
+
+   //// Pass the event on to the parent class for any filtering implemented.
+   return QWidget::eventFilter(watchedObj, event);
 }
 
 //// --------------------------------------------------------------------------
