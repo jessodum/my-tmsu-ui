@@ -27,6 +27,7 @@ class MyTMSUUI_Data
    void clearTagsList();
    QString getCurrentFilename();
    QString getCurrentFileFullPath();
+   QList<MyTMSUUI_TaggedValue> getImpliedTaggedValuesList(const MyTMSUUI_TaggedValue& impliesTaggedValue) const;
 
  protected:
 

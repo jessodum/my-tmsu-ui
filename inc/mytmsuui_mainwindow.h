@@ -53,7 +53,7 @@ class MyTMSUUI_MainWindow : public QMainWindow
    void updateUiForCurrentImage();
    void setNavEnabledStates();
    void uncheckAllTagWidgets();
-   void buildImpliedTagChainsList(QList<QString>* listToBuild, const QString& impliesTagName);
+   void buildImpliedTagChainsList(QList<MyTMSUUI_TaggedValue>* listToBuild, const MyTMSUUI_TaggedValue& impliesTaggedValue);
 
    bool isCurrentImageAnim();
    TagWidgetList getTagWidgetList();
