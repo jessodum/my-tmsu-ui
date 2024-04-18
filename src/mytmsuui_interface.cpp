@@ -572,28 +572,78 @@ void MyTMSUUI_Interface::handleFinishedImpliesDBQuery(int exitCode)
    //// Command Success
    myErrorStr = "";
 
-   QRegularExpression regex("^\\s*([-\\w]+) -> ([-\\w]+)\\s*$");
+   //// First, clear out (any) old implications from our data list
+   myDataPtr->myImplicationsList.clear();
+
+   QRegularExpression regex("^\\s*([-\\w]+)(=([-\\w]+))? -> ([-\\w]+)(=([-\\w]+))?\\s*$");
 
    QTextStream procOutputStream(myIFProc.readAllStandardOutput());
    QString outputLine;
    while (procOutputStream.readLineInto(&outputLine))
    {
       QRegularExpressionMatch match = regex.match(outputLine);
-      if(match.hasMatch())
+      if(!match.hasMatch())
       {
-         QString impliesTag = match.captured(1);
-         QString impliedTag = match.captured(2);
-
-         //// Find the Tag data for the "implies" Tag in our list
-         MyTMSUUI_TagData* impliesTagDataPtr = MyTMSUUI_TagData::findInListOfPointers(myDataPtr->myTagsList, impliesTag);
-
-         //// Find the Tag data for the "implied" Tag in our list
-         MyTMSUUI_TagData* impliedTagDataPtr = MyTMSUUI_TagData::findInListOfPointers(myDataPtr->myTagsList, impliedTag);
-
-         //// Add imply connection
-         impliesTagDataPtr->implies(impliedTagDataPtr);
+         continue;
       }
+      //// else
+
+      MyTMSUUI_Implication newImplication;
+      QString impliesTag = match.captured(1);
+      QString impliedTag = match.captured(4);
+
+      //// Ensure the "implies" tag exists in our list
+      MyTMSUUI_TagData* impliesTagDataPtr = MyTMSUUI_TagData::findInListOfPointers(myDataPtr->myTagsList, impliesTag);
+      if ( impliesTagDataPtr == nullptr )
+      {
+         qCritical("'Implies' Tag %s not found in data list", qUtf8Printable(impliesTag));
+         continue;
+      }
+
+      newImplication.myImpliesTaggedValue.myTagName = impliesTag;
+
+      if (!(match.captured(2).isNull()))
+      {
+         QString impliesValue = match.captured(3);
+         if (impliesTagDataPtr->getValuesList().contains(impliesValue))
+         {
+            newImplication.myImpliesTaggedValue.myValue = impliesValue;
+         }
+         else
+         {
+            qCritical("'Implies' Tag %s Value %s not found in data list", qUtf8Printable(impliesTag), qUtf8Printable(impliesValue));
+            continue;
+         }
+      }
+
+      //// Ensure the "implied" Tag exists in our list
+      MyTMSUUI_TagData* impliedTagDataPtr = MyTMSUUI_TagData::findInListOfPointers(myDataPtr->myTagsList, impliedTag);
+      if ( impliesTagDataPtr == nullptr )
+      {
+         qCritical("'Implied' Tag %s not found in data list", qUtf8Printable(impliedTag));
+         continue;
+      }
+
+      newImplication.myImpliedTaggedValue.myTagName = impliedTag;
+
+      if (!(match.captured(5).isNull()))
+      {
+         QString impliedValue = match.captured(6);
+         if (impliedTagDataPtr->getValuesList().contains(impliedValue))
+         {
+            newImplication.myImpliedTaggedValue.myValue = impliedValue;
+         }
+         else
+         {
+            qCritical("'Implied' Tag %s Value %s not found in data list", qUtf8Printable(impliedTag), qUtf8Printable(impliedValue));
+            continue;
+         }
+      }
+
+      //// Add imply connection
+      myDataPtr->myImplicationsList << newImplication;
    }
+
 
    //// Done with the sequence
    goIdle();

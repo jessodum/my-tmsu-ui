@@ -563,27 +563,17 @@ void MyTMSUUI_MainWindow::uncheckAllTagWidgets()
 }
 
 //// --------------------------------------------------------------------------
-void MyTMSUUI_MainWindow::buildImpliedTagChainsList(QList<QString>* listToBuild,
-                                                    const QString& impliesTagName)
+void MyTMSUUI_MainWindow::buildImpliedTagChainsList(QList<MyTMSUUI_TaggedValue>* listToBuild,
+                                                    const MyTMSUUI_TaggedValue& impliesTaggedValue)
 {
-   ENSURE_DATA_PTR("cannot access tags list")
+   ENSURE_DATA_PTR("cannot access implications list")
 
-   MyTMSUUI_TagData* tData
-      = MyTMSUUI_TagData::findInListOfPointers(myDataPtr->myTagsList, impliesTagName);
-
-   if (tData == nullptr)
+   for(MyTMSUUI_TaggedValue impliedTaggedValue : myDataPtr->getImpliedTaggedValuesList(impliesTaggedValue))
    {
-      qCritical("Failed to get tag data for %s", qUtf8Printable(impliesTagName));
-      return;
-   }
-
-   for(MyTMSUUI_TagData* impliedTagData : tData->getImpliesList())
-   {
-      QString impliedTagName = impliedTagData->getTagName();
-      if (!listToBuild->contains(impliedTagName))
+      if (!listToBuild->contains(impliedTaggedValue))
       {
-         listToBuild->append(impliedTagName);
-         buildImpliedTagChainsList(listToBuild, impliedTagName);
+         listToBuild->append(impliedTaggedValue);
+         buildImpliedTagChainsList(listToBuild, impliedTaggedValue);
       }
    }
 
@@ -1030,6 +1020,10 @@ void MyTMSUUI_MainWindow::handleTagToggled(const QString& tagName, bool byUserCl
    }
    //// else
 
+   MyTMSUUI_TaggedValue taggedValueInput;
+   taggedValueInput.myTagName = tagName;
+   taggedValueInput.myValue = tagWidget->getValue();
+
    switch (tagWidget->getCheckedState()) //// The "old" Checked State
    {
       case MyTMSUUI_Tagged_NS::Unchecked : //// GRAY --> GREEN
@@ -1070,12 +1064,12 @@ void MyTMSUUI_MainWindow::handleTagToggled(const QString& tagName, bool byUserCl
    }
 
    //// Update "implies" chain(s)
-   QList<QString> impliedTagNamesToUpdateList;
-   buildImpliedTagChainsList(&impliedTagNamesToUpdateList, tagWidget->getTagName());
+   QList<MyTMSUUI_TaggedValue> impliedTaggedValuesToUpdateList;
+   buildImpliedTagChainsList(&impliedTaggedValuesToUpdateList, taggedValueInput);
 
-   for (QString impliedTagName : impliedTagNamesToUpdateList)
+   for (MyTMSUUI_TaggedValue impliedTaggedValue : impliedTaggedValuesToUpdateList)
    {
-      MyTMSUUI_TagWidget* tWidget = findTagWidget(impliedTagName);
+      MyTMSUUI_TagWidget* tWidget = findTagWidget(impliedTaggedValue.myTagName);
       if (tWidget != nullptr)
       {
          switch (tagWidget->getCheckedState()) //// The "new" Checked State
@@ -1085,6 +1079,10 @@ void MyTMSUUI_MainWindow::handleTagToggled(const QString& tagName, bool byUserCl
                {
                 case MyTMSUUI_Tagged_NS::Unchecked : //// Implies Tag: GRAY --> PINK
                  tWidget->setCheckedState(MyTMSUUI_Tagged_NS::ToBeSetImpliedTag, true);
+                 if ( ! impliedTaggedValue.myValue.isEmpty() ) //// TODO Issue #14: Check for isNull instead.
+                 {
+                    tWidget->setValue(impliedTaggedValue.myValue);
+                 }
                  break;
                 case MyTMSUUI_Tagged_NS::SetExplicitTag :      //// Implies Tag: BLUE --> YELLOW
                 case MyTMSUUI_Tagged_NS::ToBeSetExplicitTag : //// Implies Tag: GREEN --> YELLOW
@@ -1101,6 +1099,10 @@ void MyTMSUUI_MainWindow::handleTagToggled(const QString& tagName, bool byUserCl
                {
                 case MyTMSUUI_Tagged_NS::ToBeUnchecked : //// Implies Tag: RED --> PURPLE
                  tWidget->setCheckedState(MyTMSUUI_Tagged_NS::SetImpliedTag, true);
+                 if ( ! impliedTaggedValue.myValue.isEmpty() ) //// TODO Issue #14: Check for isNull instead.
+                 {
+                    tWidget->setValue(impliedTaggedValue.myValue);
+                 }
                  break;
                 case MyTMSUUI_Tagged_NS::ToBeSetImpliedTag : //// Implies Tag: PINK --> ORANGE
                  tWidget->setCheckedState(MyTMSUUI_Tagged_NS::SetBothTag, true);

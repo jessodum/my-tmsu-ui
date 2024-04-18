@@ -33,6 +33,7 @@ INCLUDEPATH += .
 INCLUDEPATH += inc
 
 HEADERS += inc/mytmsuui_data.h
+HEADERS += inc/mytmsuui_implication.h
 HEADERS += inc/mytmsuui_interface.h
 HEADERS += inc/mytmsuui_logmsghandler.h
 HEADERS += inc/mytmsuui_mainwindow.h

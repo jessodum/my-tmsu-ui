@@ -11,6 +11,7 @@ MyTMSUUI_Data::MyTMSUUI_Data()
  , myInterface()
  , myTagsList()
  , myValuesList()
+ , myImplicationsList()
 {
    myInterface.setDataObj(this);
 }
@@ -36,4 +37,20 @@ void MyTMSUUI_Data::clearTagsList()
          delete ptr;
       }
    }
+}
+
+//// --------------------------------------------------------------------------
+QList<MyTMSUUI_TaggedValue> MyTMSUUI_Data::getImpliedTaggedValuesList(const MyTMSUUI_TaggedValue& impliesTaggedValue) const
+{
+   QList<MyTMSUUI_TaggedValue> retList;
+
+   for (MyTMSUUI_Implication implc : myImplicationsList)
+   {
+      if (implc.myImpliesTaggedValue == impliesTaggedValue)
+      {
+         retList.append(implc.myImpliedTaggedValue);
+      }
+   }
+
+   return retList;
 }

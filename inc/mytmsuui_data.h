@@ -3,7 +3,7 @@
 
 #include "mytmsuui_interface.h"
 #include "mytmsuui_tagdata.h"
-#include "mytmsuui_taggedvalue.h"
+#include "mytmsuui_implication.h"
 #include <QDir>
 
 class MyTMSUUI_Data
@@ -22,10 +22,12 @@ class MyTMSUUI_Data
    MyTMSUUI_Interface myInterface;
    MyTMSUUI_TagDataPtrList myTagsList;
    QStringList myValuesList;
+   QList<MyTMSUUI_Implication> myImplicationsList;
 
    void clearTagsList();
    QString getCurrentFilename();
    QString getCurrentFileFullPath();
+   QList<MyTMSUUI_TaggedValue> getImpliedTaggedValuesList(const MyTMSUUI_TaggedValue& impliesTaggedValue) const;
 
  protected:
 

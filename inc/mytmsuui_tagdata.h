@@ -12,7 +12,6 @@
 class MyTMSUUI_TagData;
 
 // Type aliases
-typedef QList<MyTMSUUI_TagData> MyTMSUUI_TagDataList;
 typedef QList<MyTMSUUI_TagData*> MyTMSUUI_TagDataPtrList;
 
 //// Put the data members into a QSharedData-derived class
@@ -30,10 +29,8 @@ class MyTMSUUI_TagDataShared : public QSharedData
    //// Copy c'tor
    MyTMSUUI_TagDataShared(const MyTMSUUI_TagDataShared& other)
     : QSharedData(other)
-    ,       tagName(other.tagName)
-    ,    valuesList(other.valuesList)
-    ,   impliesList(other.impliesList)
-    , impliedByList(other.impliedByList)
+    , tagName(other.tagName)
+    , valuesList(other.valuesList)
    {
       //// Does nothing but initialize (yet)
    }
@@ -47,8 +44,6 @@ class MyTMSUUI_TagDataShared : public QSharedData
    //// Data Members
    QString tagName;
    QStringList valuesList;
-   MyTMSUUI_TagDataPtrList impliesList;
-   MyTMSUUI_TagDataPtrList impliedByList;
 };
 
 //// ==================================================
@@ -88,13 +83,7 @@ class MyTMSUUI_TagData
    QStringList getValuesList() const;
    void addTagValue(const QString& value);
 
-   MyTMSUUI_TagDataPtrList getImpliesList() const;
-   void implies(MyTMSUUI_TagData* otherTag);
-
-   MyTMSUUI_TagDataPtrList getImpliedByList() const;
-
  protected:
-   void addImpliedBy(MyTMSUUI_TagData* otherTag); //// Should only be called by implies
 
  private:
    QSharedDataPointer<MyTMSUUI_TagDataShared> my;
@@ -156,16 +145,6 @@ inline void MyTMSUUI_TagData::setTagName(const QString& tagName)
 inline QStringList MyTMSUUI_TagData::getValuesList() const
 {
    return my->valuesList;
-}
-
-inline MyTMSUUI_TagDataPtrList MyTMSUUI_TagData::getImpliesList() const
-{
-	return my->impliesList;
-}
-
-inline MyTMSUUI_TagDataPtrList MyTMSUUI_TagData::getImpliedByList() const
-{
-	return my->impliedByList;
 }
 
 #endif
