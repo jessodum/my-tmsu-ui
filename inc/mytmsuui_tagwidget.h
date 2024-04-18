@@ -47,6 +47,7 @@ class MyTMSUUI_TagWidget : public QWidget
 
  protected:
    void updateCheckboxStyle();
+   bool eventFilter(QObject* watchedObj, QEvent* event) override;
 
  protected slots:
    void doCheckboxClicked();
