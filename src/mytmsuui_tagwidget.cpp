@@ -27,6 +27,9 @@ MyTMSUUI_TagWidget::MyTMSUUI_TagWidget(QWidget* parent)
                               this,   SLOT(doCheckboxClicked()) );
    connect(myGuiPtr->myTagCheckbox, SIGNAL(          toggled(bool)),
                               this,   SLOT(doCheckboxToggled()) );
+   //// Combo Box
+   connect(myGuiPtr->myValueSelectBox, SIGNAL(      activated(int)),
+                                 this,   SLOT(doValueSelected(int)) );
 }
 
 //// --------------------------------------------------------------------------
@@ -176,6 +179,16 @@ void MyTMSUUI_TagWidget::resetUserClicked()
 void MyTMSUUI_TagWidget::resetValuesSelect()
 {
    myGuiPtr->myValueSelectBox->setCurrentIndex(-1);
+}
+
+//// --------------------------------------------------------------------------
+void MyTMSUUI_TagWidget::doValueSelected(int selectedIndex)
+{
+   if ( !isChecked() && selectedIndex >= 0)
+   {
+      //// Do as if user clicked the checkbox
+      myGuiPtr->myTagCheckbox->click();
+   }
 }
 
 //// --------------------------------------------------------------------------

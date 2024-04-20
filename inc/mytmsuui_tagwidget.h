@@ -41,6 +41,7 @@ class MyTMSUUI_TagWidget : public QWidget
  public slots:
    void resetUserClicked();
    void resetValuesSelect();
+   void doValueSelected(int selectedIndex);
 
  signals:
    void tagToggled(const QString& tagName, bool byUserClick);
