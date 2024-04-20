@@ -16,10 +16,10 @@ MyTMSUUI_Interface::MyTMSUUI_Interface(QObject* parent)
  , myDataPtr(nullptr)
  , myIFProc()
  , myState(MyTMSUUI_IF_NS::Idle)
- , myErrorStr("")
- , myDBRootPath("")
+ , myErrorStr()
+ , myDBRootPath()
  , myValuesIterIdx(0)
- , myCurrentValueIter("")
+ , myCurrentValueIter()
 {
    myIFProc.setProgram("tmsu");
 

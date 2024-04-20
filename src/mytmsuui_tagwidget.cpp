@@ -70,7 +70,7 @@ QString MyTMSUUI_TagWidget::getTagName() const
 //// --------------------------------------------------------------------------
 QString MyTMSUUI_TagWidget::getValue() const
 {
-   QString retval("");
+   QString retval();
 
    if (usesValues())
    {
