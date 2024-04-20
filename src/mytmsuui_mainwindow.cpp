@@ -1086,7 +1086,7 @@ void MyTMSUUI_MainWindow::handleTagToggled(const QString& tagName, bool byUserCl
                {
                 case MyTMSUUI_Tagged_NS::Unchecked : //// Implies Tag: GRAY --> PINK
                  tWidget->setCheckedState(MyTMSUUI_Tagged_NS::ToBeSetImpliedTag, true);
-                 if ( ! impliedTaggedValue.myValue.isEmpty() ) //// TODO Issue #14: Check for isNull instead.
+                 if ( ! impliedTaggedValue.myValue.isEmpty() )
                  {
                     tWidget->setValue(impliedTaggedValue.myValue);
                  }
@@ -1106,7 +1106,7 @@ void MyTMSUUI_MainWindow::handleTagToggled(const QString& tagName, bool byUserCl
                {
                 case MyTMSUUI_Tagged_NS::ToBeUnchecked : //// Implies Tag: RED --> PURPLE
                  tWidget->setCheckedState(MyTMSUUI_Tagged_NS::SetImpliedTag, true);
-                 if ( ! impliedTaggedValue.myValue.isEmpty() ) //// TODO Issue #14: Check for isNull instead.
+                 if ( ! impliedTaggedValue.myValue.isEmpty() )
                  {
                     tWidget->setValue(impliedTaggedValue.myValue);
                  }
