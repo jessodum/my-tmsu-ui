@@ -1016,6 +1016,11 @@ void MyTMSUUI_MainWindow::handleTagToggled(const QString& tagName, bool byUserCl
       tagWidget->setCheckedState( tagWidget->isChecked() ? MyTMSUUI_Tagged_NS::SetExplicitTag
                                                          : MyTMSUUI_Tagged_NS::Unchecked );
 
+      if ( !tagWidget->isChecked() && tagWidget->usesValues() )
+      {
+         tagWidget->resetValuesSelect();
+      }
+
       return;
    }
    //// else
