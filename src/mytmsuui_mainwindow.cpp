@@ -826,6 +826,7 @@ void MyTMSUUI_MainWindow::doUpdateRecurse(bool newRecurseState)
 void MyTMSUUI_MainWindow::radioQueryClicked()
 {
    myGuiPtr->myRetrieveOptionsGroupBox->setEnabled(true);
+   myGuiPtr->myApplyButton->setText("Get");
 
    //// Prevent handleTagToggled from updating other tags' checkmarks during Query mode.
    myToggleOtherTagsAllowed = false;
@@ -839,6 +840,7 @@ void MyTMSUUI_MainWindow::radioQueryClicked()
 void MyTMSUUI_MainWindow::radioSetTagsClicked()
 {
    myGuiPtr->myRetrieveOptionsGroupBox->setEnabled(false);
+   myGuiPtr->myApplyButton->setText("Apply");
    myToggleOtherTagsAllowed = true; //// Restore
 
    ENSURE_DATA_PTR("cannot access files list")
