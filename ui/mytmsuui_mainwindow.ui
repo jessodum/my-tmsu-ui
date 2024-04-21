@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1440</width>
+    <width>1800</width>
     <height>1024</height>
    </rect>
   </property>
@@ -248,136 +248,148 @@
       <widget class="QWidget" name="layoutWidget">
        <layout class="QHBoxLayout" name="myRightAreaHLayout">
         <item>
-         <widget class="QWidget" name="layoutWidget">
-          <layout class="QVBoxLayout" name="myRightAreaVLayout">
-           <property name="leftMargin">
-            <number>8</number>
-           </property>
-           <item>
-            <widget class="QRadioButton" name="mySetTagsRadioButton">
-             <property name="styleSheet">
-              <string notr="true">QRadioButton::indicator:unchecked{image: url(:radio/img/radio_unchecked_grey.png);} QRadioButton::indicator:checked{image: url(:radio/img/radio_checked_blue.png);}</string>
+         <layout class="QVBoxLayout" name="myRightAreaVLayout">
+          <property name="leftMargin">
+           <number>8</number>
+          </property>
+          <item>
+           <widget class="QRadioButton" name="mySetTagsRadioButton">
+            <property name="styleSheet">
+             <string notr="true">QRadioButton::indicator:unchecked{image: url(:radio/img/radio_unchecked_grey.png);} QRadioButton::indicator:checked{image: url(:radio/img/radio_checked_blue.png);}</string>
+            </property>
+            <property name="text">
+             <string>Set tags (for current image)</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+            <attribute name="buttonGroup">
+             <string notr="true">myRightAreaButtonGroup</string>
+            </attribute>
+           </widget>
+          </item>
+          <item>
+           <widget class="QRadioButton" name="myQueryRadioButton">
+            <property name="styleSheet">
+             <string notr="true">QRadioButton::indicator:unchecked{image: url(:radio/img/radio_unchecked_grey.png);} QRadioButton::indicator:checked{image: url(:radio/img/radio_checked_blue.png);}</string>
+            </property>
+            <property name="text">
+             <string>Query</string>
+            </property>
+            <attribute name="buttonGroup">
+             <string notr="true">myRightAreaButtonGroup</string>
+            </attribute>
+           </widget>
+          </item>
+          <item>
+           <widget class="QGroupBox" name="myRetrieveOptionsGroupBox">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">QGroupBox {border: 0px; border-radius: 0px; margin-top: 1em; padding-left: 10px;}</string>
+            </property>
+            <property name="title">
+             <string>Files to retrieve if no tags are selected:</string>
+            </property>
+            <layout class="QVBoxLayout" name="myRetrieveOptionsLayout">
+             <item>
+              <widget class="QRadioButton" name="myRetrieveUntaggedRadioButton">
+               <property name="styleSheet">
+                <string notr="true">QRadioButton::indicator:unchecked{image: url(:radio/img/radio_unchecked_grey.png);} QRadioButton::indicator:checked{image: url(:radio/img/radio_checked_blue.png);}</string>
+               </property>
+               <property name="text">
+                <string>Untagged Only</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QRadioButton" name="myRetrieveAllRadioButton">
+               <property name="styleSheet">
+                <string notr="true">QRadioButton::indicator:unchecked{image: url(:radio/img/radio_unchecked_grey.png);} QRadioButton::indicator:checked{image: url(:radio/img/radio_checked_blue.png);}</string>
+               </property>
+               <property name="text">
+                <string>All</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QRadioButton" name="myRetrieveNoneRadioButton">
+               <property name="styleSheet">
+                <string notr="true">QRadioButton::indicator:unchecked{image: url(:radio/img/radio_unchecked_grey.png);} QRadioButton::indicator:checked{image: url(:radio/img/radio_checked_blue.png);}</string>
+               </property>
+               <property name="text">
+                <string>None</string>
+               </property>
+               <property name="checked">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="myApplyButton">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>80</width>
+              <height>16777215</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>Apply</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QScrollArea" name="myShortTagsScrollArea">
+            <property name="styleSheet">
+             <string notr="true">QScrollArea {margin-top: 5px; margin-right: 5px; margin-bottom: 1px;} QScrollBar:vertical{width: 18px;}</string>
+            </property>
+            <property name="horizontalScrollBarPolicy">
+             <enum>Qt::ScrollBarAsNeeded</enum>
+            </property>
+            <property name="widgetResizable">
+             <bool>true</bool>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+            </property>
+            <widget class="QWidget" name="myShortTagsParentWidget">
+             <property name="geometry">
+              <rect>
+               <x>0</x>
+               <y>0</y>
+               <width>313</width>
+               <height>642</height>
+              </rect>
              </property>
-             <property name="text">
-              <string>Set tags (for current image)</string>
-             </property>
-             <property name="checked">
-              <bool>true</bool>
-             </property>
-             <attribute name="buttonGroup">
-              <string notr="true">myRightAreaButtonGroup</string>
-             </attribute>
             </widget>
-           </item>
-           <item>
-            <widget class="QRadioButton" name="myQueryRadioButton">
-             <property name="styleSheet">
-              <string notr="true">QRadioButton::indicator:unchecked{image: url(:radio/img/radio_unchecked_grey.png);} QRadioButton::indicator:checked{image: url(:radio/img/radio_checked_blue.png);}</string>
-             </property>
-             <property name="text">
-              <string>Query</string>
-             </property>
-             <attribute name="buttonGroup">
-              <string notr="true">myRightAreaButtonGroup</string>
-             </attribute>
-            </widget>
-           </item>
-           <item>
-            <widget class="QGroupBox" name="myRetrieveOptionsGroupBox">
-             <property name="enabled">
-              <bool>false</bool>
-             </property>
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="styleSheet">
-              <string notr="true">QGroupBox {border: 0px; border-radius: 0px; margin-top: 1em; padding-left: 10px;}</string>
-             </property>
-             <property name="title">
-              <string>Files to retrieve if no tags are selected:</string>
-             </property>
-             <layout class="QVBoxLayout" name="myRetrieveOptionsLayout">
-              <item>
-               <widget class="QRadioButton" name="myRetrieveUntaggedRadioButton">
-                <property name="styleSheet">
-                 <string notr="true">QRadioButton::indicator:unchecked{image: url(:radio/img/radio_unchecked_grey.png);} QRadioButton::indicator:checked{image: url(:radio/img/radio_checked_blue.png);}</string>
-                </property>
-                <property name="text">
-                 <string>Untagged Only</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QRadioButton" name="myRetrieveAllRadioButton">
-                <property name="styleSheet">
-                 <string notr="true">QRadioButton::indicator:unchecked{image: url(:radio/img/radio_unchecked_grey.png);} QRadioButton::indicator:checked{image: url(:radio/img/radio_checked_blue.png);}</string>
-                </property>
-                <property name="text">
-                 <string>All</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QRadioButton" name="myRetrieveNoneRadioButton">
-                <property name="styleSheet">
-                 <string notr="true">QRadioButton::indicator:unchecked{image: url(:radio/img/radio_unchecked_grey.png);} QRadioButton::indicator:checked{image: url(:radio/img/radio_checked_blue.png);}</string>
-                </property>
-                <property name="text">
-                 <string>None</string>
-                </property>
-                <property name="checked">
-                 <bool>true</bool>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="myApplyButton">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>80</width>
-               <height>16777215</height>
-              </size>
-             </property>
-             <property name="text">
-              <string>Apply</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QScrollArea" name="myTagsScrollArea">
-             <property name="styleSheet">
-              <string notr="true">QScrollArea {margin-top: 5px; margin-right: 5px; margin-bottom: 1px;} QScrollBar:vertical{width: 18px;}</string>
-             </property>
-             <property name="horizontalScrollBarPolicy">
-              <enum>Qt::ScrollBarAsNeeded</enum>
-             </property>
-             <property name="widgetResizable">
-              <bool>true</bool>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-             </property>
-             <widget class="QWidget" name="myTagsParentWidget">
-             </widget>
-            </widget>
-           </item>
-          </layout>
-         </widget>
+           </widget>
+          </item>
+         </layout>
         </item>
         <item>
-         <widget class="QScrollArea" name="myShortTagsScrollArea">
+         <widget class="QScrollArea" name="myTagsScrollArea">
+          <property name="minimumSize">
+           <size>
+            <width>301</width>
+            <height>0</height>
+           </size>
+          </property>
           <property name="styleSheet">
            <string notr="true">QScrollArea {margin-top: 5px; margin-right: 5px; margin-bottom: 1px;} QScrollBar:vertical{width: 18px;}</string>
           </property>
@@ -390,13 +402,13 @@
           <property name="alignment">
            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
           </property>
-          <widget class="QWidget" name="myShortTagsParentWidget">
+          <widget class="QWidget" name="myTagsParentWidget">
            <property name="geometry">
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>313</width>
-             <height>644</height>
+             <width>289</width>
+             <height>865</height>
             </rect>
            </property>
           </widget>
@@ -413,7 +425,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1440</width>
+     <width>1800</width>
      <height>27</height>
     </rect>
    </property>
