@@ -25,8 +25,8 @@ struct MyTMSUUI_TaggedValue
    MyTMSUUI_Tagged_NS::CheckedState myCheckedState;
 
    MyTMSUUI_TaggedValue()
-    : myTagName("")
-    , myValue("")
+    : myTagName()
+    , myValue()
     , myCheckedState(MyTMSUUI_Tagged_NS::Unchecked)
    {
       //// Does nothing but initialize (yet)

@@ -61,11 +61,16 @@ class MyTMSUUI_MainWindow : public QMainWindow
 
  protected slots:
    void doSelectBaseDir();
+   void doOpenHelpManual();
+   void doAbout();
    void firstButtonClicked();
    void prevButtonClicked();
    void nextButtonClicked();
    void lastButtonClicked();
    void applyButtonClicked();
+   void resetButtonClicked();
+   void scrollToBottomClicked();
+   void scrollToTopClicked();
    void doUpdateRecurse(bool newRecurseState);
    void radioQueryClicked();
    void radioSetTagsClicked();
