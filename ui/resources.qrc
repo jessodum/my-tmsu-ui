@@ -10,6 +10,8 @@
     <file>img/cb_unchecked_red.png</file>
   </qresource>
   <qresource prefix="nav">
+    <file>img/nav_scroll_top.png</file>
+    <file>img/nav_scroll_bottom.png</file>
     <file>img/nav_first.png</file>
     <file>img/nav_last.png</file>
     <file>img/nav_next.png</file>

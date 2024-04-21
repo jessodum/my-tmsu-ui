@@ -225,7 +225,7 @@
           </property>
           <property name="minimumSize">
            <size>
-            <width>1000</width>
+            <width>800</width>
             <height>0</height>
            </size>
           </property>
@@ -248,7 +248,7 @@
       <widget class="QWidget" name="layoutWidget">
        <layout class="QHBoxLayout" name="myRightAreaHLayout">
         <item>
-         <layout class="QVBoxLayout" name="myRightAreaVLayout">
+         <layout class="QVBoxLayout" name="myRightAreaVLayout1">
           <property name="leftMargin">
            <number>8</number>
           </property>
@@ -336,23 +336,53 @@
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="myApplyButton">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="maximumSize">
-             <size>
-              <width>80</width>
-              <height>16777215</height>
-             </size>
-            </property>
-            <property name="text">
-             <string>Apply</string>
-            </property>
-           </widget>
+           <layout class="QHBoxLayout" name="myTagButtonsHLayout">
+            <item>
+             <widget class="QPushButton" name="myApplyButton">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>80</width>
+                <height>16777215</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>Apply</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="myTagButtonsSpacer">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QPushButton" name="myResetButton">
+              <property name="maximumSize">
+               <size>
+                <width>80</width>
+                <height>16777215</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>Reset</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </item>
           <item>
            <widget class="QScrollArea" name="myShortTagsScrollArea">
@@ -373,8 +403,8 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>313</width>
-               <height>642</height>
+               <width>315</width>
+               <height>640</height>
               </rect>
              </property>
             </widget>
@@ -383,36 +413,62 @@
          </layout>
         </item>
         <item>
-         <widget class="QScrollArea" name="myTagsScrollArea">
-          <property name="minimumSize">
-           <size>
-            <width>301</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="styleSheet">
-           <string notr="true">QScrollArea {margin-top: 5px; margin-right: 5px; margin-bottom: 1px;} QScrollBar:vertical{width: 18px;}</string>
-          </property>
-          <property name="horizontalScrollBarPolicy">
-           <enum>Qt::ScrollBarAsNeeded</enum>
-          </property>
-          <property name="widgetResizable">
-           <bool>true</bool>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-          </property>
-          <widget class="QWidget" name="myTagsParentWidget">
-           <property name="geometry">
-            <rect>
-             <x>0</x>
-             <y>0</y>
-             <width>289</width>
-             <height>865</height>
-            </rect>
-           </property>
-          </widget>
-         </widget>
+         <layout class="QVBoxLayout" name="myRightAreaVLayout2">
+          <item>
+           <widget class="QPushButton" name="myScrollToBottomButton">
+            <property name="text">
+             <string>Scroll To Bottom</string>
+            </property>
+            <property name="icon">
+             <iconset resource="resources.qrc">
+              <normaloff>:/nav/img/nav_scroll_bottom.png</normaloff>:/nav/img/nav_scroll_bottom.png</iconset>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QScrollArea" name="myTagsScrollArea">
+            <property name="minimumSize">
+             <size>
+              <width>301</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">QScrollArea {margin-top: 5px; margin-right: 5px; margin-bottom: 1px;} QScrollBar:vertical{width: 18px;}</string>
+            </property>
+            <property name="horizontalScrollBarPolicy">
+             <enum>Qt::ScrollBarAsNeeded</enum>
+            </property>
+            <property name="widgetResizable">
+             <bool>true</bool>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+            </property>
+            <widget class="QWidget" name="myTagsParentWidget">
+             <property name="geometry">
+              <rect>
+               <x>0</x>
+               <y>0</y>
+               <width>321</width>
+               <height>791</height>
+              </rect>
+             </property>
+            </widget>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="myScrollToTopButton">
+            <property name="text">
+             <string>Scroll To Top</string>
+            </property>
+            <property name="icon">
+             <iconset resource="resources.qrc">
+              <normaloff>:/nav/img/nav_scroll_top.png</normaloff>:/nav/img/nav_scroll_top.png</iconset>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </item>
        </layout>
       </widget>
@@ -436,7 +492,15 @@
     <addaction name="mySelectBaseDirAction"/>
     <addaction name="myQuitAction"/>
    </widget>
+   <widget class="QMenu" name="myHelpMenu">
+    <property name="title">
+     <string>Help</string>
+    </property>
+    <addaction name="myHelpManualAction"/>
+    <addaction name="myAboutAction"/>
+   </widget>
    <addaction name="myFileMenu"/>
+   <addaction name="myHelpMenu"/>
   </widget>
   <widget class="QStatusBar" name="myStatusBar"/>
   <action name="mySelectBaseDirAction">
@@ -468,6 +532,16 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+Q</string>
+   </property>
+  </action>
+  <action name="myHelpManualAction">
+   <property name="text">
+    <string>Manual</string>
+   </property>
+  </action>
+  <action name="myAboutAction">
+   <property name="text">
+    <string>About</string>
    </property>
   </action>
  </widget>
