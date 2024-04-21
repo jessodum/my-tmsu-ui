@@ -67,6 +67,14 @@ MyTMSUUI_MainWindow::MyTMSUUI_MainWindow(QWidget* parent)
    connect(myGuiPtr->mySelectBaseDirAction, SIGNAL(      triggered()),
                                       this,   SLOT(doSelectBaseDir()) );
 
+   //// Action: Open help manual
+   connect(myGuiPtr->myHelpManualAction, SIGNAL(       triggered()),
+                                   this,   SLOT(doOpenHelpManual()) );
+
+   //// Action: About
+   connect(myGuiPtr->myAboutAction, SIGNAL(triggered()),
+                              this,   SLOT(  doAbout()) );
+
    //// Push Button: Select base dir
    connect(myGuiPtr->mySelectBaseDirBtn, SIGNAL(        clicked()),
                                    this,   SLOT(doSelectBaseDir()) );
@@ -90,6 +98,18 @@ MyTMSUUI_MainWindow::MyTMSUUI_MainWindow(QWidget* parent)
    //// Push Button: Apply
    connect(myGuiPtr->myApplyButton, SIGNAL(           clicked()),
                               this,   SLOT(applyButtonClicked()) );
+
+   //// Push Button: Reset
+   connect(myGuiPtr->myResetButton, SIGNAL(           clicked()),
+                              this,   SLOT(resetButtonClicked()) );
+
+   //// Push Button: Scroll To Bottom
+   connect(myGuiPtr->myScrollToBottomButton, SIGNAL(              clicked()),
+                                       this,   SLOT(scrollToBottomClicked()) );
+
+   //// Push Button: Scroll To Top
+   connect(myGuiPtr->myScrollToTopButton, SIGNAL(           clicked()),
+                                    this,   SLOT(scrollToTopClicked()) );
 
    //// Check Box: Recurse
    connect(myGuiPtr->myRecurseCheckbox, SIGNAL(        toggled(bool)),
@@ -690,6 +710,20 @@ void MyTMSUUI_MainWindow::doSelectBaseDir()
 }
 
 //// --------------------------------------------------------------------------
+void MyTMSUUI_MainWindow::doOpenHelpManual()
+{
+   //// TODO-FUTURE: Open Help Manual
+   qDebug("TODO doOpenHelpManual");
+}
+
+//// --------------------------------------------------------------------------
+void MyTMSUUI_MainWindow::doAbout()
+{
+   //// TODO: About Dialog
+   qDebug("TODO doAbout");
+}
+
+//// --------------------------------------------------------------------------
 void MyTMSUUI_MainWindow::firstButtonClicked()
 {
    goToImage(1);
@@ -809,6 +843,28 @@ void MyTMSUUI_MainWindow::applyButtonClicked()
    }
 
    return;
+}
+
+//// --------------------------------------------------------------------------
+void MyTMSUUI_MainWindow::resetButtonClicked()
+{
+   //// TODO: resetButtonClicked
+   qDebug("TODO resetButtonClicked");
+}
+
+//// --------------------------------------------------------------------------
+void MyTMSUUI_MainWindow::scrollToBottomClicked()
+{
+   QWidget* innerWidget = myGuiPtr->myTagsScrollArea->widget();
+
+   int bottom = innerWidget->height();
+   myGuiPtr->myTagsScrollArea->ensureVisible(0, bottom);
+}
+
+//// --------------------------------------------------------------------------
+void MyTMSUUI_MainWindow::scrollToTopClicked()
+{
+   myGuiPtr->myTagsScrollArea->ensureVisible(0, 0);
 }
 
 //// --------------------------------------------------------------------------

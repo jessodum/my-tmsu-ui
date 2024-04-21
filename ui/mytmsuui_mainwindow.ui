@@ -535,13 +535,37 @@
    </property>
   </action>
   <action name="myHelpManualAction">
+   <property name="icon">
+    <iconset theme="help-contents"/>
+   </property>
    <property name="text">
     <string>Manual</string>
    </property>
+   <property name="toolTip">
+    <string>Open the Help Manual</string>
+   </property>
+   <property name="statusTip">
+    <string>Open the Help Manual</string>
+   </property>
+   <property name="shortcut">
+    <string>F1</string>
+   </property>
   </action>
   <action name="myAboutAction">
+   <property name="icon">
+    <iconset theme="help-about"/>
+   </property>
    <property name="text">
     <string>About</string>
+   </property>
+   <property name="toolTip">
+    <string>About the application</string>
+   </property>
+   <property name="statusTip">
+    <string>About the application</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+A</string>
    </property>
   </action>
  </widget>
