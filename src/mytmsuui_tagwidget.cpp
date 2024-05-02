@@ -30,6 +30,8 @@ MyTMSUUI_TagWidget::MyTMSUUI_TagWidget(QWidget* parent)
    //// Combo Box
    connect(myGuiPtr->myValueSelectBox, SIGNAL(      activated(int)),
                                  this,   SLOT(doValueSelected(int)) );
+   connect(myGuiPtr->myValueSelectBox, SIGNAL(currentIndexChanged(int)),
+                                 this,   SLOT(  doValueIdxChanged(int)) );
 }
 
 //// --------------------------------------------------------------------------
@@ -95,16 +97,32 @@ void MyTMSUUI_TagWidget::setValue(const QString& value)
    {
       myGuiPtr->myValueSelectBox->setCurrentText(value);
    }
-   else
-   {
-      qWarning("Attempt to set a value on tag widget that doesn't use values is invalid");
-   }
+   // else
+   // {
+   //    qWarning("Attempt to set a value on tag widget that doesn't use values is invalid");
+   // }
 }
 
 //// --------------------------------------------------------------------------
 bool MyTMSUUI_TagWidget::usesValues() const
 {
    return myGuiPtr->myValueSelectBox->isEnabled();
+}
+
+//// --------------------------------------------------------------------------
+MyTMSUUI_TagData* MyTMSUUI_TagWidget::getTagData() const
+{
+   MyTMSUUI_TagData* retval = new MyTMSUUI_TagData(getTagName());
+
+   QComboBox* values = myGuiPtr->myValueSelectBox;
+   if (usesValues() && values->count() > 0)
+   {
+      for (int i = 0; i < values->count(); ++i)
+      {
+         retval->addTagValue(values->itemText(i));
+      }
+   }
+   return retval;
 }
 
 //// --------------------------------------------------------------------------
@@ -167,6 +185,12 @@ void MyTMSUUI_TagWidget::setCheckedState(MyTMSUUI_Tagged_NS::CheckedState state,
    updateCheckboxStyle();
 
    return;
+}
+
+//// --------------------------------------------------------------------------
+void MyTMSUUI_TagWidget::clickCheckbox()
+{
+   myGuiPtr->myTagCheckbox->click();
 }
 
 //// --------------------------------------------------------------------------
@@ -267,16 +291,33 @@ bool MyTMSUUI_TagWidget::eventFilter(QObject* watchedObj, QEvent* event)
 //// --------------------------------------------------------------------------
 void MyTMSUUI_TagWidget::doCheckboxClicked()
 {
-   emit tagToggled(getTagName(), myToggledByUserClick);
+   QWidget* myParent = this->parentWidget();
+
+   if (myParent != nullptr && myParent->objectName() == "myShortTagsParentWidget")
+   {
+      emit shortTagClicked(getTagName(), myToggledByUserClick);
+   }
+   else
+   {
+      emit tagToggled(getTagName(), myToggledByUserClick);
+   }
 }
 
 //// --------------------------------------------------------------------------
 void MyTMSUUI_TagWidget::doCheckboxToggled()
 {
-   if (!myToggledByUserClick)
+   QWidget* myParent = this->parentWidget();
+   bool isShortListTagWidget = (myParent != nullptr && myParent->objectName() == "myShortTagsParentWidget");
+
+   if (!isShortListTagWidget && !myToggledByUserClick)
    {
       emit tagToggled(getTagName(), myToggledByUserClick);
    }
    //// else, defer to "clicked" signal-slot
 }
 
+//// --------------------------------------------------------------------------
+void MyTMSUUI_TagWidget::doValueIdxChanged(int idx)
+{
+   emit valueIndexChanged(getTagName(), idx);
+}

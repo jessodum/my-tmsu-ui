@@ -14,6 +14,14 @@ QT_END_NAMESPACE
 namespace MyTMSUUI_MainWin_NS
 {
    static const int MAX_IMAGE_HEIGHT = 1140;
+
+   enum ShortListModAction
+   {
+      SL_MOD_NO_ACTION,
+      SL_MOD_ADD,
+      SL_MOD_REMOVE,
+      SL_MOD_UPDATE
+   };
 }
 
 //// Forward declarations
@@ -40,46 +48,50 @@ class MyTMSUUI_MainWindow : public QMainWindow
    void imageUpdated(const QString& f);
 
  protected:
-   virtual void closeEvent(QCloseEvent* event);
-   void clearTagWidgets();
-   void rebuildTagWidgets();
-   void updateInterfaceFilesList();
-   void updateInterfaceQueryTagsList();
-   void prepFilesListForDisplay();
+   void applyTagWidgetToShortList(MyTMSUUI_TagWidget* tagWidgetPtr, const MyTMSUUI_MainWin_NS::ShortListModAction action);
    void beginDisplayList(bool emptyListIsOK = false);
-   void setTaggedValuesInWidgets();
+   void buildImpliedTagChainsList(QList<MyTMSUUI_TaggedValue>* listToBuild, const MyTMSUUI_TaggedValue& impliesTaggedValue);
+   void clearTagWidgets();
+   virtual void closeEvent(QCloseEvent* event);
+   MyTMSUUI_TagWidget* findCloneTagWidget(MyTMSUUI_TagWidget* origTagWidget);
+   MyTMSUUI_TagWidget* findTagWidget(const QString& tagName);
+   TagWidgetList getTagWidgetList(bool useShortList = false);
    void goToImage(qsizetype number);
    void goToLastImage();
-   void updateUiForCurrentImage();
-   void setNavEnabledStates();
-   void uncheckAllTagWidgets();
-   void buildImpliedTagChainsList(QList<MyTMSUUI_TaggedValue>* listToBuild, const MyTMSUUI_TaggedValue& impliesTaggedValue);
-
    bool isCurrentImageAnim();
-   TagWidgetList getTagWidgetList();
-   MyTMSUUI_TagWidget* findTagWidget(const QString& tagName);
+   void prepFilesListForDisplay();
+   void rebuildTagWidgets();
+   void setNavEnabledStates();
+   void setTaggedValuesInWidgets();
+   void uncheckAllTagWidgets();
+   void updateInterfaceFilesList();
+   void updateInterfaceQueryTagsList();
+   void updateUiForCurrentImage();
 
  protected slots:
-   void doSelectBaseDir();
-   void doOpenHelpManual();
-   void doAbout();
-   void firstButtonClicked();
-   void prevButtonClicked();
-   void nextButtonClicked();
-   void lastButtonClicked();
    void applyButtonClicked();
-   void resetButtonClicked();
-   void scrollToBottomClicked();
-   void scrollToTopClicked();
+   void doAbout();
+   void doOpenHelpManual();
+   void doSelectBaseDir();
    void doUpdateRecurse(bool newRecurseState);
+   void firstButtonClicked();
+   void handleMainTagToggled(const QString& tagName, bool byUserClick);
+   void handleMainTagValIdxChanged(const QString& tagName, int index);
+   void handleShortTagClicked(const QString& tagName, bool byUserClick);
+   void handleShortTagValIdxChanged(const QString& tagName, int index);
+   void interfaceGoneIdle(MyTMSUUI_IF_NS::ProcState lastState, bool withError = false);
+   void lastButtonClicked();
+   void nextButtonClicked();
+   void prevButtonClicked();
+   void radioAllClicked();
+   void radioNoneClicked();
    void radioQueryClicked();
    void radioSetTagsClicked();
    void radioUntaggedClicked();
-   void radioAllClicked();
-   void radioNoneClicked();
+   void resetButtonClicked();
+   void scrollToBottomClicked();
+   void scrollToTopClicked();
    void setStatusUpdating();
-   void interfaceGoneIdle(MyTMSUUI_IF_NS::ProcState lastState, bool withError = false);
-   void handleTagToggled(const QString& tagName, bool byUserClick);
 
  private:
    Ui::MyTMSUUI_MainWindow* myGuiPtr;
@@ -87,6 +99,7 @@ class MyTMSUUI_MainWindow : public QMainWindow
    QLabel* myGuiStatusBarErrorLabel;
    MyTMSUUI_Data* myDataPtr;
    bool myToggleOtherTagsAllowed;
+   size_t myShortListWidgetNum;
 };
 
 #endif //// MYTMSUUI_MAINWINDOW_H
