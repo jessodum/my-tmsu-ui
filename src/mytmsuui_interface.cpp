@@ -854,9 +854,8 @@ void MyTMSUUI_Interface::handleFinishedUnsetTags(int exitCode)
 
       //// In other words, it might not be a real error.
 
-      qWarning("Error unsetting tags");
+      qWarning("Unsetting tags returned exit code %d. There may have been partial command success.", exitCode);
       //// TODO-MAINT: Get error message from stderr?
-      ////   (NOTE: There may have been a partial command success in unsetting tags)
    }
 
    myErrorStr = "";

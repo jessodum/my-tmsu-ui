@@ -33,18 +33,22 @@ class MyTMSUUI_TagWidget : public QWidget
    QString getValue() const;
    QString getValuePlaceholderText() const;
    bool usesValues() const;
+   MyTMSUUI_TagData* getTagData() const;
 
    //// Accessors: Set
    void setCheckedState(MyTMSUUI_Tagged_NS::CheckedState state, bool toggleIfNeeded = false);
    void setValue(const QString& value);
 
  public slots:
+   void clickCheckbox();
    void resetUserClicked();
    void resetValuesSelect();
    void doValueSelected(int selectedIndex);
 
  signals:
    void tagToggled(const QString& tagName, bool byUserClick);
+   void shortTagClicked(const QString& tagName, bool byUserClick);
+   void valueIndexChanged(const QString& tagName, int index);
 
  protected:
    void updateCheckboxStyle();
@@ -53,6 +57,7 @@ class MyTMSUUI_TagWidget : public QWidget
  protected slots:
    void doCheckboxClicked();
    void doCheckboxToggled();
+   void doValueIdxChanged(int idx);
 
  private:
    Ui::MyTMSUUI_TagWidget* myGuiPtr;
