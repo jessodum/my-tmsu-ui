@@ -2,6 +2,8 @@
 #include "ui_mytmsuui_mainwindow.h"
 #include "mytmsuui_tagwidget.h"
 #include <QFileDialog>
+#include <QMessageBox>
+#include <QDesktopServices>
 #include <QImageReader>
 #include <QMovie>
 #include <QtLogging>
@@ -66,7 +68,7 @@ MyTMSUUI_MainWindow::MyTMSUUI_MainWindow(QWidget* parent)
 
    //// Action: Open help manual
    connect(myGuiPtr->myHelpManualAction, SIGNAL(       triggered()),
-                                   this,   SLOT(doOpenHelpManual()) );
+                                   this,   SLOT(doOpenUserManual()) );
 
    //// Action: About
    connect(myGuiPtr->myAboutAction, SIGNAL(triggered()),
@@ -512,17 +514,27 @@ void MyTMSUUI_MainWindow::closeEvent(QCloseEvent* event)
 //// --------------------------------------------------------------------------
 void MyTMSUUI_MainWindow::doAbout()
 {
-   //// TODO: About Dialog
-   qDebug("TODO doAbout");
+   QMessageBox aboutDialog;
+
+   //// TODO-FUTURE: Get text from resource (qrc)
+   aboutDialog.setWindowTitle("About My TMSU UI");
+   aboutDialog.setIcon(QMessageBox::Information);
+   aboutDialog.setText("<h2>My TMSU UI</h2>");
+   aboutDialog.setInformativeText("<strong>Version 0.1.0</strong><br />By Jess Odum");
+
+   //// TODO-MAINT: Any details to provide?
+   // aboutDialog.setDetailedText("This is the detailed text");
+
+   aboutDialog.exec();
 }
 
 //// --------------------------------------------------------------------------
 //// (protected SLOT)
 //// --------------------------------------------------------------------------
-void MyTMSUUI_MainWindow::doOpenHelpManual()
+void MyTMSUUI_MainWindow::doOpenUserManual()
 {
-   //// TODO-FUTURE: Open Help Manual
-   qDebug("TODO doOpenHelpManual");
+   //// TODO-FUTURE: Create an actual User Manual page. Get URL from resource (qrc).
+   QDesktopServices::openUrl(QUrl("https://github.com/jessodum/my-tmsu-ui/blob/main/README.md"));
 }
 
 //// --------------------------------------------------------------------------

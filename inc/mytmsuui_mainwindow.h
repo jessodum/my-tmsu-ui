@@ -71,7 +71,7 @@ class MyTMSUUI_MainWindow : public QMainWindow
  protected slots:
    void applyButtonClicked();
    void doAbout();
-   void doOpenHelpManual();
+   void doOpenUserManual();
    void doSelectBaseDir();
    void doUpdateRecurse(bool newRecurseState);
    void firstButtonClicked();
