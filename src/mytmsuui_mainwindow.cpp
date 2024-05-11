@@ -1,6 +1,7 @@
 #include "mytmsuui_mainwindow.h"
 #include "ui_mytmsuui_mainwindow.h"
 #include "mytmsuui_tagwidget.h"
+#include <QIntValidator>
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QDesktopServices>
@@ -52,6 +53,12 @@ MyTMSUUI_MainWindow::MyTMSUUI_MainWindow(QWidget* parent)
 
    myGuiPtr->myStatusBar->addWidget(myGuiStatusBarNormalLabel);
    myGuiPtr->myStatusBar->addWidget(myGuiStatusBarErrorLabel);
+
+   //// Validator for Current Image Num Entry
+   //// (Disallow negative numbers)
+   QIntValidator* currentImgNumValidator = new QIntValidator(this);
+   currentImgNumValidator->setBottom(0);
+   myGuiPtr->myNavImgNumEntry->setValidator(currentImgNumValidator);
 
    //// -----------------
    //// Setup Connections
@@ -109,6 +116,10 @@ MyTMSUUI_MainWindow::MyTMSUUI_MainWindow(QWidget* parent)
    //// Push Button: Scroll To Top
    connect(myGuiPtr->myScrollToTopButton, SIGNAL(           clicked()),
                                     this,   SLOT(scrollToTopClicked()) );
+
+   //// Line Edit (Entry): Nav Current Image Number
+   connect(myGuiPtr->myNavImgNumEntry, SIGNAL(     editingFinished()),
+                                 this,   SLOT(jumpToImageFromEntry()) );
 
    //// Check Box: Recurse
    connect(myGuiPtr->myRecurseCheckbox, SIGNAL(        toggled(bool)),
@@ -437,6 +448,8 @@ void MyTMSUUI_MainWindow::beginDisplayList(bool emptyListIsOK)
          myGuiStatusBarNormalLabel->setText("");
          myGuiStatusBarErrorLabel->setText("No image files in current base directory");
       }
+
+      setNavEnabledStates();
       return;
    }
    //// else
@@ -722,13 +735,14 @@ void MyTMSUUI_MainWindow::goToImage(qsizetype number)
       currentFilename = "(GET FILENAME FAILED)";
    }
 
-   QString imgNumberStatus("Image ");
-   imgNumberStatus += QString::number(number);
-   imgNumberStatus += " of ";
-   imgNumberStatus += QString::number(myDataPtr->myCurrentFilesList.size());
-   imgNumberStatus += ": ";
+   //// Update statusbar text
+   QString imgNumberStatus("Image: ");
    imgNumberStatus += currentFilename;
    myGuiStatusBarNormalLabel->setText(imgNumberStatus);
+
+   //// Update nav image number texts
+   setNavImgNumTexts(number, myDataPtr->myCurrentFilesList.size());
+
    return;
 }
 
@@ -1180,6 +1194,42 @@ bool MyTMSUUI_MainWindow::isCurrentImageAnim()
 //// --------------------------------------------------------------------------
 //// (protected SLOT)
 //// --------------------------------------------------------------------------
+void MyTMSUUI_MainWindow::jumpToImageFromEntry()
+{
+   ENSURE_DATA_PTR("cannot access files list")
+
+   bool isOK = false;
+   qsizetype numFromEntry = myGuiPtr->myNavImgNumEntry->text().toULong(&isOK);
+
+   if (!isOK)
+   {
+      qCritical("Failed to convert entry to number: %s", qUtf8Printable(myGuiPtr->myNavImgNumEntry->text()));
+      return;
+   }
+   //// else
+
+   if (numFromEntry == 0)
+   {
+      goToImage(1);
+      return;
+   }
+   //// else
+
+   qsizetype maxImgNum = myDataPtr->myCurrentFilesList.size();
+   if (numFromEntry > maxImgNum)
+   {
+      goToImage(maxImgNum);
+      return;
+   }
+   //// else
+
+   goToImage(numFromEntry);
+   return;
+}
+
+//// --------------------------------------------------------------------------
+//// (protected SLOT)
+//// --------------------------------------------------------------------------
 void MyTMSUUI_MainWindow::lastButtonClicked()
 {
    ENSURE_DATA_PTR("cannot access files list")
@@ -1420,6 +1470,7 @@ void MyTMSUUI_MainWindow::setNavEnabledStates()
       myGuiPtr->myPrevImgButton->setEnabled(false);
       myGuiPtr->myNextImgButton->setEnabled(false);
       myGuiPtr->myLastImgButton->setEnabled(false);
+      setNavImgNumTexts(0, 0);
       return;
    }
    //// else
@@ -1428,6 +1479,21 @@ void MyTMSUUI_MainWindow::setNavEnabledStates()
    myGuiPtr->myPrevImgButton->setEnabled(myDataPtr->myCurrentFilesList.size() > 1);
    myGuiPtr->myNextImgButton->setEnabled(myDataPtr->myCurrentFilesList.size() > 1);
    myGuiPtr->myLastImgButton->setEnabled(myDataPtr->myCurrentImageNum < myDataPtr->myCurrentFilesList.size());
+   return;
+}
+
+//// --------------------------------------------------------------------------
+//// (protected)
+//// --------------------------------------------------------------------------
+void MyTMSUUI_MainWindow::setNavImgNumTexts(qsizetype currNum, qsizetype maxNum)
+{
+   //// Update nav text: Entry (current image number)
+   myGuiPtr->myNavImgNumEntry->setText(QString::number(currNum));
+
+   //// Update nav text: Label (max image number)
+   QString outOfMaxImgNumString("of ");
+   outOfMaxImgNumString += QString::number(maxNum); 
+   myGuiPtr->myNavMaxImgNumLabel->setText(outOfMaxImgNumString);
    return;
 }
 
