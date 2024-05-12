@@ -1,11 +1,13 @@
 #include "mytmsuui_mainwindow.h"
 #include "ui_mytmsuui_mainwindow.h"
 #include "mytmsuui_tagwidget.h"
+#include <QIntValidator>
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QDesktopServices>
 #include <QImageReader>
 #include <QMovie>
+#include <QCloseEvent>
 #include <QtLogging>
 
 #define ENSURE_DATA_PTR_COMMON(whynot) \
@@ -52,6 +54,12 @@ MyTMSUUI_MainWindow::MyTMSUUI_MainWindow(QWidget* parent)
 
    myGuiPtr->myStatusBar->addWidget(myGuiStatusBarNormalLabel);
    myGuiPtr->myStatusBar->addWidget(myGuiStatusBarErrorLabel);
+
+   //// Validator for Current Image Num Entry
+   //// (Disallow negative numbers)
+   QIntValidator* currentImgNumValidator = new QIntValidator(this);
+   currentImgNumValidator->setBottom(0);
+   myGuiPtr->myNavImgNumEntry->setValidator(currentImgNumValidator);
 
    //// -----------------
    //// Setup Connections
@@ -109,6 +117,10 @@ MyTMSUUI_MainWindow::MyTMSUUI_MainWindow(QWidget* parent)
    //// Push Button: Scroll To Top
    connect(myGuiPtr->myScrollToTopButton, SIGNAL(           clicked()),
                                     this,   SLOT(scrollToTopClicked()) );
+
+   //// Line Edit (Entry): Nav Current Image Number
+   connect(myGuiPtr->myNavImgNumEntry, SIGNAL(     editingFinished()),
+                                 this,   SLOT(jumpToImageFromEntry()) );
 
    //// Check Box: Recurse
    connect(myGuiPtr->myRecurseCheckbox, SIGNAL(        toggled(bool)),
@@ -437,6 +449,8 @@ void MyTMSUUI_MainWindow::beginDisplayList(bool emptyListIsOK)
          myGuiStatusBarNormalLabel->setText("");
          myGuiStatusBarErrorLabel->setText("No image files in current base directory");
       }
+
+      setNavEnabledStates();
       return;
    }
    //// else
@@ -464,6 +478,97 @@ void MyTMSUUI_MainWindow::buildImpliedTagChainsList(QList<MyTMSUUI_TaggedValue>*
    }
 
    return;
+}
+
+//// --------------------------------------------------------------------------
+//// (protected)
+//// --------------------------------------------------------------------------
+MyTMSUUI_MainWin_NS::CheckUnAppliedResult MyTMSUUI_MainWindow::checkForUnappliedTags(bool canCancelAction, bool fromQueryClick)
+{
+   //// Only applies to Set Mode
+   if (myGuiPtr->myQueryRadioButton->isChecked() && !fromQueryClick)
+   {
+      return MyTMSUUI_MainWin_NS::CK_UA_CONTINUE;
+   }
+   //// else
+
+   //// Any "ToBe" checked states?
+   bool unappliedTags = false;
+   for (MyTMSUUI_TagWidget* tagWidget : getTagWidgetList())
+   {
+      switch(tagWidget->getCheckedState())
+      {
+       case MyTMSUUI_Tagged_NS::ToBeUnchecked:
+       case MyTMSUUI_Tagged_NS::ToBeSetExplicitTag:
+       case MyTMSUUI_Tagged_NS::ToBeSetImpliedTag:
+       case MyTMSUUI_Tagged_NS::ToBeSetBothTag:
+         unappliedTags = true;
+         break;
+
+       default:
+         break;
+      }
+
+      if (unappliedTags)
+      {
+         break;
+      }
+   }
+
+   if (!unappliedTags)
+   {
+      return MyTMSUUI_MainWin_NS::CK_UA_CONTINUE;
+   }
+   //// else
+
+   QMessageBox unappliedTagsDialog;
+
+   //// TODO-FUTURE: Get text from resource (qrc)
+   unappliedTagsDialog.setWindowTitle("Un-applied changes");
+   unappliedTagsDialog.setIcon(QMessageBox::Question);
+   unappliedTagsDialog.setText("There are tag updates that have not yet been applied. Do you want to apply them now?");
+
+   //// TODO-MAINT: Any details to provide?
+   // unappliedTagsDialog.setDetailedText("This is the detailed text");
+
+   //// Need to do this to force the "Discard" text because standard button QMessageBox::Discard uses platform-dependent text.
+   QPushButton* discardButton = unappliedTagsDialog.addButton("Discard", QMessageBox::DestructiveRole);
+
+   if (canCancelAction)
+   {
+      unappliedTagsDialog.setStandardButtons( QMessageBox::Apply | QMessageBox::Cancel );
+      unappliedTagsDialog.setDefaultButton( QMessageBox::Cancel );
+   }
+   else
+   {
+      unappliedTagsDialog.setStandardButtons( QMessageBox::Apply );
+      unappliedTagsDialog.setInformativeText("NOTE: The action you performed cannot be canceled.");
+      unappliedTagsDialog.setDefaultButton( discardButton );
+   }
+
+   unappliedTagsDialog.exec();
+   QAbstractButton* clickedButton = unappliedTagsDialog.clickedButton();
+   QMessageBox::StandardButton stdBtn = unappliedTagsDialog.standardButton(clickedButton);
+
+   switch (stdBtn)
+   {
+    case QMessageBox::Apply:
+      applyButtonClicked();
+      return MyTMSUUI_MainWin_NS::CK_UA_CONTINUE;
+
+    // case QMessageBox::Discard:
+    case QMessageBox::NoButton: //// This is returned by standardButton(clickedButton) if clickedButton
+                                //// is not a standard button (i.e., our custom "Discard" button).
+      return MyTMSUUI_MainWin_NS::CK_UA_CONTINUE;
+
+    case QMessageBox::Cancel:
+      return MyTMSUUI_MainWin_NS::CK_UA_CANCEL;
+
+    default:
+      qCritical("Unhandled button: %d", stdBtn);
+   }
+
+   return MyTMSUUI_MainWin_NS::CK_UA_CANCEL;
 }
 
 //// --------------------------------------------------------------------------
@@ -502,6 +607,13 @@ void MyTMSUUI_MainWindow::clearTagWidgets()
 //// --------------------------------------------------------------------------
 void MyTMSUUI_MainWindow::closeEvent(QCloseEvent* event)
 {
+   if (checkForUnappliedTags() == MyTMSUUI_MainWin_NS::CK_UA_CANCEL)
+   {
+      event->ignore();
+      return;
+   }
+   //// else
+
    // Call base class event handler
    QMainWindow::closeEvent(event);
 
@@ -542,6 +654,12 @@ void MyTMSUUI_MainWindow::doOpenUserManual()
 //// --------------------------------------------------------------------------
 void MyTMSUUI_MainWindow::doSelectBaseDir()
 {
+   if (checkForUnappliedTags() == MyTMSUUI_MainWin_NS::CK_UA_CANCEL)
+   {
+      return;
+   }
+   //// else
+
    ENSURE_DATA_PTR("cannot set a base directory")
 
    //// Keep track of change to the selected base directory
@@ -582,6 +700,8 @@ void MyTMSUUI_MainWindow::doSelectBaseDir()
 //// --------------------------------------------------------------------------
 void MyTMSUUI_MainWindow::doUpdateRecurse(bool newRecurseState)
 {
+   checkForUnappliedTags(false); //// Toggling the "Recurse" checkbox cannot be canceled.
+
    ENSURE_DATA_PTR("cannot set the 'recurse enabled' flag")
 
    myDataPtr->myRecurseEnabled = newRecurseState;
@@ -645,6 +765,12 @@ MyTMSUUI_TagWidget* MyTMSUUI_MainWindow::findTagWidget(const QString& tagName)
 //// --------------------------------------------------------------------------
 void MyTMSUUI_MainWindow::firstButtonClicked()
 {
+   if (checkForUnappliedTags() == MyTMSUUI_MainWin_NS::CK_UA_CANCEL)
+   {
+      return;
+   }
+   //// else
+
    goToImage(1);
    return;
 }
@@ -722,13 +848,14 @@ void MyTMSUUI_MainWindow::goToImage(qsizetype number)
       currentFilename = "(GET FILENAME FAILED)";
    }
 
-   QString imgNumberStatus("Image ");
-   imgNumberStatus += QString::number(number);
-   imgNumberStatus += " of ";
-   imgNumberStatus += QString::number(myDataPtr->myCurrentFilesList.size());
-   imgNumberStatus += ": ";
+   //// Update statusbar text
+   QString imgNumberStatus("Image: ");
    imgNumberStatus += currentFilename;
    myGuiStatusBarNormalLabel->setText(imgNumberStatus);
+
+   //// Update nav image number texts
+   setNavImgNumTexts(number, myDataPtr->myCurrentFilesList.size());
+
    return;
 }
 
@@ -1180,8 +1307,57 @@ bool MyTMSUUI_MainWindow::isCurrentImageAnim()
 //// --------------------------------------------------------------------------
 //// (protected SLOT)
 //// --------------------------------------------------------------------------
+void MyTMSUUI_MainWindow::jumpToImageFromEntry()
+{
+   ENSURE_DATA_PTR("cannot access files list")
+
+   if (checkForUnappliedTags() == MyTMSUUI_MainWin_NS::CK_UA_CANCEL)
+   {
+      myGuiPtr->myNavImgNumEntry->setText(QString::number(myDataPtr->myCurrentImageNum));
+      return;
+   }
+   //// else
+
+   bool isOK = false;
+   qsizetype numFromEntry = myGuiPtr->myNavImgNumEntry->text().toULong(&isOK);
+
+   if (!isOK)
+   {
+      qCritical("Failed to convert entry to number: %s", qUtf8Printable(myGuiPtr->myNavImgNumEntry->text()));
+      return;
+   }
+   //// else
+
+   if (numFromEntry == 0)
+   {
+      goToImage(1);
+      return;
+   }
+   //// else
+
+   qsizetype maxImgNum = myDataPtr->myCurrentFilesList.size();
+   if (numFromEntry > maxImgNum)
+   {
+      goToImage(maxImgNum);
+      return;
+   }
+   //// else
+
+   goToImage(numFromEntry);
+   return;
+}
+
+//// --------------------------------------------------------------------------
+//// (protected SLOT)
+//// --------------------------------------------------------------------------
 void MyTMSUUI_MainWindow::lastButtonClicked()
 {
+   if (checkForUnappliedTags() == MyTMSUUI_MainWin_NS::CK_UA_CANCEL)
+   {
+      return;
+   }
+   //// else
+
    ENSURE_DATA_PTR("cannot access files list")
 
    goToImage(myDataPtr->myCurrentFilesList.size());
@@ -1193,6 +1369,11 @@ void MyTMSUUI_MainWindow::lastButtonClicked()
 //// --------------------------------------------------------------------------
 void MyTMSUUI_MainWindow::nextButtonClicked()
 {
+   if (checkForUnappliedTags() == MyTMSUUI_MainWin_NS::CK_UA_CANCEL)
+   {
+      return;
+   }
+
    ENSURE_DATA_PTR("cannot access current image number")
 
    goToImage(myDataPtr->myCurrentImageNum + 1);
@@ -1235,8 +1416,13 @@ void MyTMSUUI_MainWindow::prepFilesListForDisplay()
 //// --------------------------------------------------------------------------
 void MyTMSUUI_MainWindow::prevButtonClicked()
 {
-   ENSURE_DATA_PTR("cannot access current image number")
+   if (checkForUnappliedTags() == MyTMSUUI_MainWin_NS::CK_UA_CANCEL)
+   {
+      return;
+   }
 
+   ENSURE_DATA_PTR("cannot access current image number")
+	
    goToImage(myDataPtr->myCurrentImageNum - 1);
    return;
 }
@@ -1266,6 +1452,8 @@ void MyTMSUUI_MainWindow::radioNoneClicked()
 //// --------------------------------------------------------------------------
 void MyTMSUUI_MainWindow::radioQueryClicked()
 {
+   checkForUnappliedTags(false, true); //// Switching to Query Mode by click cannot be canceled.
+
    myGuiPtr->myRetrieveOptionsGroupBox->setEnabled(true);
    myGuiPtr->myApplyButton->setText("Get");
 
@@ -1420,6 +1608,7 @@ void MyTMSUUI_MainWindow::setNavEnabledStates()
       myGuiPtr->myPrevImgButton->setEnabled(false);
       myGuiPtr->myNextImgButton->setEnabled(false);
       myGuiPtr->myLastImgButton->setEnabled(false);
+      setNavImgNumTexts(0, 0);
       return;
    }
    //// else
@@ -1428,6 +1617,21 @@ void MyTMSUUI_MainWindow::setNavEnabledStates()
    myGuiPtr->myPrevImgButton->setEnabled(myDataPtr->myCurrentFilesList.size() > 1);
    myGuiPtr->myNextImgButton->setEnabled(myDataPtr->myCurrentFilesList.size() > 1);
    myGuiPtr->myLastImgButton->setEnabled(myDataPtr->myCurrentImageNum < myDataPtr->myCurrentFilesList.size());
+   return;
+}
+
+//// --------------------------------------------------------------------------
+//// (protected)
+//// --------------------------------------------------------------------------
+void MyTMSUUI_MainWindow::setNavImgNumTexts(qsizetype currNum, qsizetype maxNum)
+{
+   //// Update nav text: Entry (current image number)
+   myGuiPtr->myNavImgNumEntry->setText(QString::number(currNum));
+
+   //// Update nav text: Label (max image number)
+   QString outOfMaxImgNumString("of ");
+   outOfMaxImgNumString += QString::number(maxNum); 
+   myGuiPtr->myNavMaxImgNumLabel->setText(outOfMaxImgNumString);
    return;
 }
 

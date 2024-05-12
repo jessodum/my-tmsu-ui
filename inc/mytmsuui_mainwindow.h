@@ -22,6 +22,12 @@ namespace MyTMSUUI_MainWin_NS
       SL_MOD_REMOVE,
       SL_MOD_UPDATE
    };
+
+   enum CheckUnAppliedResult
+   {
+      CK_UA_CONTINUE,
+      CK_UA_CANCEL
+   };
 }
 
 //// Forward declarations
@@ -51,6 +57,7 @@ class MyTMSUUI_MainWindow : public QMainWindow
    void applyTagWidgetToShortList(MyTMSUUI_TagWidget* tagWidgetPtr, const MyTMSUUI_MainWin_NS::ShortListModAction action);
    void beginDisplayList(bool emptyListIsOK = false);
    void buildImpliedTagChainsList(QList<MyTMSUUI_TaggedValue>* listToBuild, const MyTMSUUI_TaggedValue& impliesTaggedValue);
+   MyTMSUUI_MainWin_NS::CheckUnAppliedResult checkForUnappliedTags(bool canCancelAction = true, bool fromQueryClick = false);
    void clearTagWidgets();
    virtual void closeEvent(QCloseEvent* event);
    MyTMSUUI_TagWidget* findCloneTagWidget(MyTMSUUI_TagWidget* origTagWidget);
@@ -62,6 +69,7 @@ class MyTMSUUI_MainWindow : public QMainWindow
    void prepFilesListForDisplay();
    void rebuildTagWidgets();
    void setNavEnabledStates();
+   void setNavImgNumTexts(qsizetype currNum, qsizetype maxNum);
    void setTaggedValuesInWidgets();
    void uncheckAllTagWidgets();
    void updateInterfaceFilesList();
@@ -80,6 +88,7 @@ class MyTMSUUI_MainWindow : public QMainWindow
    void handleShortTagClicked(const QString& tagName, bool byUserClick);
    void handleShortTagValIdxChanged(const QString& tagName, int index);
    void interfaceGoneIdle(MyTMSUUI_IF_NS::ProcState lastState, bool withError = false);
+   void jumpToImageFromEntry();
    void lastButtonClicked();
    void nextButtonClicked();
    void prevButtonClicked();
