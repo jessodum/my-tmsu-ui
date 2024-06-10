@@ -1422,7 +1422,7 @@ void MyTMSUUI_MainWindow::prevButtonClicked()
    }
 
    ENSURE_DATA_PTR("cannot access current image number")
-	
+
    goToImage(myDataPtr->myCurrentImageNum - 1);
    return;
 }

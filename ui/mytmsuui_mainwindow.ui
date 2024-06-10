@@ -157,6 +157,9 @@
              <iconset resource="resources.qrc">
               <normaloff>:/nav/img/nav_prev.png</normaloff>:/nav/img/nav_prev.png</iconset>
             </property>
+            <property name="shortcut">
+             <string>Left</string>
+            </property>
            </widget>
           </item>
           <item>
@@ -238,6 +241,9 @@
             <property name="icon">
              <iconset resource="resources.qrc">
               <normaloff>:/nav/img/nav_next.png</normaloff>:/nav/img/nav_next.png</iconset>
+            </property>
+            <property name="shortcut">
+             <string>Right</string>
             </property>
            </widget>
           </item>
