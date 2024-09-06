@@ -476,15 +476,30 @@
         <item>
          <layout class="QVBoxLayout" name="myRightAreaVLayout2">
           <item>
-           <widget class="QPushButton" name="myScrollToBottomButton">
-            <property name="text">
-             <string>Scroll To Bottom</string>
-            </property>
-            <property name="icon">
-             <iconset resource="resources.qrc">
-              <normaloff>:/nav/img/nav_scroll_bottom.png</normaloff>:/nav/img/nav_scroll_bottom.png</iconset>
-            </property>
-           </widget>
+           <layout class="QHBoxLayout" name="myRightUpperBtnsHLayout">
+            <item>
+             <widget class="QPushButton" name="myUpperScrollToBottomButton">
+              <property name="text">
+               <string>Scroll To Bottom</string>
+              </property>
+              <property name="icon">
+               <iconset resource="resources.qrc">
+                <normaloff>:/nav/img/nav_scroll_bottom.png</normaloff>:/nav/img/nav_scroll_bottom.png</iconset>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="myUpperScrollToTopButton">
+              <property name="text">
+               <string>Scroll To Top</string>
+              </property>
+              <property name="icon">
+               <iconset resource="resources.qrc">
+                <normaloff>:/nav/img/nav_scroll_top.png</normaloff>:/nav/img/nav_scroll_top.png</iconset>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </item>
           <item>
            <widget class="QScrollArea" name="myTagsScrollArea">
@@ -519,15 +534,30 @@
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="myScrollToTopButton">
-            <property name="text">
-             <string>Scroll To Top</string>
-            </property>
-            <property name="icon">
-             <iconset resource="resources.qrc">
-              <normaloff>:/nav/img/nav_scroll_top.png</normaloff>:/nav/img/nav_scroll_top.png</iconset>
-            </property>
-           </widget>
+           <layout class="QHBoxLayout" name="myRightLowerBtnsHLayout">
+            <item>
+             <widget class="QPushButton" name="myLowerScrollToTopButton">
+              <property name="text">
+               <string>Scroll To Top</string>
+              </property>
+              <property name="icon">
+               <iconset resource="resources.qrc">
+                <normaloff>:/nav/img/nav_scroll_top.png</normaloff>:/nav/img/nav_scroll_top.png</iconset>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="myLowerScrollToBottomButton">
+              <property name="text">
+               <string>Scroll To Bottom</string>
+              </property>
+              <property name="icon">
+               <iconset resource="resources.qrc">
+                <normaloff>:/nav/img/nav_scroll_bottom.png</normaloff>:/nav/img/nav_scroll_bottom.png</iconset>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </item>
          </layout>
         </item>

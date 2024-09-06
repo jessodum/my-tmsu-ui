@@ -111,12 +111,16 @@ MyTMSUUI_MainWindow::MyTMSUUI_MainWindow(QWidget* parent)
                               this,   SLOT(resetButtonClicked()) );
 
    //// Push Button: Scroll To Bottom
-   connect(myGuiPtr->myScrollToBottomButton, SIGNAL(              clicked()),
-                                       this,   SLOT(scrollToBottomClicked()) );
+   connect(myGuiPtr->myUpperScrollToBottomButton, SIGNAL(              clicked()),
+                                            this,   SLOT(scrollToBottomClicked()) );
+   connect(myGuiPtr->myLowerScrollToBottomButton, SIGNAL(              clicked()),
+                                            this,   SLOT(scrollToBottomClicked()) );
 
    //// Push Button: Scroll To Top
-   connect(myGuiPtr->myScrollToTopButton, SIGNAL(           clicked()),
-                                    this,   SLOT(scrollToTopClicked()) );
+   connect(myGuiPtr->myUpperScrollToTopButton, SIGNAL(           clicked()),
+                                         this,   SLOT(scrollToTopClicked()) );
+   connect(myGuiPtr->myLowerScrollToTopButton, SIGNAL(           clicked()),
+                                         this,   SLOT(scrollToTopClicked()) );
 
    //// Line Edit (Entry): Nav Current Image Number
    connect(myGuiPtr->myNavImgNumEntry, SIGNAL(     editingFinished()),
