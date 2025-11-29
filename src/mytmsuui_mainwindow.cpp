@@ -1,4 +1,5 @@
 #include "mytmsuui_mainwindow.h"
+#include "mytmsuui_consts.h"
 #include "ui_mytmsuui_mainwindow.h"
 #include "mytmsuui_tagwidget.h"
 #include <QIntValidator>
@@ -528,9 +529,9 @@ MyTMSUUI_MainWin_NS::CheckUnAppliedResult MyTMSUUI_MainWindow::checkForUnapplied
    QMessageBox unappliedTagsDialog;
 
    //// TODO-FUTURE: Get text from resource (qrc)
-   unappliedTagsDialog.setWindowTitle("Un-applied changes");
+   unappliedTagsDialog.setWindowTitle(MyTMSUUI_Consts::UA_TAGS_DIAG_TITLE);
    unappliedTagsDialog.setIcon(QMessageBox::Question);
-   unappliedTagsDialog.setText("There are tag updates that have not yet been applied. Do you want to apply them now?");
+   unappliedTagsDialog.setText(MyTMSUUI_Consts::UA_TAGS_DIAG_TEXT);
 
    //// TODO-MAINT: Any details to provide?
    // unappliedTagsDialog.setDetailedText("This is the detailed text");
@@ -546,7 +547,7 @@ MyTMSUUI_MainWin_NS::CheckUnAppliedResult MyTMSUUI_MainWindow::checkForUnapplied
    else
    {
       unappliedTagsDialog.setStandardButtons( QMessageBox::Apply );
-      unappliedTagsDialog.setInformativeText("NOTE: The action you performed cannot be canceled.");
+      unappliedTagsDialog.setInformativeText( MyTMSUUI_Consts::UA_TAGS_DIAG_CANNOT_CANCEL );
       unappliedTagsDialog.setDefaultButton( discardButton );
    }
 
@@ -633,10 +634,22 @@ void MyTMSUUI_MainWindow::doAbout()
    QMessageBox aboutDialog;
 
    //// TODO-FUTURE: Get text from resource (qrc)
-   aboutDialog.setWindowTitle("About My TMSU UI");
+   QString title("About ");
+   title += MyTMSUUI_Consts::APP_NAME_DISPLAY;
+   aboutDialog.setWindowTitle(title);
+
    aboutDialog.setIcon(QMessageBox::Information);
-   aboutDialog.setText("<h2>My TMSU UI</h2>");
-   aboutDialog.setInformativeText("<strong>Version 0.1.0</strong><br />By Jess Odum");
+
+   QString textHtml("<h2>");
+   textHtml += MyTMSUUI_Consts::APP_NAME_DISPLAY;
+   textHtml += "</h2>";
+   aboutDialog.setText(textHtml);
+
+   QString infoTextHtml("<strong>Version ");
+   infoTextHtml += MyTMSUUI_Consts::APP_VERSION;
+   infoTextHtml += "</strong><br />By ";
+   infoTextHtml += MyTMSUUI_Consts::APP_AUTHOR;
+   aboutDialog.setInformativeText(infoTextHtml);
 
    //// TODO-MAINT: Any details to provide?
    // aboutDialog.setDetailedText("This is the detailed text");
@@ -650,7 +663,7 @@ void MyTMSUUI_MainWindow::doAbout()
 void MyTMSUUI_MainWindow::doOpenUserManual()
 {
    //// TODO-FUTURE: Create an actual User Manual page. Get URL from resource (qrc).
-   QDesktopServices::openUrl(QUrl("https://github.com/jessodum/my-tmsu-ui/blob/main/README.md"));
+   QDesktopServices::openUrl(QUrl(MyTMSUUI_Consts::HELP_DOC_URL));
 }
 
 //// --------------------------------------------------------------------------

@@ -39,6 +39,8 @@ DEFINES += QT_MESSAGELOGCONTEXT
 INCLUDEPATH += .
 INCLUDEPATH += inc
 
+HEADERS += inc/mytmsuui_config.h
+HEADERS += inc/mytmsuui_consts.h
 HEADERS += inc/mytmsuui_data.h
 HEADERS += inc/mytmsuui_implication.h
 HEADERS += inc/mytmsuui_interface.h
@@ -49,6 +51,7 @@ HEADERS += inc/mytmsuui_taggedvalue.h
 HEADERS += inc/mytmsuui_tagwidget.h
 
 SOURCES += src/main.cpp
+SOURCES += src/mytmsuui_config.cpp
 SOURCES += src/mytmsuui_data.cpp
 SOURCES += src/mytmsuui_interface.cpp
 SOURCES += src/mytmsuui_mainwindow.cpp
