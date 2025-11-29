@@ -20,9 +20,9 @@ int main(int argc, char* argv[])
    QCoreApplication::setApplicationName(MyTMSUUI_Consts::APP_NAME_CLI);
    QCoreApplication::setApplicationVersion(MyTMSUUI_Consts::APP_VERSION);
 
-   // Initialize the Config singleton and provide the app pointer
-   // (needed for the command line parser)
-   MyTMSUUI_Config::getInstance()->setApp(&theApp);
+   // Initialize the Config singleton and parse the command line arguments
+   // (need the app for the command line parser)
+   MyTMSUUI_Config::getInstance()->parseArgs(theApp);
 
    MyTMSUUI_MainWindow theMainWin;
    MyTMSUUI_Data dataObj;

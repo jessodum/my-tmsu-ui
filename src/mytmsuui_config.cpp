@@ -2,6 +2,8 @@
 #include "mytmsuui_consts.h"
 #include <QCoreApplication>
 
+static const QString ENV_VAR_NAME_PREFIX = "MTU_";
+
 MyTMSUUI_Config* MyTMSUUI_Config::ourInstancePtr = nullptr;
 
 //// --------------------------------------------------------------------------
@@ -18,30 +20,69 @@ MyTMSUUI_Config* MyTMSUUI_Config::getInstance()
 //// --------------------------------------------------------------------------
 MyTMSUUI_Config::MyTMSUUI_Config()
 {
+   myCLArgParser.setSingleDashWordOptionMode(QCommandLineParser::ParseAsLongOptions);
    myCLArgParser.setApplicationDescription(MyTMSUUI_Consts::APP_DESCRIPTION);
    myCLArgParser.addHelpOption();
    myCLArgParser.addVersionOption();
-// TODO: Set up the parser
+
+   // Set up the configurable options for command line parser
+   myCLArgParser.addOptions({
+      {
+         MyTMSUUI_ConfigNames::MAX_IMAGE_HEIGHT,
+         MyTMSUUI_ConfigNames::MAX_IMAGE_HEIGHT_DESCR,
+         MyTMSUUI_ConfigNames::MAX_IMAGE_HEIGHT_VALNAME
+      }
+      // ,{
+      //    MyTMSUUI_ConfigNames::ANOTHER_CONFIG,
+      //    MyTMSUUI_ConfigNames::ANOTHER_CONFIG_DESCR,
+      //    MyTMSUUI_ConfigNames::ANOTHER_CONFIG_VALNAME
+      // }
+   });
 }
 
 //// --------------------------------------------------------------------------
-void MyTMSUUI_Config::setApp(QCoreApplication* appPtr)
+void MyTMSUUI_Config::parseArgs(QCoreApplication& app)
 {
-   static bool setOnce = false;
+   static bool doneOnce = false;
 
-   if (setOnce)
+   if (doneOnce)
    {
-      qWarning("App has already been set for config");
+      qWarning("Command line args have already been parsed for config");
       return;
    }
 
-   if (appPtr == nullptr)
-   {
-      qWarning("NULL app pointer provided for config");
-      return;
-   }
-
-   myCLArgParser.process(*appPtr);
-   setOnce = true;
+   myCLArgParser.process(app);
+   doneOnce = true;
 }
+
+//// --------------------------------------------------------------------------
+QVariant MyTMSUUI_Config::getValue(const QString& configName)
+{
+   return getValue(configName, "");
+}
+
+QVariant MyTMSUUI_Config::getValue(const QString& configName, const QVariant& dfltValue)
+{
+   // Command Line Arg > env > conf file
+   // (a.k.a.: QCommandLineParser > qgetenv > QSettings)
+
+   // First, check command line for config setting...
+   if (myCLArgParser.isSet(configName))
+   {
+      return QVariant(myCLArgParser.value(configName));
+   }
+
+   // Else, check environment next...
+
+   QString envVarName(ENV_VAR_NAME_PREFIX);
+   envVarName += configName;
+   if (qEnvironmentVariableIsSet(envVarName.toStdString().c_str()))
+   {
+      return QVariant(qEnvironmentVariable(envVarName.toStdString().c_str()));
+   }
+
+   // Else, check config file...
+   return mySettings.value(configName, dfltValue);
+}
+
 

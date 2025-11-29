@@ -1,5 +1,6 @@
 #include "mytmsuui_mainwindow.h"
 #include "mytmsuui_consts.h"
+#include "mytmsuui_config.h"
 #include "ui_mytmsuui_mainwindow.h"
 #include "mytmsuui_tagwidget.h"
 #include <QIntValidator>
@@ -528,7 +529,7 @@ MyTMSUUI_MainWin_NS::CheckUnAppliedResult MyTMSUUI_MainWindow::checkForUnapplied
 
    QMessageBox unappliedTagsDialog;
 
-   //// TODO-FUTURE: Get text from resource (qrc)
+   //// TODO-FUTURE: Get text from (string) resource file
    unappliedTagsDialog.setWindowTitle(MyTMSUUI_Consts::UA_TAGS_DIAG_TITLE);
    unappliedTagsDialog.setIcon(QMessageBox::Question);
    unappliedTagsDialog.setText(MyTMSUUI_Consts::UA_TAGS_DIAG_TEXT);
@@ -633,7 +634,7 @@ void MyTMSUUI_MainWindow::doAbout()
 {
    QMessageBox aboutDialog;
 
-   //// TODO-FUTURE: Get text from resource (qrc)
+   //// TODO-FUTURE: Get text from (string) resource file
    QString title("About ");
    title += MyTMSUUI_Consts::APP_NAME_DISPLAY;
    aboutDialog.setWindowTitle(title);
@@ -662,7 +663,8 @@ void MyTMSUUI_MainWindow::doAbout()
 //// --------------------------------------------------------------------------
 void MyTMSUUI_MainWindow::doOpenUserManual()
 {
-   //// TODO-FUTURE: Create an actual User Manual page. Get URL from resource (qrc).
+   //// TODO-FUTURE: Create an actual User Manual page.
+   //// TODO-FUTURE: Get URL from (string) resource file.
    QDesktopServices::openUrl(QUrl(MyTMSUUI_Consts::HELP_DOC_URL));
 }
 
@@ -1807,6 +1809,19 @@ void MyTMSUUI_MainWindow::updateUiForCurrentImage()
 
    myGuiPtr->myImageWidget->clear();
 
+   bool goodIntConv = false;
+   int maxImageHeight
+      = MyTMSUUI_Config::getInstance()->getValue
+        (
+         MyTMSUUI_ConfigNames::MAX_IMAGE_HEIGHT,
+         MyTMSUUI_ConfigDefaults::DFLT_MAX_IMAGE_HEIGHT
+        ).toInt(&goodIntConv);
+
+   if (!goodIntConv)
+   {
+      maxImageHeight = MyTMSUUI_ConfigDefaults::DFLT_MAX_IMAGE_HEIGHT;
+   }
+
    //// Determine if image is animated.
    if (isCurrentImageAnim())
    {
@@ -1814,12 +1829,11 @@ void MyTMSUUI_MainWindow::updateUiForCurrentImage()
       QSize scaledSize;
       {
          QImageReader animImgReader(myDataPtr->getCurrentFileFullPath());
-         //// TODO-FUTURE: Use a config system (qgetenv + QSettings + QCommandLineArgs) for max image height
-         if (animImgReader.size().height() > MyTMSUUI_MainWin_NS::MAX_IMAGE_HEIGHT)
+         if (animImgReader.size().height() > maxImageHeight)
          {
             needsToShrink = true;
             QImage animFrame = animImgReader.read();
-            scaledSize = (animFrame.scaledToHeight(MyTMSUUI_MainWin_NS::MAX_IMAGE_HEIGHT)).size();
+            scaledSize = (animFrame.scaledToHeight(maxImageHeight)).size();
          }
          //// TODO-MAINT: max image width?
       }
@@ -1838,10 +1852,9 @@ void MyTMSUUI_MainWindow::updateUiForCurrentImage()
    {
       QPixmap img(myDataPtr->getCurrentFileFullPath());
 
-      //// TODO-FUTURE: Use a config system (qgetenv + QSettings + QCommandLineArgs) for max image height
-      if (img.height() > MyTMSUUI_MainWin_NS::MAX_IMAGE_HEIGHT)
+      if (img.height() > maxImageHeight)
       {
-         QPixmap scaledImg = img.scaledToHeight(MyTMSUUI_MainWin_NS::MAX_IMAGE_HEIGHT);
+         QPixmap scaledImg = img.scaledToHeight(maxImageHeight);
          myGuiPtr->myImageWidget->setPixmap(scaledImg);
       }
       //// TODO-MAINT: max image width?

@@ -13,8 +13,6 @@ QT_END_NAMESPACE
 
 namespace MyTMSUUI_MainWin_NS
 {
-   static const int MAX_IMAGE_HEIGHT = 1140;
-
    enum ShortListModAction
    {
       SL_MOD_NO_ACTION,
