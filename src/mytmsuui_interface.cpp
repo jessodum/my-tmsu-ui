@@ -86,7 +86,7 @@ void MyTMSUUI_Interface::retrieveFilesList(bool queryTagsSpecified)
    if (myDataPtr == nullptr)
    {
       myErrorStr = "No data object to store file listing";
-      goIdle(true);
+      goIdle(MyTMSUUI_IF_NS::EC_NoDataObj);
       return;
    }
    //// else
@@ -165,7 +165,7 @@ void MyTMSUUI_Interface::retrieveFilesList(bool queryTagsSpecified)
    {
       myDataPtr->myCurrentFilesList.clear();
       myErrorStr = "No files found";
-      goIdle(true);
+      goIdle(MyTMSUUI_IF_NS::EC_NoFilesFound);
       return;
    }
 
@@ -207,7 +207,7 @@ void MyTMSUUI_Interface::setTags(const QString& filename)
       else
       {
          myErrorStr = "No tags to set or unset";
-         goIdle(true);
+         goIdle(MyTMSUUI_IF_NS::EC_NoTags);
       }
       return;
    }
@@ -403,7 +403,7 @@ void MyTMSUUI_Interface::handleFinishedInfoQuery(int exitCode)
    {
       myDBRootPath = "";
       myErrorStr = "No (tags) database in directory tree";
-      goIdle(true);
+      goIdle(MyTMSUUI_IF_NS::EC_NoDB);
       return;
    }
    //// else
@@ -458,7 +458,7 @@ void MyTMSUUI_Interface::handleFinishedTagsDBQuery(int exitCode)
    if (exitCode != 0)
    {
       myErrorStr = "Error getting list of Tags from database";
-      goIdle(true);
+      goIdle(MyTMSUUI_IF_NS::EC_DBTagsList);
       return;
    }
    //// else
@@ -488,7 +488,7 @@ void MyTMSUUI_Interface::handleFinishedAllValuesDBQuery(int exitCode)
    if (exitCode != 0)
    {
       myErrorStr = "Error getting list of Values from database";
-      goIdle(true);
+      goIdle(MyTMSUUI_IF_NS::EC_DBValuesList);
       return;
    }
    //// else
@@ -521,7 +521,7 @@ void MyTMSUUI_Interface::handleFinishedTagsByValueDBQuery(int exitCode)
    if (exitCode != 0)
    {
       myErrorStr = "Error getting Tags using a Value";
-      goIdle(true);
+      goIdle(MyTMSUUI_IF_NS::EC_DBTagsByValue);
       return;
    }
    //// else
@@ -564,7 +564,7 @@ void MyTMSUUI_Interface::handleFinishedImpliesDBQuery(int exitCode)
    if (exitCode != 0)
    {
       myErrorStr = "Error getting list of implied Tags from database";
-      goIdle(true);
+      goIdle(MyTMSUUI_IF_NS::EC_DBImplTagsList);
       return;
    }
    //// else
@@ -658,7 +658,7 @@ void MyTMSUUI_Interface::handleFinishedRetrieveFileTags(int exitCode)
    {
       myErrorStr = "Error retrieving tags for the filename";
       //// TODO-MAINT: Get error message from stderr?
-      goIdle(true);
+      goIdle(MyTMSUUI_IF_NS::EC_FileTags);
       return;
    }
    //// else
@@ -766,7 +766,7 @@ void MyTMSUUI_Interface::handleFinishedBuildFilesList(int exitCode)
    {
       myErrorStr = "Error retrieving files from query";
       //// TODO-MAINT: Get error message from stderr?
-      goIdle(true);
+      goIdle(MyTMSUUI_IF_NS::EC_FilesByQuery);
       return;
    }
    //// else
@@ -796,7 +796,7 @@ void MyTMSUUI_Interface::handleFinishedBuildFilesList(int exitCode)
    {
       myDataPtr->myCurrentFilesList.clear();
       myErrorStr = "No files matching query";
-      goIdle(true);
+      goIdle(MyTMSUUI_IF_NS::EC_NoFilesByQuery);
       return;
    }
 
@@ -813,7 +813,7 @@ void MyTMSUUI_Interface::handleFinishedSetTags(int exitCode)
       myErrorStr = "Error setting tags";
       //// TODO-MAINT: Get error message from stderr?
       ////   (NOTE: There may have been a partial command success in setting tags)
-      goIdle(true);
+      goIdle(MyTMSUUI_IF_NS::EC_SettingFileTags);
       return;
    }
    //// else
@@ -834,7 +834,7 @@ void MyTMSUUI_Interface::handleFinishedSetTags(int exitCode)
    if (myDataPtr == nullptr)
    {
       myErrorStr = "Cannot get current image filename (no data object)";
-      goIdle(true);
+      goIdle(MyTMSUUI_IF_NS::EC_NoDataObj);
       return;
    }
    //// else

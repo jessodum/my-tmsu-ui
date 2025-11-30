@@ -23,7 +23,7 @@ tags
 .DS_Store
 .directory
 *.debug
-Makefile*
+Makefile.*
 *.prl
 *.app
 moc_*.cpp
@@ -61,6 +61,8 @@ CMakeLists.txt.user*
 *.vcxproj
 *vcxproj.*
 .vscode/*
+# Created by Perl extension for VSCode
+.vstags
 
 # MinGW generated files
 *.Debug

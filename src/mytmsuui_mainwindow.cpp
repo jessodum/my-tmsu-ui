@@ -1,4 +1,6 @@
 #include "mytmsuui_mainwindow.h"
+#include "mytmsuui_consts.h"
+#include "mytmsuui_config.h"
 #include "ui_mytmsuui_mainwindow.h"
 #include "mytmsuui_tagwidget.h"
 #include <QIntValidator>
@@ -527,10 +529,10 @@ MyTMSUUI_MainWin_NS::CheckUnAppliedResult MyTMSUUI_MainWindow::checkForUnapplied
 
    QMessageBox unappliedTagsDialog;
 
-   //// TODO-FUTURE: Get text from resource (qrc)
-   unappliedTagsDialog.setWindowTitle("Un-applied changes");
+   //// TODO-FUTURE: Get text from (string) resource file
+   unappliedTagsDialog.setWindowTitle(MyTMSUUI_Consts::UA_TAGS_DIAG_TITLE);
    unappliedTagsDialog.setIcon(QMessageBox::Question);
-   unappliedTagsDialog.setText("There are tag updates that have not yet been applied. Do you want to apply them now?");
+   unappliedTagsDialog.setText(MyTMSUUI_Consts::UA_TAGS_DIAG_TEXT);
 
    //// TODO-MAINT: Any details to provide?
    // unappliedTagsDialog.setDetailedText("This is the detailed text");
@@ -546,7 +548,7 @@ MyTMSUUI_MainWin_NS::CheckUnAppliedResult MyTMSUUI_MainWindow::checkForUnapplied
    else
    {
       unappliedTagsDialog.setStandardButtons( QMessageBox::Apply );
-      unappliedTagsDialog.setInformativeText("NOTE: The action you performed cannot be canceled.");
+      unappliedTagsDialog.setInformativeText( MyTMSUUI_Consts::UA_TAGS_DIAG_CANNOT_CANCEL );
       unappliedTagsDialog.setDefaultButton( discardButton );
    }
 
@@ -632,11 +634,23 @@ void MyTMSUUI_MainWindow::doAbout()
 {
    QMessageBox aboutDialog;
 
-   //// TODO-FUTURE: Get text from resource (qrc)
-   aboutDialog.setWindowTitle("About My TMSU UI");
+   //// TODO-FUTURE: Get text from (string) resource file
+   QString title("About ");
+   title += MyTMSUUI_Consts::APP_NAME_DISPLAY;
+   aboutDialog.setWindowTitle(title);
+
    aboutDialog.setIcon(QMessageBox::Information);
-   aboutDialog.setText("<h2>My TMSU UI</h2>");
-   aboutDialog.setInformativeText("<strong>Version 0.1.0</strong><br />By Jess Odum");
+
+   QString textHtml("<h2>");
+   textHtml += MyTMSUUI_Consts::APP_NAME_DISPLAY;
+   textHtml += "</h2>";
+   aboutDialog.setText(textHtml);
+
+   QString infoTextHtml("<strong>Version ");
+   infoTextHtml += MyTMSUUI_Consts::APP_VERSION;
+   infoTextHtml += "</strong><br />By ";
+   infoTextHtml += MyTMSUUI_Consts::APP_AUTHOR;
+   aboutDialog.setInformativeText(infoTextHtml);
 
    //// TODO-MAINT: Any details to provide?
    // aboutDialog.setDetailedText("This is the detailed text");
@@ -649,8 +663,9 @@ void MyTMSUUI_MainWindow::doAbout()
 //// --------------------------------------------------------------------------
 void MyTMSUUI_MainWindow::doOpenUserManual()
 {
-   //// TODO-FUTURE: Create an actual User Manual page. Get URL from resource (qrc).
-   QDesktopServices::openUrl(QUrl("https://github.com/jessodum/my-tmsu-ui/blob/main/README.md"));
+   //// TODO-FUTURE: Create an actual User Manual page.
+   //// TODO-FUTURE: Get URL from (string) resource file.
+   QDesktopServices::openUrl(QUrl(MyTMSUUI_Consts::HELP_DOC_URL));
 }
 
 //// --------------------------------------------------------------------------
@@ -1193,11 +1208,12 @@ void MyTMSUUI_MainWindow::handleShortTagValIdxChanged(const QString& tagName, in
 //// --------------------------------------------------------------------------
 //// (protected SLOT)
 //// --------------------------------------------------------------------------
-void MyTMSUUI_MainWindow::interfaceGoneIdle(MyTMSUUI_IF_NS::ProcState lastState, bool withError)
+void MyTMSUUI_MainWindow::interfaceGoneIdle(MyTMSUUI_IF_NS::ProcState lastState,
+                                            MyTMSUUI_IF_NS::LastStateErrorCode errorCode)
 {
    statusBar()->clearMessage();
 
-   if (withError)
+   if (errorCode != MyTMSUUI_IF_NS::EC_NoError)
    {
       myGuiStatusBarErrorLabel->setText(myDataPtr->myInterface.getError());
    }
@@ -1209,7 +1225,7 @@ void MyTMSUUI_MainWindow::interfaceGoneIdle(MyTMSUUI_IF_NS::ProcState lastState,
    switch (lastState)
    {
       case MyTMSUUI_IF_NS::InfoQuery:
-         if (withError)
+         if (errorCode != MyTMSUUI_IF_NS::EC_NoError)
          {
             clearTagWidgets();
             myDataPtr->myCurrentFilesList.clear();
@@ -1228,7 +1244,7 @@ void MyTMSUUI_MainWindow::interfaceGoneIdle(MyTMSUUI_IF_NS::ProcState lastState,
          break;
 
       case MyTMSUUI_IF_NS::ImpliesDBQuery:
-         if (withError)
+         if (errorCode != MyTMSUUI_IF_NS::EC_NoError)
             break;
 
          //// (Re-)build tag widgets
@@ -1241,11 +1257,16 @@ void MyTMSUUI_MainWindow::interfaceGoneIdle(MyTMSUUI_IF_NS::ProcState lastState,
          break;
 
       case MyTMSUUI_IF_NS::BuildFilesList:
-         if (withError)
+         if (errorCode != MyTMSUUI_IF_NS::EC_NoError)
          {
             myDataPtr->myCurrentFilesList.clear();
             setNavEnabledStates();
-            uncheckAllTagWidgets();
+
+            if (errorCode != MyTMSUUI_IF_NS::EC_NoFilesByQuery)
+            {
+               uncheckAllTagWidgets();
+            }
+
             myGuiPtr->myImageWidget->clear();
             myGuiStatusBarNormalLabel->setText("");
          }
@@ -1260,8 +1281,8 @@ void MyTMSUUI_MainWindow::interfaceGoneIdle(MyTMSUUI_IF_NS::ProcState lastState,
          break;
 
       case MyTMSUUI_IF_NS::RetrieveFileTags:
-         if (withError)
-            //// TODO-MAINT: handle RetrieveFileTags withError?
+         if (errorCode != MyTMSUUI_IF_NS::EC_NoError)
+            //// TODO-MAINT: handle RetrieveFileTags with error?
             break;
 
          setTaggedValuesInWidgets();
@@ -1269,9 +1290,9 @@ void MyTMSUUI_MainWindow::interfaceGoneIdle(MyTMSUUI_IF_NS::ProcState lastState,
 
       case MyTMSUUI_IF_NS::SetTags:
       case MyTMSUUI_IF_NS::UnsetTags:
-         if (withError)
+         if (errorCode != MyTMSUUI_IF_NS::EC_NoError)
          {
-            //// TODO-MAINT: handle RetrieveFileTags withError?
+            //// TODO-MAINT: handle RetrieveFileTags with error?
          }
          else
          {
@@ -1592,8 +1613,10 @@ void MyTMSUUI_MainWindow::setDataObj(MyTMSUUI_Data* dataPtr)
               &(myDataPtr->myInterface),   SLOT(retrieveFileTags(const QString&)) );
 
       //// I/f: Gone idle
-      connect(&(myDataPtr->myInterface), SIGNAL(         goneIdle(MyTMSUUI_IF_NS::ProcState, bool)),
-                                   this,   SLOT(interfaceGoneIdle(MyTMSUUI_IF_NS::ProcState, bool)) );
+      connect(&(myDataPtr->myInterface), SIGNAL(         goneIdle(MyTMSUUI_IF_NS::ProcState,
+                                                                  MyTMSUUI_IF_NS::LastStateErrorCode)),
+                                   this,   SLOT(interfaceGoneIdle(MyTMSUUI_IF_NS::ProcState,
+                                                                  MyTMSUUI_IF_NS::LastStateErrorCode)) );
 
       emit dataBaseDirChanged(myDataPtr->myCurrentBaseDir.absolutePath());
    }
@@ -1794,6 +1817,19 @@ void MyTMSUUI_MainWindow::updateUiForCurrentImage()
 
    myGuiPtr->myImageWidget->clear();
 
+   bool goodIntConv = false;
+   int maxImageHeight
+      = MyTMSUUI_Config::getInstance()->getValue
+        (
+         MyTMSUUI_ConfigNames::MAX_IMAGE_HEIGHT,
+         MyTMSUUI_ConfigDefaults::DFLT_MAX_IMAGE_HEIGHT
+        ).toInt(&goodIntConv);
+
+   if (!goodIntConv)
+   {
+      maxImageHeight = MyTMSUUI_ConfigDefaults::DFLT_MAX_IMAGE_HEIGHT;
+   }
+
    //// Determine if image is animated.
    if (isCurrentImageAnim())
    {
@@ -1801,12 +1837,11 @@ void MyTMSUUI_MainWindow::updateUiForCurrentImage()
       QSize scaledSize;
       {
          QImageReader animImgReader(myDataPtr->getCurrentFileFullPath());
-         //// TODO-FUTURE: Use a config system (qgetenv + QSettings + QCommandLineArgs) for max image height
-         if (animImgReader.size().height() > MyTMSUUI_MainWin_NS::MAX_IMAGE_HEIGHT)
+         if (animImgReader.size().height() > maxImageHeight)
          {
             needsToShrink = true;
             QImage animFrame = animImgReader.read();
-            scaledSize = (animFrame.scaledToHeight(MyTMSUUI_MainWin_NS::MAX_IMAGE_HEIGHT)).size();
+            scaledSize = (animFrame.scaledToHeight(maxImageHeight)).size();
          }
          //// TODO-MAINT: max image width?
       }
@@ -1825,10 +1860,9 @@ void MyTMSUUI_MainWindow::updateUiForCurrentImage()
    {
       QPixmap img(myDataPtr->getCurrentFileFullPath());
 
-      //// TODO-FUTURE: Use a config system (qgetenv + QSettings + QCommandLineArgs) for max image height
-      if (img.height() > MyTMSUUI_MainWin_NS::MAX_IMAGE_HEIGHT)
+      if (img.height() > maxImageHeight)
       {
-         QPixmap scaledImg = img.scaledToHeight(MyTMSUUI_MainWin_NS::MAX_IMAGE_HEIGHT);
+         QPixmap scaledImg = img.scaledToHeight(maxImageHeight);
          myGuiPtr->myImageWidget->setPixmap(scaledImg);
       }
       //// TODO-MAINT: max image width?
