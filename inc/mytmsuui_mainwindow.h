@@ -85,7 +85,8 @@ class MyTMSUUI_MainWindow : public QMainWindow
    void handleMainTagValIdxChanged(const QString& tagName, int index);
    void handleShortTagClicked(const QString& tagName, bool byUserClick);
    void handleShortTagValIdxChanged(const QString& tagName, int index);
-   void interfaceGoneIdle(MyTMSUUI_IF_NS::ProcState lastState, bool withError = false);
+   void interfaceGoneIdle(MyTMSUUI_IF_NS::ProcState lastState,
+                          MyTMSUUI_IF_NS::LastStateErrorCode errorCode = MyTMSUUI_IF_NS::EC_NoError);
    void jumpToImageFromEntry();
    void lastButtonClicked();
    void nextButtonClicked();

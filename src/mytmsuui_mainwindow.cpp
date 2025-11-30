@@ -1208,11 +1208,12 @@ void MyTMSUUI_MainWindow::handleShortTagValIdxChanged(const QString& tagName, in
 //// --------------------------------------------------------------------------
 //// (protected SLOT)
 //// --------------------------------------------------------------------------
-void MyTMSUUI_MainWindow::interfaceGoneIdle(MyTMSUUI_IF_NS::ProcState lastState, bool withError)
+void MyTMSUUI_MainWindow::interfaceGoneIdle(MyTMSUUI_IF_NS::ProcState lastState,
+                                            MyTMSUUI_IF_NS::LastStateErrorCode errorCode)
 {
    statusBar()->clearMessage();
 
-   if (withError)
+   if (errorCode != MyTMSUUI_IF_NS::EC_NoError)
    {
       myGuiStatusBarErrorLabel->setText(myDataPtr->myInterface.getError());
    }
@@ -1224,7 +1225,7 @@ void MyTMSUUI_MainWindow::interfaceGoneIdle(MyTMSUUI_IF_NS::ProcState lastState,
    switch (lastState)
    {
       case MyTMSUUI_IF_NS::InfoQuery:
-         if (withError)
+         if (errorCode != MyTMSUUI_IF_NS::EC_NoError)
          {
             clearTagWidgets();
             myDataPtr->myCurrentFilesList.clear();
@@ -1243,7 +1244,7 @@ void MyTMSUUI_MainWindow::interfaceGoneIdle(MyTMSUUI_IF_NS::ProcState lastState,
          break;
 
       case MyTMSUUI_IF_NS::ImpliesDBQuery:
-         if (withError)
+         if (errorCode != MyTMSUUI_IF_NS::EC_NoError)
             break;
 
          //// (Re-)build tag widgets
@@ -1256,11 +1257,16 @@ void MyTMSUUI_MainWindow::interfaceGoneIdle(MyTMSUUI_IF_NS::ProcState lastState,
          break;
 
       case MyTMSUUI_IF_NS::BuildFilesList:
-         if (withError)
+         if (errorCode != MyTMSUUI_IF_NS::EC_NoError)
          {
             myDataPtr->myCurrentFilesList.clear();
             setNavEnabledStates();
-            uncheckAllTagWidgets();
+
+            if (errorCode != MyTMSUUI_IF_NS::EC_NoFilesByQuery)
+            {
+               uncheckAllTagWidgets();
+            }
+
             myGuiPtr->myImageWidget->clear();
             myGuiStatusBarNormalLabel->setText("");
          }
@@ -1275,8 +1281,8 @@ void MyTMSUUI_MainWindow::interfaceGoneIdle(MyTMSUUI_IF_NS::ProcState lastState,
          break;
 
       case MyTMSUUI_IF_NS::RetrieveFileTags:
-         if (withError)
-            //// TODO-MAINT: handle RetrieveFileTags withError?
+         if (errorCode != MyTMSUUI_IF_NS::EC_NoError)
+            //// TODO-MAINT: handle RetrieveFileTags with error?
             break;
 
          setTaggedValuesInWidgets();
@@ -1284,9 +1290,9 @@ void MyTMSUUI_MainWindow::interfaceGoneIdle(MyTMSUUI_IF_NS::ProcState lastState,
 
       case MyTMSUUI_IF_NS::SetTags:
       case MyTMSUUI_IF_NS::UnsetTags:
-         if (withError)
+         if (errorCode != MyTMSUUI_IF_NS::EC_NoError)
          {
-            //// TODO-MAINT: handle RetrieveFileTags withError?
+            //// TODO-MAINT: handle RetrieveFileTags with error?
          }
          else
          {
@@ -1607,8 +1613,10 @@ void MyTMSUUI_MainWindow::setDataObj(MyTMSUUI_Data* dataPtr)
               &(myDataPtr->myInterface),   SLOT(retrieveFileTags(const QString&)) );
 
       //// I/f: Gone idle
-      connect(&(myDataPtr->myInterface), SIGNAL(         goneIdle(MyTMSUUI_IF_NS::ProcState, bool)),
-                                   this,   SLOT(interfaceGoneIdle(MyTMSUUI_IF_NS::ProcState, bool)) );
+      connect(&(myDataPtr->myInterface), SIGNAL(         goneIdle(MyTMSUUI_IF_NS::ProcState,
+                                                                  MyTMSUUI_IF_NS::LastStateErrorCode)),
+                                   this,   SLOT(interfaceGoneIdle(MyTMSUUI_IF_NS::ProcState,
+                                                                  MyTMSUUI_IF_NS::LastStateErrorCode)) );
 
       emit dataBaseDirChanged(myDataPtr->myCurrentBaseDir.absolutePath());
    }

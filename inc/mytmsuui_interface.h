@@ -24,6 +24,23 @@ namespace MyTMSUUI_IF_NS
       UnsetTags
    };
 
+   enum LastStateErrorCode
+   {
+      EC_NoError,
+      EC_NoDataObj,
+      EC_NoFilesFound,
+      EC_NoTags,
+      EC_NoDB,
+      EC_DBTagsList,
+      EC_DBValuesList,
+      EC_DBTagsByValue,
+      EC_DBImplTagsList,
+      EC_FileTags,
+      EC_FilesByQuery,
+      EC_NoFilesByQuery,
+      EC_SettingFileTags,
+   };
+
    enum EmptyQueryAction
    {
       RetrieveNone,
@@ -56,7 +73,8 @@ class MyTMSUUI_Interface : public QObject
    void setDataObj(MyTMSUUI_Data* dataPtr);
 
  signals:
-   void goneIdle(MyTMSUUI_IF_NS::ProcState lastState, bool withError = false);
+   void goneIdle(MyTMSUUI_IF_NS::ProcState lastState,
+                 MyTMSUUI_IF_NS::LastStateErrorCode errorCode = MyTMSUUI_IF_NS::EC_NoError);
 
  public slots:
    void doNewBaseDir(const QString& newPath);
@@ -86,7 +104,7 @@ class MyTMSUUI_Interface : public QObject
    void handleFinishedSetTags(int exitCode);
    void handleFinishedUnsetTags(int exitCode);
 
-   void goIdle(bool withError = false);
+   void goIdle(MyTMSUUI_IF_NS::LastStateErrorCode errorCode = MyTMSUUI_IF_NS::EC_NoError);
 
  protected slots:
    void handleFinishedProc(int exitCode, QProcess::ExitStatus howExited);
@@ -128,11 +146,11 @@ inline void MyTMSUUI_Interface::setDataObj(MyTMSUUI_Data* dataPtr)
    myDataPtr = dataPtr;
 }
 
-inline void MyTMSUUI_Interface::goIdle(bool withError)
+inline void MyTMSUUI_Interface::goIdle(MyTMSUUI_IF_NS::LastStateErrorCode errorCode)
 {
    MyTMSUUI_IF_NS::ProcState prevState = myState;
    myState = MyTMSUUI_IF_NS::Idle;
-   emit goneIdle(prevState, withError);
+   emit goneIdle(prevState, errorCode);
 }
 
 #endif
