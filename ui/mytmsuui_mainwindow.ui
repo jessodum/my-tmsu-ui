@@ -448,7 +448,8 @@
           <item>
            <widget class="QScrollArea" name="myShortTagsScrollArea">
             <property name="styleSheet">
-             <string notr="true">QScrollArea
+             <string notr="true">
+QScrollArea
 {
    margin-top: 5px;
    margin-right: 5px;
@@ -475,7 +476,8 @@ QScrollBar::add-line:vertical
 {
    height: 18px;
    subcontrol-origin: margin;
-}</string>
+}
+             </string>
             </property>
             <property name="horizontalScrollBarPolicy">
              <enum>Qt::ScrollBarPolicy::ScrollBarAsNeeded</enum>
@@ -537,7 +539,8 @@ QScrollBar::add-line:vertical
              </size>
             </property>
             <property name="styleSheet">
-             <string notr="true">QScrollArea
+             <string notr="true">
+QScrollArea
 {
    margin-top: 5px;
    margin-right: 5px;
@@ -564,7 +567,8 @@ QScrollBar::add-line:vertical
 {
    height: 18px;
    subcontrol-origin: margin;
-}l</string>
+}
+             </string>
             </property>
             <property name="horizontalScrollBarPolicy">
              <enum>Qt::ScrollBarPolicy::ScrollBarAsNeeded</enum>

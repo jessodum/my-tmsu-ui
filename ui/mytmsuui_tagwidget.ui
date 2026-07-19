@@ -47,8 +47,10 @@
       </size>
      </property>
      <property name="styleSheet">
-      <string notr="true">QCheckBox::indicator:unchecked {image: url(:cb/img/cb_unchecked_grey.png);}
-QCheckBox::indicator:checked {image: url(:cb/img/cb_checked_blue.png);}</string>
+      <string notr="true">
+QCheckBox::indicator:unchecked {image: url(:cb/img/cb_unchecked_grey.png);}
+QCheckBox::indicator:checked {image: url(:cb/img/cb_checked_blue.png);}
+      </string>
      </property>
      <property name="text">
       <string/>
@@ -98,7 +100,8 @@ QCheckBox::indicator:checked {image: url(:cb/img/cb_checked_blue.png);}</string>
       </size>
      </property>
      <property name="styleSheet">
-      <string notr="true">QComboBox
+      <string notr="true">
+QComboBox
 {
    padding: 4px;
 }
@@ -108,7 +111,8 @@ QComboBox QAbstractItemView
    border: 1px solid black;
    color: black;
    background-color: white;
-}</string>
+}
+      </string>
      </property>
      <property name="insertPolicy">
       <enum>QComboBox::InsertPolicy::InsertAlphabetically</enum>
