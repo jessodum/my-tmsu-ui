@@ -85,6 +85,25 @@ QString MyTMSUUI_TagWidget::getValue() const
 }
 
 //// --------------------------------------------------------------------------
+QString MyTMSUUI_TagWidget::getUniqID() const
+{
+   QString retval = myGuiPtr->myTagCheckbox->text();
+
+   if (usesValues())
+   {
+      retval += "=";
+      QString currentText = myGuiPtr->myValueSelectBox->currentText();
+
+      if (!currentText.isEmpty())
+      {
+         retval += currentText;
+      }
+   }
+
+   return retval;
+}
+
+//// --------------------------------------------------------------------------
 QString MyTMSUUI_TagWidget::getValuePlaceholderText() const
 {
    return usesValues() ? myGuiPtr->myValueSelectBox->placeholderText() : "";

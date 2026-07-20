@@ -172,6 +172,10 @@ MyTMSUUI_MainWindow::~MyTMSUUI_MainWindow()
 
 //// --------------------------------------------------------------------------
 //// (protected SLOT)
+//// Description: callback for clicking the "Apply" button
+//// Called by:
+//// - myApplyButton clicked() SIGNAL
+//// - checkForUnappliedTags (**see issue 35**)
 //// --------------------------------------------------------------------------
 void MyTMSUUI_MainWindow::applyButtonClicked()
 {
@@ -262,6 +266,12 @@ void MyTMSUUI_MainWindow::applyButtonClicked()
 
 //// --------------------------------------------------------------------------
 //// (protected)
+//// Description: Adds/removes/updates clone of main tag widget in the "short list" of tag widgets.
+//// Called by:
+//// - self
+//// - handleMainTagToggled
+//// - setTaggedValuesInWidgets
+//// - uncheckAllTagWidgets
 //// --------------------------------------------------------------------------
 void MyTMSUUI_MainWindow::applyTagWidgetToShortList(MyTMSUUI_TagWidget* tagWidgetPtr,
                                                     MyTMSUUI_MainWin_NS::ShortListModAction action)
@@ -309,7 +319,7 @@ void MyTMSUUI_MainWindow::applyTagWidgetToShortList(MyTMSUUI_TagWidget* tagWidge
 
          //// Insert in sorted order
          bool inserted = false;
-         QString newTagName = newTagWidget->getTagName();
+         QString newUniqID = newTagWidget->getUniqID();
          for (int idx = 0; idx < tagWidgetsVLayout->count(); ++idx)
          {
             if (tagWidgetsVLayout->itemAt(idx)->widget() == nullptr)
@@ -320,8 +330,8 @@ void MyTMSUUI_MainWindow::applyTagWidgetToShortList(MyTMSUUI_TagWidget* tagWidge
             //// else
 
             QWidget* wdgt = tagWidgetsVLayout->itemAt(idx)->widget();
-            QString existingTagName = ((MyTMSUUI_TagWidget*)wdgt)->getTagName();
-            if (newTagName.localeAwareCompare(existingTagName) <= 0)
+            QString existingUniqID = ((MyTMSUUI_TagWidget*)wdgt)->getUniqID();
+            if (newUniqID.localeAwareCompare(existingUniqID) <= 0)
             {
                tagWidgetsVLayout->insertWidget(idx, newTagWidget);
                inserted = true;
@@ -349,7 +359,7 @@ void MyTMSUUI_MainWindow::applyTagWidgetToShortList(MyTMSUUI_TagWidget* tagWidge
       }
       else
       {
-         qWarning("Clone widget for tag %s already exists", qUtf8Printable(cloneTagWidget->getTagName()));
+         qWarning("Clone widget for tag %s already exists", qUtf8Printable(cloneTagWidget->getUniqID()));
          //// TODO-MAINT: Update existing widget?
       }
 
@@ -385,7 +395,7 @@ void MyTMSUUI_MainWindow::applyTagWidgetToShortList(MyTMSUUI_TagWidget* tagWidge
             //// else
 
             QWidget* wdgt = tagWidgetsVLayout->itemAt(idx)->widget();
-            if (((MyTMSUUI_TagWidget*)wdgt)->getTagName() == tagWidgetPtr->getTagName())
+            if (((MyTMSUUI_TagWidget*)wdgt)->getUniqID() == tagWidgetPtr->getUniqID())
             {
                //// Found it!
                QLayoutItem* layoutItem = tagWidgetsVLayout->takeAt(idx);
@@ -434,6 +444,11 @@ void MyTMSUUI_MainWindow::applyTagWidgetToShortList(MyTMSUUI_TagWidget* tagWidge
 
 //// --------------------------------------------------------------------------
 //// (protected)
+//// Description: Resets GUI for a new list of images.
+//// Called by:
+//// - applyButtonClicked
+//// - interfaceGoneIdle
+//// - updateInterfaceFilesList
 //// --------------------------------------------------------------------------
 void MyTMSUUI_MainWindow::beginDisplayList(bool emptyListIsOK)
 {
@@ -468,6 +483,10 @@ void MyTMSUUI_MainWindow::beginDisplayList(bool emptyListIsOK)
 
 //// --------------------------------------------------------------------------
 //// (protected)
+//// Description: Recursively builds list of implied tags from in the input TaggedValue
+//// Called by:
+//// - self
+//// - handleMainTagToggled
 //// --------------------------------------------------------------------------
 void MyTMSUUI_MainWindow::buildImpliedTagChainsList(QList<MyTMSUUI_TaggedValue>* listToBuild,
                                                     const MyTMSUUI_TaggedValue& impliesTaggedValue)
@@ -488,6 +507,19 @@ void MyTMSUUI_MainWindow::buildImpliedTagChainsList(QList<MyTMSUUI_TaggedValue>*
 
 //// --------------------------------------------------------------------------
 //// (protected)
+//// Description: Looks for any "unapplied" (i.e., ToBe*) checkbox states and,
+////    if found, presents user with "Unapplied Tags" dialog box to determine
+////    course of action.
+//// Called by:
+//// - closeEvent
+//// - doSelectBaseDir
+//// - doUpdateRecurse
+//// - firstButtonClicked
+//// - jumpToImageFromEntry
+//// - lastButtonClicked
+//// - nextButtonClicked
+//// - prevButtonClicked
+//// - radioQueryClicked
 //// --------------------------------------------------------------------------
 MyTMSUUI_MainWin_NS::CheckUnAppliedResult MyTMSUUI_MainWindow::checkForUnappliedTags(bool canCancelAction, bool fromQueryClick)
 {
@@ -559,7 +591,7 @@ MyTMSUUI_MainWin_NS::CheckUnAppliedResult MyTMSUUI_MainWindow::checkForUnapplied
    switch (stdBtn)
    {
     case QMessageBox::Apply:
-      applyButtonClicked();
+      applyButtonClicked(); // TODO: Update here for fix to issue 35? (https://github.com/jessodum/my-tmsu-ui/issues/35)
       return MyTMSUUI_MainWin_NS::CK_UA_CONTINUE;
 
     // case QMessageBox::Discard:
@@ -579,6 +611,10 @@ MyTMSUUI_MainWin_NS::CheckUnAppliedResult MyTMSUUI_MainWindow::checkForUnapplied
 
 //// --------------------------------------------------------------------------
 //// (protected)
+//// Description: Removes all TagWidgets from main list
+//// Called by:
+//// - interfaceGoneIdle
+//// - rebuildTagWidgets
 //// --------------------------------------------------------------------------
 void MyTMSUUI_MainWindow::clearTagWidgets()
 {
@@ -610,6 +646,9 @@ void MyTMSUUI_MainWindow::clearTagWidgets()
 
 //// --------------------------------------------------------------------------
 //// (protected)
+//// Description: Event handler for closing the GUI
+//// Called by:
+//// - (Qt event dispatch)
 //// --------------------------------------------------------------------------
 void MyTMSUUI_MainWindow::closeEvent(QCloseEvent* event)
 {
@@ -629,6 +668,9 @@ void MyTMSUUI_MainWindow::closeEvent(QCloseEvent* event)
 
 //// --------------------------------------------------------------------------
 //// (protected SLOT)
+//// Description: Displays "About" dialog
+//// Called by:
+//// - myAboutAction triggered() SIGNAL
 //// --------------------------------------------------------------------------
 void MyTMSUUI_MainWindow::doAbout()
 {
@@ -660,6 +702,9 @@ void MyTMSUUI_MainWindow::doAbout()
 
 //// --------------------------------------------------------------------------
 //// (protected SLOT)
+//// Description: Opens "User Manual" / help doc web page
+//// Called by:
+//// - myHelpManualAction triggered() SIGNAL
 //// --------------------------------------------------------------------------
 void MyTMSUUI_MainWindow::doOpenUserManual()
 {
@@ -670,6 +715,10 @@ void MyTMSUUI_MainWindow::doOpenUserManual()
 
 //// --------------------------------------------------------------------------
 //// (protected SLOT)
+//// Description: Display dir selection dialog and act upon user's input
+//// Called by:
+//// - mySelectBaseDirAction triggered() SIGNAL
+//// - mySelectBaseDirBtn clicked() SIGNAL
 //// --------------------------------------------------------------------------
 void MyTMSUUI_MainWindow::doSelectBaseDir()
 {
@@ -716,6 +765,9 @@ void MyTMSUUI_MainWindow::doSelectBaseDir()
 
 //// --------------------------------------------------------------------------
 //// (protected SLOT)
+//// Description: Callback for the "Recurse into subdirectories" checkbox
+//// Called by:
+//// - myRecurseCheckbox toggled() SIGNAL
 //// --------------------------------------------------------------------------
 void MyTMSUUI_MainWindow::doUpdateRecurse(bool newRecurseState)
 {
@@ -731,6 +783,11 @@ void MyTMSUUI_MainWindow::doUpdateRecurse(bool newRecurseState)
 
 //// --------------------------------------------------------------------------
 //// (protected)
+//// Description: Find a "clone" TagWidget from the "short list" that matches the input TagWidget
+//// Called by:
+//// - applyTagWidgetToShortList
+//// - handleMainTagValIdxChanged
+//// - handleShortTagValIdxChanged
 //// --------------------------------------------------------------------------
 MyTMSUUI_TagWidget* MyTMSUUI_MainWindow::findCloneTagWidget(MyTMSUUI_TagWidget* origTagWidget)
 {
@@ -747,7 +804,7 @@ MyTMSUUI_TagWidget* MyTMSUUI_MainWindow::findCloneTagWidget(MyTMSUUI_TagWidget* 
 
    for (MyTMSUUI_TagWidget* tagWidget : tagWidgetsList)
    {
-      if (tagWidget->getTagName() == origTagWidget->getTagName())
+      if (tagWidget->getUniqID() == origTagWidget->getUniqID())
       {
          //// Found it!
          retval = tagWidget;
@@ -760,12 +817,20 @@ MyTMSUUI_TagWidget* MyTMSUUI_MainWindow::findCloneTagWidget(MyTMSUUI_TagWidget* 
 
 //// --------------------------------------------------------------------------
 //// (protected)
+//// Description: Find a TagWidget from the "main list" that matches the input tag name
+// JDO-TODO: update or add function to use UniqID
+//// Called by:
+//// - handleMainTagToggled
+//// - handleMainTagValIdxChanged
+//// - handleShortTagClicked
+//// - handleShortTagValIdxChanged
 //// --------------------------------------------------------------------------
 MyTMSUUI_TagWidget* MyTMSUUI_MainWindow::findTagWidget(const QString& tagName)
 {
    MyTMSUUI_TagWidget* retval = nullptr;
    TagWidgetList tagWidgetsList = getTagWidgetList();
 
+//JDO-TODO: resume search from here
    for (MyTMSUUI_TagWidget* tagWidget : tagWidgetsList)
    {
       if (tagWidget->getTagName() == tagName)
@@ -781,6 +846,9 @@ MyTMSUUI_TagWidget* MyTMSUUI_MainWindow::findTagWidget(const QString& tagName)
 
 //// --------------------------------------------------------------------------
 //// (protected SLOT)
+//// Description: Callback for the "Jump to 1st image" button
+//// Called by:
+//// - myFirstImgButton clicked() SIGNAL
 //// --------------------------------------------------------------------------
 void MyTMSUUI_MainWindow::firstButtonClicked()
 {
@@ -796,6 +864,15 @@ void MyTMSUUI_MainWindow::firstButtonClicked()
 
 //// --------------------------------------------------------------------------
 //// (protected)
+//// Description: Returns list of TagWidgets for either "main" or "short" list
+//// Called by:
+//// - applyButtonClicked
+//// - checkForUnappliedTags
+//// - findCloneTagWidget
+//// - findTagWidget
+//// - setTaggedValuesInWidgets
+//// - uncheckAllTagWidgets
+//// - updateInterfaceQueryTagsList
 //// --------------------------------------------------------------------------
 TagWidgetList MyTMSUUI_MainWindow::getTagWidgetList(bool useShortList)
 {
@@ -830,6 +907,16 @@ TagWidgetList MyTMSUUI_MainWindow::getTagWidgetList(bool useShortList)
 
 //// --------------------------------------------------------------------------
 //// (protected)
+//// Description: Jump to an image in the list by its number in the list
+//// Called by:
+//// - self
+//// - beginDisplayList
+//// - firstButtonClicked
+//// - goToLastImage
+//// - jumpToImageFromEntry
+//// - lastButtonClicked
+//// - nextButtonClicked
+//// - prevButtonClicked
 //// --------------------------------------------------------------------------
 void MyTMSUUI_MainWindow::goToImage(qsizetype number)
 {
@@ -880,6 +967,9 @@ void MyTMSUUI_MainWindow::goToImage(qsizetype number)
 
 //// --------------------------------------------------------------------------
 //// (protected)
+//// Description: Jump to the last image in the list
+//// Called by:
+//// - goToImage
 //// --------------------------------------------------------------------------
 void MyTMSUUI_MainWindow::goToLastImage()
 {
@@ -898,8 +988,11 @@ void MyTMSUUI_MainWindow::goToLastImage()
 
 //// --------------------------------------------------------------------------
 //// (protected SLOT)
+//// Description: Callback for a "main" TagWidget checkbox clicked
+//// Called by:
+//// - ("main" tag widget) tagToggled() SIGNAL
 //// --------------------------------------------------------------------------
-void MyTMSUUI_MainWindow::handleMainTagToggled(const QString& tagName, bool byUserClick)
+void MyTMSUUI_MainWindow::handleMainTagToggled(const QString& tagName, bool byUserClick) // JDO-TODO: update to by UniqID?
 {
    bool userClickedForQuery = false;
    if (!myToggleOtherTagsAllowed)
@@ -1000,6 +1093,7 @@ void MyTMSUUI_MainWindow::handleMainTagToggled(const QString& tagName, bool byUs
 
    for (MyTMSUUI_TaggedValue impliedTaggedValue : impliedTaggedValuesToUpdateList)
    {
+      // JDO-TODO: update to by UniqID?
       MyTMSUUI_TagWidget* tWidget = findTagWidget(impliedTaggedValue.myTagName);
       if (tWidget == nullptr)
       {
@@ -1098,8 +1192,11 @@ void MyTMSUUI_MainWindow::handleMainTagToggled(const QString& tagName, bool byUs
 
 //// --------------------------------------------------------------------------
 //// (protected SLOT)
+//// Description: Callback for the index of a "main" TagWidget value combobox changing
+//// Called by:
+//// - ("main" tag widget) valueIndexChanged() SIGNAL
 //// --------------------------------------------------------------------------
-void MyTMSUUI_MainWindow::handleMainTagValIdxChanged(const QString& tagName, int index)
+void MyTMSUUI_MainWindow::handleMainTagValIdxChanged(const QString& tagName, int index) // JDO-TODO: update to by UniqID?
 {
    MyTMSUUI_TagWidget* mainTagWidget = findTagWidget(tagName);
    if (mainTagWidget == nullptr)
@@ -1134,14 +1231,19 @@ void MyTMSUUI_MainWindow::handleMainTagValIdxChanged(const QString& tagName, int
    }
    //// else
 
+   // JDO-TODO: See issue 36 (https://github.com/jessodum/my-tmsu-ui/issues/36):
+   //    "Changing value on applied (set) tag should update state to ToBeSet"
    //// Copy new value string
    cloneTagWidget->setValue(mainTagWidget->getValue());
 }
 
 //// --------------------------------------------------------------------------
 //// (protected SLOT)
+//// Description: Callback for a "short list" TagWidget checkbox clicked
+//// Called by:
+//// - ("short list" tag widget) shortTagClicked() SIGNAL
 //// --------------------------------------------------------------------------
-void MyTMSUUI_MainWindow::handleShortTagClicked(const QString& tagName, bool byUserClick)
+void MyTMSUUI_MainWindow::handleShortTagClicked(const QString& tagName, bool byUserClick) // JDO-TODO: update to by UniqID?
 {
    if (!byUserClick)
    {
@@ -1165,8 +1267,11 @@ void MyTMSUUI_MainWindow::handleShortTagClicked(const QString& tagName, bool byU
 
 //// --------------------------------------------------------------------------
 //// (protected SLOT)
+//// Description: Callback for the index of a "short list" TagWidget value combobox changing
+//// Called by:
+//// - ("short list" tag widget) valueIndexChanged() SIGNAL
 //// --------------------------------------------------------------------------
-void MyTMSUUI_MainWindow::handleShortTagValIdxChanged(const QString& tagName, int index)
+void MyTMSUUI_MainWindow::handleShortTagValIdxChanged(const QString& tagName, int index) // JDO-TODO: update to by UniqID?
 {
    //// Find original tag widget
    MyTMSUUI_TagWidget* mainTagWidget = findTagWidget(tagName);
@@ -1201,12 +1306,17 @@ void MyTMSUUI_MainWindow::handleShortTagValIdxChanged(const QString& tagName, in
    }
    //// else
 
+   // JDO-TODO: See issue 36 (https://github.com/jessodum/my-tmsu-ui/issues/36):
+   //    "Changing value on applied (set) tag should update state to ToBeSet"
    //// Copy new value string
    mainTagWidget->setValue(cloneTagWidget->getValue());
 }
 
 //// --------------------------------------------------------------------------
 //// (protected SLOT)
+//// Description: Callback for sub-process interface completing work
+//// Called by:
+//// - myDataPtr->myInterface goneIdle() SIGNAL
 //// --------------------------------------------------------------------------
 void MyTMSUUI_MainWindow::interfaceGoneIdle(MyTMSUUI_IF_NS::ProcState lastState,
                                             MyTMSUUI_IF_NS::LastStateErrorCode errorCode)
@@ -1311,6 +1421,9 @@ void MyTMSUUI_MainWindow::interfaceGoneIdle(MyTMSUUI_IF_NS::ProcState lastState,
 
 //// --------------------------------------------------------------------------
 //// (protected)
+//// Description: Returns flag indicating whether the current image is an animation
+//// Called by:
+//// - updateUiForCurrentImage
 //// --------------------------------------------------------------------------
 bool MyTMSUUI_MainWindow::isCurrentImageAnim()
 {
@@ -1331,6 +1444,9 @@ bool MyTMSUUI_MainWindow::isCurrentImageAnim()
 
 //// --------------------------------------------------------------------------
 //// (protected SLOT)
+//// Description: Callback for changing the image number manually by the entry field
+//// Called by:
+//// - myNavImgNumEntry editingFinished() SIGNAL
 //// --------------------------------------------------------------------------
 void MyTMSUUI_MainWindow::jumpToImageFromEntry()
 {
@@ -1374,6 +1490,9 @@ void MyTMSUUI_MainWindow::jumpToImageFromEntry()
 
 //// --------------------------------------------------------------------------
 //// (protected SLOT)
+//// Description: Callback for the "Jump to last image" button
+//// Called by:
+//// - myLastImgButton clicked() SIGNAL
 //// --------------------------------------------------------------------------
 void MyTMSUUI_MainWindow::lastButtonClicked()
 {
@@ -1391,6 +1510,9 @@ void MyTMSUUI_MainWindow::lastButtonClicked()
 
 //// --------------------------------------------------------------------------
 //// (protected SLOT)
+//// Description: Callback for the "Go to next image" button
+//// Called by:
+//// - myNextImgButton clicked() SIGNAL
 //// --------------------------------------------------------------------------
 void MyTMSUUI_MainWindow::nextButtonClicked()
 {
@@ -1407,6 +1529,9 @@ void MyTMSUUI_MainWindow::nextButtonClicked()
 
 //// --------------------------------------------------------------------------
 //// (protected)
+//// Description: Iterate through the temporary list of "image" files to filter out non-image files by format inspection
+//// Called by:
+//// - interfaceGoneIdle
 //// --------------------------------------------------------------------------
 void MyTMSUUI_MainWindow::prepFilesListForDisplay()
 {
@@ -1438,6 +1563,9 @@ void MyTMSUUI_MainWindow::prepFilesListForDisplay()
 
 //// --------------------------------------------------------------------------
 //// (protected SLOT)
+//// Description: Callback for the "Go to previous image" button
+//// Called by:
+//// - myPrevImgButton clicked() SIGNAL
 //// --------------------------------------------------------------------------
 void MyTMSUUI_MainWindow::prevButtonClicked()
 {
@@ -1454,6 +1582,9 @@ void MyTMSUUI_MainWindow::prevButtonClicked()
 
 //// --------------------------------------------------------------------------
 //// (protected SLOT)
+//// Description: Callback for clicking the (retrieve) "All" radio button
+//// Called by:
+//// - myRetrieveAllRadioButton clicked() SIGNAL
 //// --------------------------------------------------------------------------
 void MyTMSUUI_MainWindow::radioAllClicked()
 {
@@ -1464,6 +1595,9 @@ void MyTMSUUI_MainWindow::radioAllClicked()
 
 //// --------------------------------------------------------------------------
 //// (protected SLOT)
+//// Description: Callback for clicking the (retrieve) "None" radio button
+//// Called by:
+//// - myRetrieveNoneRadioButton clicked() SIGNAL
 //// --------------------------------------------------------------------------
 void MyTMSUUI_MainWindow::radioNoneClicked()
 {
@@ -1474,6 +1608,9 @@ void MyTMSUUI_MainWindow::radioNoneClicked()
 
 //// --------------------------------------------------------------------------
 //// (protected SLOT)
+//// Description: Callback for clicking the "Query" radio button
+//// Called by:
+//// - myQueryRadioButton clicked() SIGNAL
 //// --------------------------------------------------------------------------
 void MyTMSUUI_MainWindow::radioQueryClicked()
 {
@@ -1492,6 +1629,9 @@ void MyTMSUUI_MainWindow::radioQueryClicked()
 
 //// --------------------------------------------------------------------------
 //// (protected SLOT)
+//// Description: Callback for clicking the "Set" radio button
+//// Called by:
+//// - mySetTagsRadioButton clicked() SIGNAL
 //// --------------------------------------------------------------------------
 void MyTMSUUI_MainWindow::radioSetTagsClicked()
 {
@@ -1511,6 +1651,9 @@ void MyTMSUUI_MainWindow::radioSetTagsClicked()
 
 //// --------------------------------------------------------------------------
 //// (protected SLOT)
+//// Description: Callback for clicking the (retrieve) "Untagged" radio button
+//// Called by:
+//// - myRetrieveUntaggedRadioButton clicked() SIGNAL
 //// --------------------------------------------------------------------------
 void MyTMSUUI_MainWindow::radioUntaggedClicked()
 {
@@ -1521,6 +1664,9 @@ void MyTMSUUI_MainWindow::radioUntaggedClicked()
 
 //// --------------------------------------------------------------------------
 //// (protected)
+//// Description: Rebuilds the "main" list of TagWidgets
+//// Called by:
+//// - interfaceGoneIdle
 //// --------------------------------------------------------------------------
 void MyTMSUUI_MainWindow::rebuildTagWidgets()
 {
@@ -1564,6 +1710,9 @@ void MyTMSUUI_MainWindow::rebuildTagWidgets()
 
 //// --------------------------------------------------------------------------
 //// (protected SLOT)
+//// Description: Callback for clicking the "Reset" button
+//// Called by:
+//// - myResetButton clicked() SIGNAL
 //// --------------------------------------------------------------------------
 void MyTMSUUI_MainWindow::resetButtonClicked()
 {
@@ -1579,6 +1728,10 @@ void MyTMSUUI_MainWindow::resetButtonClicked()
 
 //// --------------------------------------------------------------------------
 //// (protected SLOT)
+//// Description: Callback for clicking the "Scroll to bottom" button
+//// Called by:
+//// - myUpperScrollToBottomButton clicked() SIGNAL
+//// - myLowerScrollToBottomButton clicked() SIGNAL
 //// --------------------------------------------------------------------------
 void MyTMSUUI_MainWindow::scrollToBottomClicked()
 {
@@ -1590,6 +1743,10 @@ void MyTMSUUI_MainWindow::scrollToBottomClicked()
 
 //// --------------------------------------------------------------------------
 //// (protected SLOT)
+//// Description: Callback for clicking the "Scroll to top" button
+//// Called by:
+//// - myUpperScrollToTopButton clicked() SIGNAL
+//// - myLowerScrollToTopButton clicked() SIGNAL
 //// --------------------------------------------------------------------------
 void MyTMSUUI_MainWindow::scrollToTopClicked()
 {
@@ -1598,6 +1755,9 @@ void MyTMSUUI_MainWindow::scrollToTopClicked()
 
 //// --------------------------------------------------------------------------
 //// (public)
+//// Description: Set accessor for the pointer to the application's Data object
+//// Called by:
+//// - (main)
 //// --------------------------------------------------------------------------
 void MyTMSUUI_MainWindow::setDataObj(MyTMSUUI_Data* dataPtr)
 {
@@ -1624,6 +1784,13 @@ void MyTMSUUI_MainWindow::setDataObj(MyTMSUUI_Data* dataPtr)
 
 //// --------------------------------------------------------------------------
 //// (protected)
+//// Description: Updates the enabled states for the navigation buttons
+//// Called by:
+//// - applyButtonClicked
+//// - beginDisplayList
+//// - interfaceGoneIdle
+//// - updateInterfaceFilesList
+//// - updateUiForCurrentImage
 //// --------------------------------------------------------------------------
 void MyTMSUUI_MainWindow::setNavEnabledStates()
 {
@@ -1649,6 +1816,10 @@ void MyTMSUUI_MainWindow::setNavEnabledStates()
 
 //// --------------------------------------------------------------------------
 //// (protected)
+//// Description: Updates the image numbers in the navigation area: current (entry) and max (label)
+//// Called by:
+//// - goToImage
+//// - setNavEnabledStates
 //// --------------------------------------------------------------------------
 void MyTMSUUI_MainWindow::setNavImgNumTexts(qsizetype currNum, qsizetype maxNum)
 {
@@ -1664,6 +1835,11 @@ void MyTMSUUI_MainWindow::setNavImgNumTexts(qsizetype currNum, qsizetype maxNum)
 
 //// --------------------------------------------------------------------------
 //// (protected SLOT)
+//// Description: Displays "Updating..." in the status bar
+//// Called by:
+//// - self dataBaseDirChanged() SIGNAL
+//// - doUpdateRecurse
+//// - interfaceGoneIdle
 //// --------------------------------------------------------------------------
 void MyTMSUUI_MainWindow::setStatusUpdating()
 {
@@ -1673,6 +1849,10 @@ void MyTMSUUI_MainWindow::setStatusUpdating()
 
 //// --------------------------------------------------------------------------
 //// (protected)
+//// Description: Updates the TagWidgets (in both "main" and "short" lists) to match the TaggedValues of the current image
+//// Called by:
+//// - interfaceGoneIdle
+//// - resetButtonClicked
 //// --------------------------------------------------------------------------
 void MyTMSUUI_MainWindow::setTaggedValuesInWidgets()
 {
@@ -1694,6 +1874,8 @@ void MyTMSUUI_MainWindow::setTaggedValuesInWidgets()
    {
       //// Remove widgets from "short" list
       applyTagWidgetToShortList(tagWidget, MyTMSUUI_MainWin_NS::SL_MOD_REMOVE);
+
+      // JDO-TODO: Remove multiple?
       tagWidget->setCheckedState(MyTMSUUI_Tagged_NS::Unchecked, true);
       if (tagWidget->usesValues())
       {
@@ -1729,6 +1911,12 @@ void MyTMSUUI_MainWindow::setTaggedValuesInWidgets()
 
 //// --------------------------------------------------------------------------
 //// (protected)
+//// Description: Unchecks all TagWidgets in "main" list; removes clones from "short" list
+//// Called by:
+//// - beginDisplayList
+//// - interfaceGoneIdle
+//// - radioQueryClicked
+//// - resetButtonClicked
 //// --------------------------------------------------------------------------
 void MyTMSUUI_MainWindow::uncheckAllTagWidgets()
 {
@@ -1736,6 +1924,7 @@ void MyTMSUUI_MainWindow::uncheckAllTagWidgets()
    for (MyTMSUUI_TagWidget* tagWidget : tagWidgetsList)
    {
       applyTagWidgetToShortList(tagWidget, MyTMSUUI_MainWin_NS::SL_MOD_REMOVE);
+      // JDO-TODO: Remove multiple?
       tagWidget->setCheckedState(MyTMSUUI_Tagged_NS::Unchecked, true);
       if (tagWidget->usesValues())
       {
@@ -1748,6 +1937,10 @@ void MyTMSUUI_MainWindow::uncheckAllTagWidgets()
 
 //// --------------------------------------------------------------------------
 //// (protected)
+//// Description: Requests that the sub-process interface update the list of files
+//// Called by:
+//// - doUpdateRecurse
+//// - interfaceGoneIdle
 //// --------------------------------------------------------------------------
 void MyTMSUUI_MainWindow::updateInterfaceFilesList()
 {
@@ -1776,6 +1969,10 @@ void MyTMSUUI_MainWindow::updateInterfaceFilesList()
 
 //// --------------------------------------------------------------------------
 //// (protected)
+//// Description: Updates the list of query tags in the sub-process interface
+//// Called by:
+//// - applyButtonClicked
+//// - updateInterfaceFilesList
 //// --------------------------------------------------------------------------
 void MyTMSUUI_MainWindow::updateInterfaceQueryTagsList()
 {
@@ -1785,6 +1982,7 @@ void MyTMSUUI_MainWindow::updateInterfaceQueryTagsList()
 
    TagWidgetList twList = getTagWidgetList();
 
+   // JDO-TODO: Handle multiple?
    for (MyTMSUUI_TagWidget* tagWidget : twList)
    {
       if (tagWidget->isChecked())
@@ -1801,6 +1999,9 @@ void MyTMSUUI_MainWindow::updateInterfaceQueryTagsList()
 
 //// --------------------------------------------------------------------------
 //// (protected)
+//// Description: Display the current image and update other GUI elements as applicable
+//// Called by:
+//// - goToImage
 //// --------------------------------------------------------------------------
 void MyTMSUUI_MainWindow::updateUiForCurrentImage()
 {
