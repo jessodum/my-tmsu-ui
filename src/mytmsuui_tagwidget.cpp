@@ -310,27 +310,31 @@ bool MyTMSUUI_TagWidget::eventFilter(QObject* watchedObj, QEvent* event)
 //// --------------------------------------------------------------------------
 void MyTMSUUI_TagWidget::doCheckboxClicked()
 {
+   //// Triggered by clicked() signal (i.e., user interaction, or call to click())
+
    QWidget* myParent = this->parentWidget();
 
    if (myParent != nullptr && myParent->objectName() == "myShortTagsParentWidget")
    {
-      emit shortTagClicked(getTagName(), myToggledByUserClick);
+      emit shortTagClicked(getTagName(), myToggledByUserClick); // JDO-TODO: use getUniqID()
    }
    else
    {
-      emit tagToggled(getTagName(), myToggledByUserClick);
+      emit tagToggled(getTagName(), myToggledByUserClick); // JDO-TODO: use getUniqID()
    }
 }
 
 //// --------------------------------------------------------------------------
 void MyTMSUUI_TagWidget::doCheckboxToggled()
 {
+   //// Triggered by toggled() signal (i.e., change in checkbox state)
+
    QWidget* myParent = this->parentWidget();
    bool isShortListTagWidget = (myParent != nullptr && myParent->objectName() == "myShortTagsParentWidget");
 
    if (!isShortListTagWidget && !myToggledByUserClick)
    {
-      emit tagToggled(getTagName(), myToggledByUserClick);
+      emit tagToggled(getTagName(), myToggledByUserClick); // JDO-TODO: use getUniqID()
    }
    //// else, defer to "clicked" signal-slot
 }
@@ -338,5 +342,5 @@ void MyTMSUUI_TagWidget::doCheckboxToggled()
 //// --------------------------------------------------------------------------
 void MyTMSUUI_TagWidget::doValueIdxChanged(int idx)
 {
-   emit valueIndexChanged(getTagName(), idx);
+   emit valueIndexChanged(getTagName(), idx); // JDO-TODO: use getUniqID()
 }

@@ -212,7 +212,7 @@ void MyTMSUUI_MainWindow::applyButtonClicked()
       //// Build lists of tags to set/unset
       QStringList tagsToSet;
       QStringList tagsToUnset;
-      for (MyTMSUUI_TagWidget* tagWidget : getTagWidgetList())
+      for (MyTMSUUI_TagWidget* tagWidget : getTagWidgetList()) // JDO-TODO: Use "short list" instead?
       {
          MyTMSUUI_Tagged_NS::CheckedState checkedState = tagWidget->getCheckedState();
          if (checkedState == MyTMSUUI_Tagged_NS::ToBeSetExplicitTag || checkedState == MyTMSUUI_Tagged_NS::ToBeSetBothTag)
@@ -1980,7 +1980,7 @@ void MyTMSUUI_MainWindow::updateInterfaceQueryTagsList()
 
    myDataPtr->myInterface.myQueryTagsList.clear();
 
-   TagWidgetList twList = getTagWidgetList();
+   TagWidgetList twList = getTagWidgetList(); // JDO-TODO: Use "short list" instead?
 
    // JDO-TODO: Handle multiple?
    for (MyTMSUUI_TagWidget* tagWidget : twList)
