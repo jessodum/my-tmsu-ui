@@ -31,7 +31,7 @@ class MyTMSUUI_TagWidget : public QWidget
    MyTMSUUI_Tagged_NS::CheckedState getCheckedState() const;
    QString getTagName() const;
    QString getValue() const;
-   QString getUniqID() const;
+   QString getRepString() const; // Representative string: TagName or TagName=Value
    QString getValuePlaceholderText() const;
    bool usesValues() const;
    MyTMSUUI_TagData* getTagData() const;

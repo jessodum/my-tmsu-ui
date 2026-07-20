@@ -85,7 +85,7 @@ QString MyTMSUUI_TagWidget::getValue() const
 }
 
 //// --------------------------------------------------------------------------
-QString MyTMSUUI_TagWidget::getUniqID() const
+QString MyTMSUUI_TagWidget::getRepString() const
 {
    QString retval = myGuiPtr->myTagCheckbox->text();
 
@@ -311,30 +311,34 @@ bool MyTMSUUI_TagWidget::eventFilter(QObject* watchedObj, QEvent* event)
 void MyTMSUUI_TagWidget::doCheckboxClicked()
 {
    //// Triggered by clicked() signal (i.e., user interaction, or call to click())
+   //// Occurs after "toggled()" signal.
 
    QWidget* myParent = this->parentWidget();
 
    if (myParent != nullptr && myParent->objectName() == "myShortTagsParentWidget")
    {
-      emit shortTagClicked(getTagName(), myToggledByUserClick); // JDO-TODO: use getUniqID()
+      emit shortTagClicked(getTagName(), myToggledByUserClick); // JDO-TODO: use getRepString()
    }
    else
    {
-      emit tagToggled(getTagName(), myToggledByUserClick); // JDO-TODO: use getUniqID()
+      emit tagToggled(getTagName(), myToggledByUserClick); // JDO-TODO: use getRepString()
    }
 }
 
 //// --------------------------------------------------------------------------
 void MyTMSUUI_TagWidget::doCheckboxToggled()
 {
-   //// Triggered by toggled() signal (i.e., change in checkbox state)
+   //// Triggered by toggled() signal (i.e., change in checkbox state).
+   //// Occurs before "clicked()" signal (if click occurred).
 
    QWidget* myParent = this->parentWidget();
    bool isShortListTagWidget = (myParent != nullptr && myParent->objectName() == "myShortTagsParentWidget");
 
+   //// Don't emit tagToggled if this is a "short list" widget or user click;
+   //// the doCheckboxClicked() SLOT will handle it if needed.
    if (!isShortListTagWidget && !myToggledByUserClick)
    {
-      emit tagToggled(getTagName(), myToggledByUserClick); // JDO-TODO: use getUniqID()
+      emit tagToggled(getTagName(), myToggledByUserClick); // JDO-TODO: use getRepString()
    }
    //// else, defer to "clicked" signal-slot
 }
@@ -342,5 +346,5 @@ void MyTMSUUI_TagWidget::doCheckboxToggled()
 //// --------------------------------------------------------------------------
 void MyTMSUUI_TagWidget::doValueIdxChanged(int idx)
 {
-   emit valueIndexChanged(getTagName(), idx); // JDO-TODO: use getUniqID()
+   emit valueIndexChanged(getTagName(), idx); // JDO-TODO: use getRepString()
 }

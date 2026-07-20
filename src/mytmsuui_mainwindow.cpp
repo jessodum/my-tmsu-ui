@@ -319,7 +319,7 @@ void MyTMSUUI_MainWindow::applyTagWidgetToShortList(MyTMSUUI_TagWidget* tagWidge
 
          //// Insert in sorted order
          bool inserted = false;
-         QString newUniqID = newTagWidget->getUniqID();
+         QString newRepStr = newTagWidget->getRepString();
          for (int idx = 0; idx < tagWidgetsVLayout->count(); ++idx)
          {
             if (tagWidgetsVLayout->itemAt(idx)->widget() == nullptr)
@@ -330,8 +330,8 @@ void MyTMSUUI_MainWindow::applyTagWidgetToShortList(MyTMSUUI_TagWidget* tagWidge
             //// else
 
             QWidget* wdgt = tagWidgetsVLayout->itemAt(idx)->widget();
-            QString existingUniqID = ((MyTMSUUI_TagWidget*)wdgt)->getUniqID();
-            if (newUniqID.localeAwareCompare(existingUniqID) <= 0)
+            QString existingRepStr = ((MyTMSUUI_TagWidget*)wdgt)->getRepString();
+            if (newRepStr.localeAwareCompare(existingRepStr) <= 0)
             {
                tagWidgetsVLayout->insertWidget(idx, newTagWidget);
                inserted = true;
@@ -359,7 +359,7 @@ void MyTMSUUI_MainWindow::applyTagWidgetToShortList(MyTMSUUI_TagWidget* tagWidge
       }
       else
       {
-         qWarning("Clone widget for tag %s already exists", qUtf8Printable(cloneTagWidget->getUniqID()));
+         qWarning("Clone widget for tag %s already exists", qUtf8Printable(cloneTagWidget->getRepString()));
          //// TODO-MAINT: Update existing widget?
       }
 
@@ -395,7 +395,7 @@ void MyTMSUUI_MainWindow::applyTagWidgetToShortList(MyTMSUUI_TagWidget* tagWidge
             //// else
 
             QWidget* wdgt = tagWidgetsVLayout->itemAt(idx)->widget();
-            if (((MyTMSUUI_TagWidget*)wdgt)->getUniqID() == tagWidgetPtr->getUniqID())
+            if (((MyTMSUUI_TagWidget*)wdgt)->getRepString() == tagWidgetPtr->getRepString())
             {
                //// Found it!
                QLayoutItem* layoutItem = tagWidgetsVLayout->takeAt(idx);
@@ -804,7 +804,7 @@ MyTMSUUI_TagWidget* MyTMSUUI_MainWindow::findCloneTagWidget(MyTMSUUI_TagWidget* 
 
    for (MyTMSUUI_TagWidget* tagWidget : tagWidgetsList)
    {
-      if (tagWidget->getUniqID() == origTagWidget->getUniqID())
+      if (tagWidget->getRepString() == origTagWidget->getRepString())
       {
          //// Found it!
          retval = tagWidget;
