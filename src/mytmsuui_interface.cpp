@@ -104,13 +104,7 @@ void MyTMSUUI_Interface::retrieveFilesList(bool queryTagsSpecified)
       ////              (see 'tmsu help files' for full list of operators)
       for (MyTMSUUI_TaggedValue queryTag : myQueryTagsList)
       {
-         QString queryArg = queryTag.myTagName;
-         if (!queryTag.myValue.isEmpty())
-         {
-            queryArg += "=";
-            queryArg += queryTag.myValue;
-         }
-         tmsuCmdArgs << queryArg;
+         tmsuCmdArgs << queryTag.getRepString();
       }
 
       myIFProc.setArguments(tmsuCmdArgs);

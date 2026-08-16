@@ -44,11 +44,24 @@ struct MyTMSUUI_TaggedValue
    bool operator!=(const QString& otherTagName) const;
    friend bool operator== (const QString& otherTagName, const MyTMSUUI_TaggedValue& me);
    friend bool operator!= (const QString& otherTagName, const MyTMSUUI_TaggedValue& me);
+   QString getRepString() const;
 };
 
 //// =======
 //// INLINES
 //// =======
+
+inline QString MyTMSUUI_TaggedValue::getRepString() const
+{
+   QString retval = myTagName;
+   if (!myValue.isEmpty())
+   {
+      retval += "=";
+      retval += myValue;
+   }
+
+   return retval;
+}
 
 inline bool MyTMSUUI_TaggedValue::operator==(const MyTMSUUI_TaggedValue& other) const
 {
