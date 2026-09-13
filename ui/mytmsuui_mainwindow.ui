@@ -100,13 +100,13 @@
        </sizepolicy>
       </property>
       <property name="frameShape">
-       <enum>QFrame::Box</enum>
+       <enum>QFrame::Shape::Box</enum>
       </property>
       <property name="frameShadow">
-       <enum>QFrame::Raised</enum>
+       <enum>QFrame::Shadow::Raised</enum>
       </property>
       <property name="orientation">
-       <enum>Qt::Horizontal</enum>
+       <enum>Qt::Orientation::Horizontal</enum>
       </property>
       <property name="childrenCollapsible">
        <bool>false</bool>
@@ -121,7 +121,7 @@
           <item>
            <spacer name="myNavLeftHSpacer">
             <property name="orientation">
-             <enum>Qt::Horizontal</enum>
+             <enum>Qt::Orientation::Horizontal</enum>
             </property>
             <property name="sizeHint" stdset="0">
              <size>
@@ -165,7 +165,7 @@
           <item>
            <spacer name="myNavMiddleLeftHSpacer">
             <property name="orientation">
-             <enum>Qt::Horizontal</enum>
+             <enum>Qt::Orientation::Horizontal</enum>
             </property>
             <property name="sizeHint" stdset="0">
              <size>
@@ -206,7 +206,7 @@
              <number>6</number>
             </property>
             <property name="alignment">
-             <set>Qt::AlignCenter</set>
+             <set>Qt::AlignmentFlag::AlignCenter</set>
             </property>
            </widget>
           </item>
@@ -220,7 +220,7 @@
           <item>
            <spacer name="myNavMiddleRightHSpacer">
             <property name="orientation">
-             <enum>Qt::Horizontal</enum>
+             <enum>Qt::Orientation::Horizontal</enum>
             </property>
             <property name="sizeHint" stdset="0">
              <size>
@@ -264,7 +264,7 @@
           <item>
            <spacer name="myNavRightHSpacer">
             <property name="orientation">
-             <enum>Qt::Horizontal</enum>
+             <enum>Qt::Orientation::Horizontal</enum>
             </property>
             <property name="sizeHint" stdset="0">
              <size>
@@ -291,16 +291,16 @@
            </size>
           </property>
           <property name="frameShape">
-           <enum>QFrame::Box</enum>
+           <enum>QFrame::Shape::Box</enum>
           </property>
           <property name="frameShadow">
-           <enum>QFrame::Sunken</enum>
+           <enum>QFrame::Shadow::Sunken</enum>
           </property>
           <property name="text">
            <string/>
           </property>
           <property name="alignment">
-           <set>Qt::AlignCenter</set>
+           <set>Qt::AlignmentFlag::AlignCenter</set>
           </property>
          </widget>
         </item>
@@ -420,7 +420,7 @@
             <item>
              <spacer name="myTagButtonsSpacer">
               <property name="orientation">
-               <enum>Qt::Horizontal</enum>
+               <enum>Qt::Orientation::Horizontal</enum>
               </property>
               <property name="sizeHint" stdset="0">
                <size>
@@ -448,24 +448,53 @@
           <item>
            <widget class="QScrollArea" name="myShortTagsScrollArea">
             <property name="styleSheet">
-             <string notr="true">QScrollArea {margin-top: 5px; margin-right: 5px; margin-bottom: 1px;} QScrollBar:vertical{width: 18px;}</string>
+             <string notr="true">
+QScrollArea
+{
+   margin-top: 5px;
+   margin-right: 5px;
+   margin-bottom: 1px;
+}
+
+QScrollBar:vertical
+{
+   background: #444444;
+   width: 18px;
+   margin: 18px 0px 18px 0px;
+}
+
+QScrollBar::handle:vertical
+{
+   background: #0066fe;
+   border: 3px groove #002266;
+   border-radius: 4px;
+   min-height: 18px;
+} 
+
+QScrollBar::sub-line:vertical,
+QScrollBar::add-line:vertical
+{
+   height: 18px;
+   subcontrol-origin: margin;
+}
+             </string>
             </property>
             <property name="horizontalScrollBarPolicy">
-             <enum>Qt::ScrollBarAsNeeded</enum>
+             <enum>Qt::ScrollBarPolicy::ScrollBarAsNeeded</enum>
             </property>
             <property name="widgetResizable">
              <bool>true</bool>
             </property>
             <property name="alignment">
-             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+             <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignTop</set>
             </property>
             <widget class="QWidget" name="myShortTagsParentWidget">
              <property name="geometry">
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>362</width>
-               <height>640</height>
+               <width>363</width>
+               <height>646</height>
               </rect>
              </property>
             </widget>
@@ -510,24 +539,53 @@
              </size>
             </property>
             <property name="styleSheet">
-             <string notr="true">QScrollArea {margin-top: 5px; margin-right: 5px; margin-bottom: 1px;} QScrollBar:vertical{width: 18px;}</string>
+             <string notr="true">
+QScrollArea
+{
+   margin-top: 5px;
+   margin-right: 5px;
+   margin-bottom: 1px;
+}
+
+QScrollBar:vertical
+{
+   background: #444444;
+   width: 18px;
+   margin: 18px 0px 18px 0px;
+}
+
+QScrollBar::handle:vertical
+{
+   background: #0066fe;
+   border: 3px groove #002266;
+   border-radius: 4px;
+   min-height: 18px;
+} 
+
+QScrollBar::sub-line:vertical,
+QScrollBar::add-line:vertical
+{
+   height: 18px;
+   subcontrol-origin: margin;
+}
+             </string>
             </property>
             <property name="horizontalScrollBarPolicy">
-             <enum>Qt::ScrollBarAsNeeded</enum>
+             <enum>Qt::ScrollBarPolicy::ScrollBarAsNeeded</enum>
             </property>
             <property name="widgetResizable">
              <bool>true</bool>
             </property>
             <property name="alignment">
-             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+             <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignTop</set>
             </property>
             <widget class="QWidget" name="myTagsParentWidget">
              <property name="geometry">
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>369</width>
-               <height>787</height>
+               <width>370</width>
+               <height>788</height>
               </rect>
              </property>
             </widget>
