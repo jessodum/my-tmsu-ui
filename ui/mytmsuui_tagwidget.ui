@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>210</width>
-    <height>40</height>
+    <height>42</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -47,8 +47,10 @@
       </size>
      </property>
      <property name="styleSheet">
-      <string notr="true">QCheckBox::indicator:unchecked {image: url(:cb/img/cb_unchecked_grey.png);}
-QCheckBox::indicator:checked {image: url(:cb/img/cb_checked_blue.png);}</string>
+      <string notr="true">
+QCheckBox::indicator:unchecked {image: url(:cb/img/cb_unchecked_grey.png);}
+QCheckBox::indicator:checked {image: url(:cb/img/cb_checked_blue.png);}
+      </string>
      </property>
      <property name="text">
       <string/>
@@ -98,13 +100,25 @@ QCheckBox::indicator:checked {image: url(:cb/img/cb_checked_blue.png);}</string>
       </size>
      </property>
      <property name="styleSheet">
-      <string notr="true">QComboBox {padding: 4px;} QComboBox QAbstractItemView {border: 1px solid black; color: black; background-color: white;}</string>
+      <string notr="true">
+QComboBox
+{
+   padding: 4px;
+}
+
+QComboBox QAbstractItemView
+{
+   border: 1px solid black;
+   color: black;
+   background-color: white;
+}
+      </string>
      </property>
      <property name="insertPolicy">
-      <enum>QComboBox::InsertAlphabetically</enum>
+      <enum>QComboBox::InsertPolicy::InsertAlphabetically</enum>
      </property>
      <property name="sizeAdjustPolicy">
-      <enum>QComboBox::AdjustToContents</enum>
+      <enum>QComboBox::SizeAdjustPolicy::AdjustToContents</enum>
      </property>
      <property name="placeholderText">
       <string>(Not Set)</string>
